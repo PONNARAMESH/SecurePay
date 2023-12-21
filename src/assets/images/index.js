@@ -1,0 +1,1 @@
+export const mashreqBankLogo = require('./mashreqLogo.png');
