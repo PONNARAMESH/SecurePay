@@ -14,12 +14,12 @@ import {
 } from 'react-native';
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton } from "../../components";
+import { Input, CustomButton, Devider } from "../../components";
+import colors from "../../assets/colors";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const Separator = () => <View style={styles.separator} />
 
 function Login(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
@@ -38,13 +38,14 @@ function Login(): React.JSX.Element {
                 contentInsetAdjustmentBehavior="automatic"
                 style={[backgroundStyle]}
             >
-                <View
-                    style={styles.imageContainer}
-                >
+                <View style={styles.imageContainer}>
                     <Image
                         style={styles.tinyLogo}
                         source={mashreqBankLogo}
                     />
+                </View>
+                <View style={styles.imageContainer}>
+                    <Text style={styles.pageTitle}>Log In to your Account</Text>
                 </View>
                 <Input
                     id="emailId"
@@ -60,12 +61,24 @@ function Login(): React.JSX.Element {
                     keyboardType="ascii-capable"
                     placeholder="Please give your password here.."
                 />
+                <View style={styles.buttonsContainer}>
+                    <Button
+                        title="Reset"
+                        onPress={() => { Alert.alert("you've clicked on Reset button") }}
+                        color="lightblue"
+                    />
+                    <Button
+                        title="Login"
+                        onPress={() => { Alert.alert("you've clicked on Login button") }}
+                        color="blue"
+                    />
+                </View>
+                <Devider label="Or"/>
                 <Button
-                    title="Reset"
-                    onPress={() => { Alert.alert("you've clicked on Reset button") }}
-                    style={{ backgroundColor: "red", fontColor: "white" }}
+                    title="Registration/Sing Up"
+                    onPress={() => { Alert.alert("you've clicked on Sign Up button") }}
+                    color="green"
                 />
-                <Separator />
             </ScrollView>
         </SafeAreaView>
     );
@@ -76,9 +89,10 @@ const styles = StyleSheet.create({
         flex: 1,
         width: windowWidth,
         height: windowHeight,
-        // just for testing
-        borderWidth: 2,
-        borderColor: 'red',
+        paddingTop: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        gap: 10,
     },
     imageContainer: {
         flex: 1,
@@ -88,17 +102,28 @@ const styles = StyleSheet.create({
         // borderWidth: 2,
         // borderColor: 'red',
     },
+    pageTitle: {
+        fontSize: 25,
+        fontWeight: "bold",
+        color: colors.yellow,
+    },
     tinyLogo: {
-        width: 100,
-        height: 100,
-        // // just for testing
-        // borderWidth: 2,
-        // borderColor: 'red',
+        width: 150,
+        height: 150,
     },
     separator: {
-        marginVertical: 8,
+        marginVertical: 20,
+        borderWidth: 2,
         borderBottomColor: '#737373',
         borderBottomWidth: StyleSheet.hairlineWidth,
+        // marginTop: 10,
+        // marginBottom: 10,
+    },
+    buttonsContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: "space-between",
+        marginTop: 5,
     }
 });
 

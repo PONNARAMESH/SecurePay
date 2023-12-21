@@ -15,9 +15,9 @@ export function Input(props: InputProps): React.JSX.Element {
     const { id, label, multiline, onChange, placeholder, keyboardType } = props;
     return (
 
-        <View className={styles.customInputContainer} id={`${id}_view`}>
-            <View className={styles.labelContainer}>
-                <Text htmlFor={id} className={styles.label}>
+        <View style={styles.customInputContainer} id={`${id}_view`}>
+            <View style={styles.labelContainer}>
+                <Text style={styles.label}>
                     {label}
                 </Text>
                 {/* <AnimatePresence mode="wait" initial={false}>
@@ -32,7 +32,6 @@ export function Input(props: InputProps): React.JSX.Element {
             <TextInput
                 id={id}
                 style={styles.input}
-                className={styles.textArea}
                 placeholder={placeholder}
                 keyboardType={keyboardType ?? "text"}
 
@@ -46,24 +45,17 @@ const styles = StyleSheet.create({
     customInputContainer: {
         flex: 1,
         gap: 0.5,
-        marginTop: 20,
-
-        // just for testing
-        borderWidth: 2,
-        borderColor: 'red',
+        marginVertical: 5,
     },
     labelContainer: {
         flex: 1,
         justifyContent: 'space-between',
-        marginTop: 0.3,
-        marginBottom: 0.3,
-
-        // just for testing
-        borderWidth: 2,
-        borderColor: 'red',
+        marginVertical: 3,
     },
     label: {
         textTransform: 'capitalize',
+        marginVertical: 3,
+        fontSize: 15,
     },
     errorMessage: {
         flex: 1,
@@ -77,17 +69,17 @@ const styles = StyleSheet.create({
         margin: 0
     },
     textArea: {
-        // resize: 'vertical',
         maxHeight: 20,
-        padding: 1.25,
+        paddingHorizontal: 3,
+        paddingVertical: 3,
         borderRadius: 5,
         borderWidth: 1,
-        // width: 100%,
     },
     input: {
-        padding: 1.25,
+        paddingHorizontal: 3,
+        paddingVertical: 10,
         borderRadius: 5,
         borderWidth: 1,
-        // width: 100%,
+        fontSize: 15,
     },
 });
