@@ -76,9 +76,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     input: {
-        paddingHorizontal: 3,
+        paddingHorizontal: 15,
         paddingVertical: 10,
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         fontSize: 15,
     },

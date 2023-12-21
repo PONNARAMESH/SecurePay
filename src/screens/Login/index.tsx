@@ -62,19 +62,19 @@ function Login(): React.JSX.Element {
                     placeholder="Please give your password here.."
                 />
                 <View style={styles.buttonsContainer}>
-                    <Button
+                    <CustomButton
                         title="Reset"
                         onPress={() => { Alert.alert("you've clicked on Reset button") }}
                         color="lightblue"
                     />
-                    <Button
+                    <CustomButton
                         title="Login"
                         onPress={() => { Alert.alert("you've clicked on Login button") }}
                         color="blue"
                     />
                 </View>
-                <Devider label="Or"/>
-                <Button
+                <Devider label="Or" color={"gray"}/>
+                <CustomButton
                     title="Registration/Sing Up"
                     onPress={() => { Alert.alert("you've clicked on Sign Up button") }}
                     color="green"

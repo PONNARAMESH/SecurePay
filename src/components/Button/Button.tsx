@@ -15,7 +15,7 @@ export function CustomButton(props: ButtonProps): React.JSX.Element {
         //     onPress={onPress}
         // />
         <TouchableHighlight
-            style={styles.submit}
+            style={[styles.button, { backgroundColor: color}]}
             onPress={onPress}
             underlayColor='#fff'>
             <Text style={[styles.submitText]}>{title || "button-name"}</Text>
@@ -24,20 +24,15 @@ export function CustomButton(props: ButtonProps): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-    button: {
-        paddingHorizontal: 20,
-        borderRadius: 5,
-    },
     button_hover: {
         color: 'red'
     },
-    submit: {
-        marginRight: 40,
-        marginLeft: 40,
-        marginTop: 10,
-        paddingTop: 20,
-        paddingBottom: 20,
-        backgroundColor: '#68a0cf',
+    button: {
+        fontWeight: "bold",
+        fontSize: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 7,
+        // backgroundColor: '#68a0cf',
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#fff',
@@ -45,5 +40,6 @@ const styles = StyleSheet.create({
     submitText: {
         color: '#fff',
         textAlign: 'center',
+        overflow: 'hidden',
     }
 })
