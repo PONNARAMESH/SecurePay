@@ -26,6 +26,8 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import Login from "./src/screens/Login";
+import SingUp from "./src/screens/SignUp";
+import AppRoutes from "./src/Routes";
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -65,7 +67,7 @@ function App(): React.JSX.Element {
   };
 
   return (
-    <Login />
+    <AppRoutes />
     // <SafeAreaView style={backgroundStyle}>
     //   <StatusBar
     //     barStyle={isDarkMode ? 'light-content' : 'dark-content'}

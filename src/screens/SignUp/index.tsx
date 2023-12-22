@@ -22,7 +22,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 
-export default function LoginScreen(props: { navigation: any; }): React.JSX.Element {
+export default function SignUpScreen(props: { navigation: any; route: any }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
 
@@ -47,8 +47,15 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     />
                 </View>
                 <View style={styles.imageContainer}>
-                    <Text style={styles.pageTitle}>Log In to your Account</Text>
+                    <Text style={styles.pageTitle}>Create Account</Text>
                 </View>
+                <Input
+                    id="name"
+                    name="Name"
+                    label="Name"
+                    keyboardType="ascii-capable"
+                    placeholder="Please give your Name here.."
+                />
                 <Input
                     id="emailId"
                     name="Email Id"
@@ -64,6 +71,14 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     keyboardType="ascii-capable"
                     placeholder="Please give your password here.."
                 />
+                <Input
+                    id="confirmPassword"
+                    name="Confirm Password"
+                    label="Confirm Password"
+                    secureTextEntry={true}
+                    keyboardType="ascii-capable"
+                    placeholder="Please confirm your password"
+                />
                 <View style={styles.buttonsContainer}>
                     <CustomButton
                         title="Reset"
@@ -71,15 +86,16 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                         color="lightblue"
                     />
                     <CustomButton
-                        title="Log In"
-                        onPress={() => { Alert.alert("you've clicked on Login button") }}
+                        title="Sing UP"
+                        onPress={() => { Alert.alert("you've clicked on Sing Up button") }}
                         color="blue"
                     />
                 </View>
                 <Devider label="Or" color={"gray"} />
                 <CustomButton
-                    title="Registration/Sing Up"
-                    onPress={() => { navigation?.navigate(routeInfo?.SIGN_UP) }}
+                    title="Log In"
+                    // onPress={() => { navigation?.navigate(routeInfo?.LOG_IN) }}
+                    onPress={() => { navigation?.goBack() }}
                     color="green"
                 />
             </ScrollView>

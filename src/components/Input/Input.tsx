@@ -9,10 +9,11 @@ export type InputProps = {
     onChange?: () => void;
     placeholder: string;
     keyboardType?: "ascii-capable" | "ascii-capable-number-pad" | "decimal-pad" | "default" | "email-address" | "name-phone-pad" | "number-pad" | "numbers-and-punctuation" | "numeric" | "phone-pad" | "twitter" | "url" | "visible-password" | "web-search";
+    secureTextEntry?: boolean;
 };
 
 export function Input(props: InputProps): React.JSX.Element {
-    const { id, label, multiline, onChange, placeholder, keyboardType } = props;
+    const { id, label, multiline, onChange, placeholder, keyboardType, secureTextEntry } = props;
     return (
 
         <View style={styles.customInputContainer} id={`${id}_view`}>
@@ -33,7 +34,8 @@ export function Input(props: InputProps): React.JSX.Element {
                 id={id}
                 style={styles.input}
                 placeholder={placeholder}
-                keyboardType={keyboardType ?? "text"}
+                // keyboardType={keyboardType ?? "ascii-capable"}
+                secureTextEntry={secureTextEntry ?? false}
 
             // {...register(`${name}`, validation)}
             />
@@ -56,6 +58,8 @@ const styles = StyleSheet.create({
         textTransform: 'capitalize',
         marginVertical: 3,
         fontSize: 15,
+        color: "#000",
+        fontWeight: "bold",
     },
     errorMessage: {
         flex: 1,
@@ -76,6 +80,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     input: {
+        backgroundColor: "#F4F6F6",
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 10,
