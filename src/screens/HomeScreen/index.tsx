@@ -17,13 +17,12 @@ import { mashreqBankLogo } from "../../assets/images";
 import { Input, CustomButton, Devider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 
-export default function LoginScreen(props: { navigation: any; }): React.JSX.Element {
+export default function HomeScreen(props: { navigation: any; }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
 
@@ -48,48 +47,9 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     />
                 </View>
                 <View style={styles.imageContainer}>
-                    <Text style={styles.pageTitle}>Log In to your Account</Text>
+                    <Text style={styles.pageTitle}>Welcome to Secure Pay App!!!</Text>
                 </View>
-                <Input
-                    id="emailId"
-                    name="Email Id"
-                    label="Email Id"
-                    keyboardType="email-address"
-                    placeholder="Please give your email Id here.."
-                />
-                <Input
-                    id="password"
-                    name="Password"
-                    label="Password"
-                    secureTextEntry={true}
-                    keyboardType="ascii-capable"
-                    placeholder="Please give your password here.."
-                />
-                <View style={styles.buttonsContainer}>
-                    <CustomButton
-                        title="Reset"
-                        onPress={() => { Alert.alert("you've clicked on Reset button") }}
-                        color="lightblue"
-                    />
-                    <CustomButton
-                        title="Log In"
-                        onPress={() => {
-                            // Alert.alert("you've clicked on Login button");
-                            console.log("##loging in ---->");
-                            auth().signInWithEmailAndPassword("test@gmail.com", "123456")
-                                .then(() => navigation.navigate('Home'))
-                                // .catch(error => this.setState({ errorMessage: error.message }));
-                                .catch((error: any) => console.log("##error: ", error));
-                        }}
-                        color="blue"
-                    />
-                </View>
-                <Devider label="Or" color={"gray"} />
-                <CustomButton
-                    title="Registration/Sing Up"
-                    onPress={() => { navigation?.navigate(routeInfo?.SIGN_UP) }}
-                    color="green"
-                />
+                
             </ScrollView>
         </SafeAreaView>
     );

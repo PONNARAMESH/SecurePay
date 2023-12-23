@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "474035989295",
+    "project_id": "payapp-c9b7c",
+    "storage_bucket": "payapp-c9b7c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474035989295:android:65cf1d4ea96c72dd5c8fda",
+        "android_client_info": {
+          "package_name": "com.securepay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-2CDJY3vZYK3Eq2DuM1BnbIOxK3yAdlc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

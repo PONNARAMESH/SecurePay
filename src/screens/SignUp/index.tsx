@@ -17,6 +17,7 @@ import { mashreqBankLogo } from "../../assets/images";
 import { Input, CustomButton, Devider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -87,7 +88,31 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     />
                     <CustomButton
                         title="Sing UP"
-                        onPress={() => { Alert.alert("you've clicked on Sing Up button") }}
+                        onPress={() => {
+                            // Alert.alert("you've clicked on Sing Up button");
+                            console.log("###createing new user!!");
+
+                            // TODO: Firebase stuff...
+                            console.log('handleSignUp')
+
+
+                            auth()
+                                .createUserWithEmailAndPassword('jane.doe@example.com', 'SuperSecretPassword!')
+                                .then(() => {
+                                    console.log('User account created & signed in!');
+                                })
+                                .catch((error: any) => {
+                                    if (error.code === 'auth/email-already-in-use') {
+                                        console.log('That email address is already in use!');
+                                    }
+
+                                    if (error.code === 'auth/invalid-email') {
+                                        console.log('That email address is invalid!');
+                                    }
+
+                                    console.error('##error: ', error);
+                                });
+                        }}
                         color="blue"
                     />
                 </View>
