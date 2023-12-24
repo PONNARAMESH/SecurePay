@@ -12,6 +12,8 @@ import {
     Alert,
     Button,
 } from 'react-native';
+import { useForm } from 'react-hook-form';
+
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
 import { Input, CustomButton, Devider } from "../../components";
@@ -26,6 +28,45 @@ const windowHeight = Dimensions.get('window').height;
 export default function LoginScreen(props: { navigation: any; }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
+
+    const { register, setValue, handleSubmit, formState: { errors }, reset, getValues } = useForm();
+    const { emailId, password } = getValues();
+
+    const hanldeRest = () => {
+        console.log("##restting the form data");
+        reset({
+            emailId: '',
+            password: ''
+        });
+    }
+
+    const onSubmit = (data: any) => {
+        // console.log("##loging in ---->", data);
+        const { emailId, password } = data;
+        auth().signInWithEmailAndPassword(emailId, password)
+            .then(() => navigation.navigate(routeInfo?.HOME_SCREEN))
+            .catch((error: any) => {
+                console.log("##error: ", error.message)
+                Alert.alert(
+                    'Alert',
+                    "Something is wrong with your credentials. Please enter correct details!",
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => { console.log('Cancel Pressed') },
+                            style: 'cancel',
+                        },
+                    ]
+                )
+            });
+    }
+
+    React.useEffect(() => {
+        register('emailId', { required: 'required' });
+        register('password', { required: 'required' });
+    }, [register])
+
+    // console.log('##errors: ', errors);
 
     const backgroundStyle = {
         backgroundColor: isDarkMode ? Colors.darker : Colors.white,
@@ -56,6 +97,9 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     label="Email Id"
                     keyboardType="email-address"
                     placeholder="Please give your email Id here.."
+                    onChangeText={text => setValue('emailId', text, { shouldValidate: true })}
+                    errors={errors}
+                    value={emailId || ''}
                 />
                 <Input
                     id="password"
@@ -64,23 +108,19 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     secureTextEntry={true}
                     keyboardType="ascii-capable"
                     placeholder="Please give your password here.."
+                    onChangeText={text => setValue('password', text, { shouldValidate: true })}
+                    errors={errors}
+                    value={password || ''}
                 />
                 <View style={styles.buttonsContainer}>
                     <CustomButton
                         title="Reset"
-                        onPress={() => { Alert.alert("you've clicked on Reset button") }}
+                        onPress={hanldeRest}
                         color="lightblue"
                     />
                     <CustomButton
                         title="Log In"
-                        onPress={() => {
-                            // Alert.alert("you've clicked on Login button");
-                            console.log("##loging in ---->");
-                            auth().signInWithEmailAndPassword("test@gmail.com", "123456")
-                                .then(() => navigation.navigate('Home'))
-                                // .catch(error => this.setState({ errorMessage: error.message }));
-                                .catch((error: any) => console.log("##error: ", error));
-                        }}
+                        onPress={handleSubmit(onSubmit)}
                         color="blue"
                     />
                 </View>

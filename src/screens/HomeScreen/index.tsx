@@ -12,6 +12,8 @@ import {
     Alert,
     Button,
 } from 'react-native';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
 import { Input, CustomButton, Devider } from "../../components";
@@ -49,7 +51,16 @@ export default function HomeScreen(props: { navigation: any; }): React.JSX.Eleme
                 <View style={styles.imageContainer}>
                     <Text style={styles.pageTitle}>Welcome to Secure Pay App!!!</Text>
                 </View>
-                
+                <CustomButton
+                    title="Log Out"
+                    onPress={() => {
+                        auth()
+                            .signOut()
+                            .then(() => console.log('User signed out!'));
+                    }}
+                    color="blue"
+                />
+
             </ScrollView>
         </SafeAreaView>
     );

@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, Button, TouchableHighlight, Text } from "react-native";
 export type ButtonProps = {
     title: string;
-    onPress: () => void;
+    onPress: (data: any) => void;
     // style: Record<string, any> | {}
     color?: string;
 };

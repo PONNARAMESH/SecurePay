@@ -12,12 +12,14 @@ import {
     Alert,
     Button,
 } from 'react-native';
+import { useForm } from 'react-hook-form';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
 import { Input, CustomButton, Devider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -26,11 +28,80 @@ const windowHeight = Dimensions.get('window').height;
 export default function SignUpScreen(props: { navigation: any; route: any }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
+    const { register, setValue, handleSubmit, formState: { errors }, getValues, reset } = useForm();
+    const { name, emailId, password, confirmPassword } = getValues();
+
+    const hanldeRest = () => {
+        console.log("##restting the form data");
+        reset({
+            name: '',
+            emailId: '',
+            password: '',
+            confirmPassword: '',
+        });
+    }
+
+    const onSingUp = (data: any) => {
+        // Alert.alert("you've clicked on Sing Up button");
+        console.log("###createing new user!!");
+        // console.log("##loging in ---->", data);
+        const { emailId, password } = data;
+
+        auth()
+            .createUserWithEmailAndPassword(emailId, password)
+            .then(() => {
+                console.log('User account created & signed in!');
+            })
+            .catch((error: any) => {
+                if (error.code === 'auth/email-already-in-use') {
+                    console.log('That email address is already in use!');
+                    Alert.alert(
+                        'Alert',
+                        "That email address is already in use!",
+                        [
+                            {
+                                text: 'Ok',
+                                onPress: () => { console.log('Cancel Pressed') },
+                            },
+                        ]
+                    )
+                }
+
+                if (error.code === 'auth/invalid-email') {
+                    console.log('That email address is invalid!');
+                    Alert.alert(
+                        'Alert',
+                        "That email address is invalid!",
+                        [
+                            {
+                                text: 'Ok',
+                                onPress: () => { console.log('Cancel Pressed') },
+                            },
+                        ]
+                    )
+                }
+
+                console.error('##error: ', error);
+                Alert.alert(
+                    'Alert',
+                    "Something went wrong. Plesae try again after sometime!",
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]
+                )
+            });
+    }
 
     const backgroundStyle = {
         backgroundColor: isDarkMode ? Colors.darker : Colors.white,
     };
 
+    React.useEffect(() => {
+        register('emailId', { required: 'required' });
+        register('password', { required: 'required' });
+    }, [register])
+
+    // console.log('##errors: ', errors);
     return (
         <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
             <StatusBar
@@ -56,6 +127,9 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     label="Name"
                     keyboardType="ascii-capable"
                     placeholder="Please give your Name here.."
+                    onChangeText={text => setValue('name', text, { shouldValidate: true })}
+                    errors={errors}
+                    value={name}
                 />
                 <Input
                     id="emailId"
@@ -63,6 +137,9 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     label="Email Id"
                     keyboardType="email-address"
                     placeholder="Please give your email Id here.."
+                    onChangeText={text => setValue('emailId', text, { shouldValidate: true })}
+                    errors={errors}
+                    value={emailId}
                 />
                 <Input
                     id="password"
@@ -71,6 +148,9 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     secureTextEntry={true}
                     keyboardType="ascii-capable"
                     placeholder="Please give your password here.."
+                    onChangeText={text => setValue('password', text, { shouldValidate: true })}
+                    errors={errors}
+                    value={password}
                 />
                 <Input
                     id="confirmPassword"
@@ -79,40 +159,19 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     secureTextEntry={true}
                     keyboardType="ascii-capable"
                     placeholder="Please confirm your password"
+                    onChangeText={text => setValue('confirmPassword', text, { shouldValidate: true })}
+                    errors={errors}
+                    value={confirmPassword}
                 />
                 <View style={styles.buttonsContainer}>
                     <CustomButton
                         title="Reset"
-                        onPress={() => { Alert.alert("you've clicked on Reset button") }}
+                        onPress={hanldeRest}
                         color="lightblue"
                     />
                     <CustomButton
                         title="Sing UP"
-                        onPress={() => {
-                            // Alert.alert("you've clicked on Sing Up button");
-                            console.log("###createing new user!!");
-
-                            // TODO: Firebase stuff...
-                            console.log('handleSignUp')
-
-
-                            auth()
-                                .createUserWithEmailAndPassword('jane.doe@example.com', 'SuperSecretPassword!')
-                                .then(() => {
-                                    console.log('User account created & signed in!');
-                                })
-                                .catch((error: any) => {
-                                    if (error.code === 'auth/email-already-in-use') {
-                                        console.log('That email address is already in use!');
-                                    }
-
-                                    if (error.code === 'auth/invalid-email') {
-                                        console.log('That email address is invalid!');
-                                    }
-
-                                    console.error('##error: ', error);
-                                });
-                        }}
+                        onPress={handleSubmit(onSingUp)}
                         color="blue"
                     />
                 </View>

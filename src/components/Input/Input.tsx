@@ -1,19 +1,47 @@
 import React from "react";
+import { useFormContext } from "react-hook-form";
+
+import { findInputError, isFormInvalid } from '../../utils';
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 export type InputProps = {
     id: string;
     name: string;
     label: string;
+    errors?: any;
     multiline?: boolean;
-    onChange?: () => void;
+    onChange?: (data: any) => void;
+    onChangeText?: (data: any) => void;
     placeholder: string;
     keyboardType?: "ascii-capable" | "ascii-capable-number-pad" | "decimal-pad" | "default" | "email-address" | "name-phone-pad" | "number-pad" | "numbers-and-punctuation" | "numeric" | "phone-pad" | "twitter" | "url" | "visible-password" | "web-search";
     secureTextEntry?: boolean;
+    value?: string;
 };
 
 export function Input(props: InputProps): React.JSX.Element {
-    const { id, label, multiline, onChange, placeholder, keyboardType, secureTextEntry } = props;
+    const {
+        id,
+        label,
+        errors,
+        multiline,
+        onChange,
+        onChangeText,
+        placeholder,
+        keyboardType,
+        secureTextEntry,
+        value
+    } = props;
+
+    // const {
+    //     // register,
+    //     formState: { errors },
+    // } = useFormContext();
+
+    const inputError: any = findInputError(errors, id);
+    const isInvalid = isFormInvalid(inputError);
+    console.log("##inputError: ", inputError);
+    console.log("##isInvalid: ", isInvalid);
+
     return (
 
         <View style={styles.customInputContainer} id={`${id}_view`}>
@@ -21,14 +49,18 @@ export function Input(props: InputProps): React.JSX.Element {
                 <Text style={styles.label}>
                     {label}
                 </Text>
-                {/* <AnimatePresence mode="wait" initial={false}>
+                {/* <AnimatePresence mode="wait" initial={false}> */}
+                <View>
                     {isInvalid && (
-                        <InputError
-                            message={inputError.error.message}
-                            key={inputError.error.message}
-                        />
+                        <Text
+                            style={styles.errorMessage}
+                            key={inputError?.error?.message}
+                        >
+                            * {inputError?.error?.message}
+                        </Text>
                     )}
-                </AnimatePresence> */}
+                </View>
+                {/* </AnimatePresence> */}
             </View>
             <TextInput
                 id={id}
@@ -36,6 +68,8 @@ export function Input(props: InputProps): React.JSX.Element {
                 placeholder={placeholder}
                 // keyboardType={keyboardType ?? "ascii-capable"}
                 secureTextEntry={secureTextEntry ?? false}
+                onChangeText={onChangeText}
+                value={value}
 
             // {...register(`${name}`, validation)}
             />
@@ -51,6 +85,7 @@ const styles = StyleSheet.create({
     },
     labelContainer: {
         flex: 1,
+        flexDirection: 'row',
         justifyContent: 'space-between',
         marginVertical: 3,
     },
@@ -69,7 +104,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 0.375,
         color: '#EF4444',
-        backgroundColor: '#FEE2E2',
+        // backgroundColor: '#FEE2E2',
         margin: 0
     },
     textArea: {
