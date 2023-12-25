@@ -12,13 +12,18 @@ const Stack = createNativeStackNavigator();
 
 export function UnAuthorizedRoutes(): React.JSX.Element {
   return (
-    <NavigationContainer>
+    <NavigationContainer >
       <Stack.Navigator>
         <Stack.Screen
           name={routeInfo?.LOG_IN}
           component={LoginScreen}
+          options={{ headerShown: false }}
         />
-        <Stack.Screen name={routeInfo?.SIGN_UP} component={SignUpScreen} />
+        <Stack.Screen
+          name={routeInfo?.SIGN_UP}
+          options={{ headerShown: false }}
+          component={SignUpScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -46,7 +46,7 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
         // console.log("##loging in ---->", data);
         const { emailId, password } = data;
         auth().signInWithEmailAndPassword(emailId, password)
-            .then(() => navigation.navigate(routeInfo?.HOME_SCREEN))
+            .then(() => {/**Code here for Successful login flow **/  })
             .catch((error: any) => {
                 console.log("##error: ", error.message)
                 Alert.alert(
