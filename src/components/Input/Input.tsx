@@ -32,15 +32,10 @@ export function Input(props: InputProps): React.JSX.Element {
         value
     } = props;
 
-    // const {
-    //     // register,
-    //     formState: { errors },
-    // } = useFormContext();
-
     const inputError: any = findInputError(errors, id);
     const isInvalid = isFormInvalid(inputError);
-    console.log("##inputError: ", inputError);
-    console.log("##isInvalid: ", isInvalid);
+    // console.log("##inputError: ", inputError);
+    // console.log("##isInvalid: ", isInvalid);
 
     return (
 
@@ -70,8 +65,6 @@ export function Input(props: InputProps): React.JSX.Element {
                 secureTextEntry={secureTextEntry ?? false}
                 onChangeText={onChangeText}
                 value={value}
-
-            // {...register(`${name}`, validation)}
             />
         </View>
     )

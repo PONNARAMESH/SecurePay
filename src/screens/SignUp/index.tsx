@@ -20,6 +20,7 @@ import { mashreqBankLogo } from "../../assets/images";
 import { Input, CustomButton, Devider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
+import { confirm_password_validation, email_validation, password_validation } from "../../utils/inputValidations";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -28,23 +29,15 @@ const windowHeight = Dimensions.get('window').height;
 export default function SignUpScreen(props: { navigation: any; route: any }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
-    const { register, setValue, handleSubmit, formState: { errors }, getValues, reset } = useForm();
+    const { register, setValue, handleSubmit, formState: { errors }, getValues, reset, watch } = useForm();
     const { name, emailId, password, confirmPassword } = getValues();
 
     const hanldeRest = () => {
         console.log("##restting the form data");
-        reset({
-            name: '',
-            emailId: '',
-            password: '',
-            confirmPassword: '',
-        });
+        reset({});
     }
 
     const onSingUp = (data: any) => {
-        // Alert.alert("you've clicked on Sing Up button");
-        console.log("###createing new user!!");
-        // console.log("##loging in ---->", data);
         const { emailId, password } = data;
 
         auth()
@@ -65,9 +58,7 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                             },
                         ]
                     )
-                }
-
-                if (error.code === 'auth/invalid-email') {
+                } else if (error.code === 'auth/invalid-email') {
                     console.log('That email address is invalid!');
                     Alert.alert(
                         'Alert',
@@ -79,16 +70,17 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                             },
                         ]
                     )
-                }
+                } else {
 
-                console.error('##error: ', error);
-                Alert.alert(
-                    'Alert',
-                    "Something went wrong. Plesae try again after sometime!",
-                    [
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
-                    ]
-                )
+                    console.error('##error: ', error);
+                    Alert.alert(
+                        'Alert',
+                        "Something went wrong. Plesae try again after sometime!",
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]
+                    )
+                }
             });
     }
 
@@ -97,8 +89,16 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
     };
 
     React.useEffect(() => {
-        register('emailId', { required: 'required' });
-        register('password', { required: 'required' });
+        register(email_validation?.id, email_validation?.validation);
+        register(password_validation?.id, password_validation?.validation);
+        register(confirm_password_validation?.id, {
+            validate: (val: string) => {
+                if (watch('password') != val) {
+                    return "Your passwords do no match";
+                }
+            },
+            ...confirm_password_validation?.validation,
+        });
     }, [register])
 
     // console.log('##errors: ', errors);
@@ -121,7 +121,7 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                 <View style={styles.imageContainer}>
                     <Text style={styles.pageTitle}>Create Account</Text>
                 </View>
-                <Input
+                {/* <Input
                     id="name"
                     name="Name"
                     label="Name"
@@ -130,49 +130,49 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     onChangeText={text => setValue('name', text, { shouldValidate: true })}
                     errors={errors}
                     value={name}
-                />
+                /> */}
                 <Input
-                    id="emailId"
-                    name="Email Id"
-                    label="Email Id"
+                    id={email_validation?.id}
+                    name={email_validation?.name}
+                    label={email_validation?.label}
                     keyboardType="email-address"
-                    placeholder="Please give your email Id here.."
-                    onChangeText={text => setValue('emailId', text, { shouldValidate: true })}
+                    placeholder={email_validation?.placeholder}
+                    onChangeText={text => setValue(email_validation?.id, text, { shouldValidate: true })}
                     errors={errors}
-                    value={emailId}
+                    value={emailId || ''}
                 />
                 <Input
-                    id="password"
-                    name="Password"
-                    label="Password"
+                    id={password_validation?.id}
+                    name={password_validation?.name}
+                    label={password_validation?.label}
                     secureTextEntry={true}
                     keyboardType="ascii-capable"
-                    placeholder="Please give your password here.."
-                    onChangeText={text => setValue('password', text, { shouldValidate: true })}
+                    placeholder={password_validation?.placeholder}
+                    onChangeText={text => setValue(password_validation?.id, text, { shouldValidate: true })}
                     errors={errors}
-                    value={password}
+                    value={password || ''}
                 />
                 <Input
-                    id="confirmPassword"
-                    name="Confirm Password"
-                    label="Confirm Password"
+                    id={confirm_password_validation?.id}
+                    name={confirm_password_validation?.name}
+                    label={confirm_password_validation?.label}
                     secureTextEntry={true}
                     keyboardType="ascii-capable"
-                    placeholder="Please confirm your password"
-                    onChangeText={text => setValue('confirmPassword', text, { shouldValidate: true })}
+                    placeholder={confirm_password_validation?.placeholder}
+                    onChangeText={text => setValue(confirm_password_validation?.id, text, { shouldValidate: true })}
                     errors={errors}
-                    value={confirmPassword}
+                    value={confirmPassword || ''}
                 />
                 <View style={styles.buttonsContainer}>
-                    <CustomButton
+                    {/* <CustomButton
                         title="Reset"
                         onPress={hanldeRest}
                         color="lightblue"
-                    />
+                    /> */}
                     <CustomButton
                         title="Sing UP"
                         onPress={handleSubmit(onSingUp)}
-                        color="blue"
+                        color={colors?.blue}
                     />
                 </View>
                 <Devider label="Or" color={"gray"} />
@@ -180,7 +180,7 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     title="Log In"
                     // onPress={() => { navigation?.navigate(routeInfo?.LOG_IN) }}
                     onPress={() => { navigation?.goBack() }}
-                    color="green"
+                    color={colors.green}
                 />
             </ScrollView>
         </SafeAreaView>
@@ -223,9 +223,9 @@ const styles = StyleSheet.create({
         // marginBottom: 10,
     },
     buttonsContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: "space-between",
+        // flex: 1,
+        // flexDirection: 'row',
+        // justifyContent: "space-between",
         marginTop: 5,
     }
 });

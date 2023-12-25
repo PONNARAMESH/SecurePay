@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------
-|  🐼 Input Validators 
+|  🐼 Input Validators
 |
 |  🐯 Purpose: THIS FILE CONTAINS ALL THE VALIDATORS OBJECTS
 |
@@ -11,7 +11,7 @@ export const name_validation = {
   label: 'name',
   type: 'text',
   id: 'name',
-  placeholder: 'write your name ...',
+  placeholder: 'Ex: John',
   validation: {
     required: {
       value: true,
@@ -22,32 +22,14 @@ export const name_validation = {
       message: '30 characters max',
     },
   },
-}
-
-export const desc_validation = {
-  name: 'description',
-  label: 'description',
-  multiline: true,
-  id: 'description',
-  placeholder: 'write description ...',
-  validation: {
-    required: {
-      value: true,
-      message: 'required',
-    },
-    maxLength: {
-      value: 200,
-      message: '200 characters max',
-    },
-  },
-}
+};
 
 export const password_validation = {
-  name: 'password',
-  label: 'password',
+  name: 'Password',
+  label: 'Password',
   type: 'password',
   id: 'password',
-  placeholder: 'type password ...',
+  placeholder: 'Ex: joch12!',
   validation: {
     required: {
       value: true,
@@ -57,29 +39,41 @@ export const password_validation = {
       value: 6,
       message: 'min 6 characters',
     },
+    pattern: {
+      value: /[a-z0-9]/, //TODO: later have to update this RegEx for strict validations
+      message: 'not valid',
+    },
   },
-}
+};
 
-export const num_validation = {
-  name: 'num',
-  label: 'number',
-  type: 'number',
-  id: 'num',
-  placeholder: 'write a random number',
+export const confirm_password_validation = {
+  name: 'Confirm Password',
+  label: 'Confirm Password',
+  type: 'password',
+  id: 'confirmPassword',
+  placeholder: 'Ex: joch12!',
   validation: {
     required: {
       value: true,
       message: 'required',
     },
+    minLength: {
+      value: 6,
+      message: 'min 6 characters',
+    },
+    pattern: {
+      value: /[a-z0-9]/, //TODO: later have to update this RegEx for strict validations
+      message: 'not valid',
+    },
   },
-}
+};
 
 export const email_validation = {
-  name: 'email',
-  label: 'email address',
+  name: 'Email Id',
+  label: 'Email address',
   type: 'email',
-  id: 'email',
-  placeholder: 'write a random email address',
+  id: 'emailId',
+  placeholder: 'Ex: john@gmail.com',
   validation: {
     required: {
       value: true,
@@ -91,4 +85,4 @@ export const email_validation = {
       message: 'not valid',
     },
   },
-}
+};
