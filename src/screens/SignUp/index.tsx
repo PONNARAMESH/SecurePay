@@ -17,7 +17,7 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton, Devider } from "../../components";
+import { Input, CustomButton, Divider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { confirm_password_validation, email_validation, password_validation } from "../../utils/inputValidations";
@@ -175,7 +175,7 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                         color={colors?.blue}
                     />
                 </View>
-                <Devider label="Or" color={"gray"} />
+                <Divider label="Or" color={"gray"} />
                 <CustomButton
                     title="Log In"
                     // onPress={() => { navigation?.navigate(routeInfo?.LOG_IN) }}

@@ -6,7 +6,7 @@ export type ButtonProps = {
     // style: Record<string, any> | {}
     color?: string;
 };
-export function CustomButton(props: ButtonProps): React.JSX.Element {
+export const CustomButton = React.memo((props: ButtonProps): React.JSX.Element => {
     const { title, onPress, color } = props;
     return (
         // <Button
@@ -15,13 +15,13 @@ export function CustomButton(props: ButtonProps): React.JSX.Element {
         //     onPress={onPress}
         // />
         <TouchableHighlight
-            style={[styles.button, { backgroundColor: color}]}
+            style={[styles.button, { backgroundColor: color }]}
             onPress={onPress}
             underlayColor='#fff'>
             <Text style={[styles.submitText]}>{title || "button-name"}</Text>
         </TouchableHighlight>
     )
-}
+})
 
 const styles = StyleSheet.create({
     button_hover: {

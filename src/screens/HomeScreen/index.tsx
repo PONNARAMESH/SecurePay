@@ -16,7 +16,7 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton, Devider } from "../../components";
+import { Input, CustomButton, Divider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 

@@ -18,7 +18,7 @@ export type InputProps = {
     value?: string;
 };
 
-export function Input(props: InputProps): React.JSX.Element {
+export const Input = React.memo((props: InputProps): React.JSX.Element => {
     const {
         id,
         label,
@@ -68,7 +68,7 @@ export function Input(props: InputProps): React.JSX.Element {
             />
         </View>
     )
-}
+})
 
 const styles = StyleSheet.create({
     customInputContainer: {
