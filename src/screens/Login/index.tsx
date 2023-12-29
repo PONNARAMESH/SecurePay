@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { useDispatch, useSelector } from "react-redux";
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
@@ -22,7 +23,7 @@ import { Input, CustomButton, Divider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { email_validation, password_validation } from "../../utils/inputValidations";
-
+import { userSingInAction } from "../../redux/actions/userAccount";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -30,11 +31,12 @@ const windowHeight = Dimensions.get('window').height;
 export default function LoginScreen(props: { navigation: any; }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
+    const dispatch = useDispatch();
 
     const { register, setValue, handleSubmit, formState: { errors }, reset, getValues } = useForm();
     const { emailId, password } = getValues();
 
-    const hanldeRest = () => {
+    const handleRest = () => {
         console.log("##restting the form data");
         reset({
             emailId: '',
@@ -43,24 +45,7 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
     }
 
     const onSubmit = (data: any) => {
-        // console.log("##loging in ---->", data);
-        const { emailId, password } = data;
-        auth().signInWithEmailAndPassword(emailId, password)
-            .then(() => {/**Code here for Successful login flow **/  })
-            .catch((error: any) => {
-                console.log("##error: ", error.message)
-                Alert.alert(
-                    'Alert',
-                    "Something is wrong with your credentials. Please enter correct details!",
-                    [
-                        {
-                            text: 'Cancel',
-                            onPress: () => { console.log('Cancel Pressed') },
-                            style: 'cancel',
-                        },
-                    ]
-                )
-            });
+        dispatch(userSingInAction(data));
     }
 
     React.useEffect(() => {
@@ -117,7 +102,7 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                 <View style={styles.buttonsContainer}>
                     {/* <CustomButton
                         title="Reset"
-                        onPress={hanldeRest}
+                        onPress={handleRest}
                         color="lightblue"
                     /> */}
                     <CustomButton

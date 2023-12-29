@@ -13,12 +13,14 @@ import {
     Button,
 } from 'react-native';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { useSelector, useDispatch } from "react-redux";
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
 import { Input, CustomButton, Divider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
+import { userSingOutAction } from "../../redux/actions";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -27,6 +29,9 @@ const windowHeight = Dimensions.get('window').height;
 export default function HomeScreen(props: { navigation: any; }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
+    const dispatch = useDispatch();
+    // const userInfo = useSelector((store: any) => store.user);
+    // console.log("##userInfo: ", userInfo);
 
     const backgroundStyle = {
         backgroundColor: isDarkMode ? Colors.darker : Colors.white,
@@ -54,9 +59,7 @@ export default function HomeScreen(props: { navigation: any; }): React.JSX.Eleme
                 <CustomButton
                     title="Log Out"
                     onPress={() => {
-                        auth()
-                            .signOut()
-                            .then(() => console.log('User signed out!'));
+                        dispatch(userSingOutAction());
                     }}
                     color="blue"
                 />
