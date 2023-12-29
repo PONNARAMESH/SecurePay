@@ -62,7 +62,7 @@ export function userSingUpAction(data: IUserEmailInfo) {
     })
 }
 
-export function userSingUpSuccessAction(data: IUserEmailInfo) {
+export function userSingUpSuccessAction(data: ILoggedInUserInfo) {
     return ({
         type: SIGN_UP_SUCCESSFUL,
         payload: data,

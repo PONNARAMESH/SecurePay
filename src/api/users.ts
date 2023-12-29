@@ -43,19 +43,40 @@ export function userSignUpAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.U
                     resolve(data);
                 })
                 .catch((error: any) => {
-                    console.log("##error: ", error.message)
+                    console.log("##error: ", error.message);
+
+                    if (error.code === 'auth/email-already-in-use') {
+                        Alert.alert(
+                            'Alert',
+                            "That email address is already in use!",
+                            [
+                                {
+                                    text: 'Ok',
+                                    onPress: () => { console.log('Cancel Pressed') },
+                                },
+                            ]
+                        )
+                    } else if (error.code === 'auth/invalid-email') {
+                        Alert.alert(
+                            'Alert',
+                            "That email address is invalid!",
+                            [
+                                {
+                                    text: 'Ok',
+                                    onPress: () => { console.log('Cancel Pressed') },
+                                },
+                            ]
+                        )
+                    } else {
+                        Alert.alert(
+                            'Alert',
+                            "Something went wrong. Plesae try again after sometime!",
+                            [
+                                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            ]
+                        )
+                    }
                     reject(error);
-                    Alert.alert(
-                        'Alert',
-                        "Something is wrong with your credentials. Please enter correct details!",
-                        [
-                            {
-                                text: 'Cancel',
-                                onPress: () => { console.log('Cancel Pressed') },
-                                style: 'cancel',
-                            },
-                        ]
-                    )
                 });
         } catch (error) {
             reject(error);
@@ -66,11 +87,11 @@ export function userSignUpAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.U
 export function userSignOutAPI(): Promise<boolean | Error> {
     return new Promise((resolve, reject) => {
         try {
-            console.log(">>>>triggering-SING_OUT API<<<<<");
+            // console.log(">>>>triggering-SING_OUT API<<<<<");
             auth()
                 .signOut()
                 .then(() => {
-                    console.log('User signed out!');
+                    // console.log('User signed out!');
                     Alert.alert(
                         'Alert',
                         "You have logged out Successfully!!!",

@@ -6,6 +6,7 @@ import {
   userSingUpFailureAction,
   userSingOutSuccessAction,
   userSingOutFailureAction,
+  userSingUpSuccessAction,
 } from '../actions';
 import {
   SIGN_IN_REQUEST,
@@ -13,7 +14,7 @@ import {
   SIGN_UP_REQUEST,
   SIGN_UP_SUCCESSFUL,
 } from '../actionTypes';
-import { userLoginAPI, userSignOutAPI } from '../../api/users';
+import { userLoginAPI, userSignOutAPI, userSignUpAPI } from '../../api/users';
 import { IUserEmailInfo } from '../../types';
 
 export function* singInSaga(action: { type: string, payload: IUserEmailInfo }) {
@@ -84,9 +85,30 @@ export function* watchOutSignOutSaga() {
 export function* singUpSaga(action: { type: string, payload: IUserEmailInfo }) {
   // console.log('##sing-in-saga');
   try {
-    const resData:FirebaseAuthTypes.UserCredential = yield call(userLoginAPI, action?.payload);
+    const resData:FirebaseAuthTypes.User = yield call(userSignUpAPI, action?.payload);
     // console.log('##res-data: ', resData);
-    yield put({ type: SIGN_UP_SUCCESSFUL, payload: resData });
+    const {
+      displayName,
+      email,
+      emailVerified,
+      isAnonymous,
+      phoneNumber,
+      photoURL,
+      providerId,
+      // tenantId,
+      uid,
+    } = resData;
+    yield put(userSingUpSuccessAction({
+      displayName,
+      email,
+      emailVerified,
+      isAnonymous,
+      phoneNumber,
+      photoURL,
+      providerId,
+      // tenantId,
+      uid,
+    }));
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);
     const {

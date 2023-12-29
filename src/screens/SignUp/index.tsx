@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { useDispatch } from "react-redux";
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
@@ -21,6 +22,7 @@ import { Input, CustomButton, Divider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { confirm_password_validation, email_validation, password_validation } from "../../utils/inputValidations";
+import { userSingUpAction } from "../../redux/actions";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -29,6 +31,7 @@ const windowHeight = Dimensions.get('window').height;
 export default function SignUpScreen(props: { navigation: any; route: any }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
+    const dispatch = useDispatch();
     const { register, setValue, handleSubmit, formState: { errors }, getValues, reset, watch } = useForm();
     const { name, emailId, password, confirmPassword } = getValues();
 
@@ -39,49 +42,7 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
 
     const onSingUp = (data: any) => {
         const { emailId, password } = data;
-
-        auth()
-            .createUserWithEmailAndPassword(emailId, password)
-            .then(() => {
-                console.log('User account created & signed in!');
-            })
-            .catch((error: any) => {
-                if (error.code === 'auth/email-already-in-use') {
-                    console.log('That email address is already in use!');
-                    Alert.alert(
-                        'Alert',
-                        "That email address is already in use!",
-                        [
-                            {
-                                text: 'Ok',
-                                onPress: () => { console.log('Cancel Pressed') },
-                            },
-                        ]
-                    )
-                } else if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
-                    Alert.alert(
-                        'Alert',
-                        "That email address is invalid!",
-                        [
-                            {
-                                text: 'Ok',
-                                onPress: () => { console.log('Cancel Pressed') },
-                            },
-                        ]
-                    )
-                } else {
-
-                    console.error('##error: ', error);
-                    Alert.alert(
-                        'Alert',
-                        "Something went wrong. Plesae try again after sometime!",
-                        [
-                            { text: 'OK', onPress: () => console.log('OK Pressed') },
-                        ]
-                    )
-                }
-            });
+        dispatch(userSingUpAction(data));
     }
 
     const backgroundStyle = {
