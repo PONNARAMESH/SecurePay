@@ -14,12 +14,13 @@ import {
   SIGN_UP_REQUEST,
   SIGN_UP_SUCCESSFUL,
 } from '../actionTypes';
-import { userLoginAPI, userSignOutAPI, userSignUpAPI } from '../../api/users';
+import { userLoginAPI, userSignOutAPI, userSignUpAPI } from '../../api/userAccount';
 import { IUserEmailInfo } from '../../types';
+import { AddNewRecordAPI } from '../../api/users';
 
 export function* singInSaga(action: { type: string, payload: IUserEmailInfo }) {
   try {
-    const resData:FirebaseAuthTypes.User = yield call(userLoginAPI, action?.payload);
+    const resData: FirebaseAuthTypes.User = yield call(userLoginAPI, action?.payload);
     // console.log('##res-data: ', resData);
     const {
       displayName,
@@ -85,30 +86,23 @@ export function* watchOutSignOutSaga() {
 export function* singUpSaga(action: { type: string, payload: IUserEmailInfo }) {
   // console.log('##sing-in-saga');
   try {
-    const resData:FirebaseAuthTypes.User = yield call(userSignUpAPI, action?.payload);
-    // console.log('##res-data: ', resData);
-    const {
-      displayName,
-      email,
-      emailVerified,
-      isAnonymous,
-      phoneNumber,
-      photoURL,
-      providerId,
-      // tenantId,
-      uid,
-    } = resData;
-    yield put(userSingUpSuccessAction({
-      displayName,
-      email,
-      emailVerified,
-      isAnonymous,
-      phoneNumber,
-      photoURL,
-      providerId,
-      // tenantId,
-      uid,
-    }));
+    const resData: FirebaseAuthTypes.UserCredential = yield call(userSignUpAPI, action?.payload);
+    const { additionalUserInfo, user } = resData;
+    console.log('##res-data: ', resData);
+    const loggedInUserInfo = {
+      displayName: user?.displayName,
+      email: user?.email,
+      emailVerified: user?.emailVerified,
+      isAnonymous: user?.isAnonymous,
+      phoneNumber: user?.phoneNumber,
+      photoURL: user?.photoURL,
+      providerId: user?.providerId,
+      // tenantId: // user?.tenantId,
+      uid: user?.uid,
+    }
+    console.log("##loggedInUserInfo: ", JSON.stringify(loggedInUserInfo, null, 4));
+    yield put(userSingUpSuccessAction({ ...loggedInUserInfo }));
+    yield call(AddNewRecordAPI, user?.uid, { ...loggedInUserInfo })
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);
     const {

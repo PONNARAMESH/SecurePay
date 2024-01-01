@@ -1,115 +1,68 @@
-import { IUserEmailInfo } from "../types";
-import { firebaseInstance } from "../firebase";
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import { Alert } from "react-native";
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+import { fireStoreDB, collectionName } from "../firebase";
 
-export function userLoginAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.UserCredential | Error> {
-    return new Promise((resolve, reject) => {
-        try {
-            const { emailId, password } = data;
-            auth().signInWithEmailAndPassword(emailId, password)
-                .then((data) => {
-                    // console.log("##API: ", data);
-                    resolve(data);
-                })
-                .catch((error: any) => {
-                    console.log("##error: ", error.message)
-                    reject(error);
-                    Alert.alert(
-                        'Alert',
-                        "Something is wrong with your credentials. Please enter correct details!",
-                        [
-                            {
-                                text: 'Cancel',
-                                onPress: () => { console.log('Cancel Pressed') },
-                                style: 'cancel',
-                            },
-                        ]
-                    )
-                });
-        } catch (error) {
-            reject(error);
-        }
-    })
+export function getAllRecordInfoAPI(): Promise<FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>> {
+    return fireStoreDB
+        .collection(collectionName)
+        .get()
+        .then(querySnapshot => {
+            // console.log('Total users: ', querySnapshot.size);
+            // querySnapshot.forEach(documentSnapshot => {
+            //     console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+            // });
+            return { ...querySnapshot };
+        })
+        .catch((error) => {
+            console.log("###error: ", error);
+            return error;
+        })
 }
 
-export function userSignUpAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.UserCredential | Error> {
-    return new Promise((resolve, reject) => {
-        try {
-            const { emailId, password } = data;
-            auth().createUserWithEmailAndPassword(emailId, password)
-                .then((data) => {
-                    // console.log("##API: ", data);
-                    resolve(data);
-                })
-                .catch((error: any) => {
-                    console.log("##error: ", error.message);
-
-                    if (error.code === 'auth/email-already-in-use') {
-                        Alert.alert(
-                            'Alert',
-                            "That email address is already in use!",
-                            [
-                                {
-                                    text: 'Ok',
-                                    onPress: () => { console.log('Cancel Pressed') },
-                                },
-                            ]
-                        )
-                    } else if (error.code === 'auth/invalid-email') {
-                        Alert.alert(
-                            'Alert',
-                            "That email address is invalid!",
-                            [
-                                {
-                                    text: 'Ok',
-                                    onPress: () => { console.log('Cancel Pressed') },
-                                },
-                            ]
-                        )
-                    } else {
-                        Alert.alert(
-                            'Alert',
-                            "Something went wrong. Plesae try again after sometime!",
-                            [
-                                { text: 'OK', onPress: () => console.log('OK Pressed') },
-                            ]
-                        )
-                    }
-                    reject(error);
-                });
-        } catch (error) {
-            reject(error);
-        }
-    })
+export function AddNewRecordAPI(docId: string, data: FirebaseFirestoreTypes.DocumentData) {
+    console.log("###adding-new-record: ", { docId, data });
+    return fireStoreDB
+        .collection(collectionName)
+        .doc(docId)
+        .set(data)
+        .then(documentSnapshot => {
+            console.log('New user added successfully');
+        })
+        .catch((error) => {
+            console.log("###error: ", error);
+            return error;
+        })
 }
 
-export function userSignOutAPI(): Promise<boolean | Error> {
-    return new Promise((resolve, reject) => {
-        try {
-            // console.log(">>>>triggering-SING_OUT API<<<<<");
-            auth()
-                .signOut()
-                .then(() => {
-                    // console.log('User signed out!');
-                    Alert.alert(
-                        'Alert',
-                        "You have logged out Successfully!!!",
-                        [
-                            {
-                                text: 'Ok',
-                                onPress: () => { console.log('Logged Out') },
-                            },
-                        ]
-                    )
-                    return true;
-                })
-                .catch((error: any) => {
-                    console.log("##error: ", error.message)
-                    reject(error);
-                });
-        } catch (error) {
-            reject(error);
-        }
-    })
+export function updateRecordInfoByDocIdAPI(docId: string, data: FirebaseFirestoreTypes.DocumentData) {
+    return fireStoreDB
+        .collection(collectionName)
+        .doc(docId)
+        .set(data) // TODO: this line have to change according to Update action
+        .then(documentSnapshot => {
+            console.log('Updated successfully');
+        })
+        .catch((error) => {
+            console.log("###error: ", error);
+            return error;
+        })
+}
+
+export function getRecordInfoByDocIdAPI(docId: string) {
+    return fireStoreDB
+        .collection(collectionName)
+        .doc(docId)
+        .get()
+        .then(documentSnapshot => {
+            console.log('User exists: ', documentSnapshot.exists);
+
+            if (documentSnapshot.exists) {
+                console.log('User data: ', documentSnapshot.data());
+                return documentSnapshot.data()
+            }
+            return null;
+        })
+        .catch((error) => {
+            console.log("###error: ", error);
+            return error;
+        })
 }

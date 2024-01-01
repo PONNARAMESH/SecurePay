@@ -10,9 +10,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import { AuthorizedRoutes, UnAuthorizedRoutes } from "./src/Routes";
 import { rootReducer } from "./src/redux/reducers"; // Assume you have a reducers folder with your reducers
 import rootSaga from "./src/redux/saga"; // Assume you have a sagas folder with your sagas
-import "./src/firebase/firebaseConfigs";
+import "./src/firebase";
 import { ILoggedInUserInfo } from "./src/types";
-
 
 const sagaMiddleware = createSagaMiddleware();
 
