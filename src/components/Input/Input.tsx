@@ -13,7 +13,7 @@ export type InputProps = {
     onChange?: (data: any) => void;
     onChangeText?: (data: any) => void;
     placeholder: string;
-    keyboardType?: "ascii-capable" | "ascii-capable-number-pad" | "decimal-pad" | "default" | "email-address" | "name-phone-pad" | "number-pad" | "numbers-and-punctuation" | "numeric" | "phone-pad" | "twitter" | "url" | "visible-password" | "web-search";
+    inputMode?: 'decimal'| 'email'| 'none' | 'numeric' | 'search' | 'tel' | 'text' | 'url';
     secureTextEntry?: boolean;
     value?: string;
 };
@@ -27,7 +27,7 @@ export const Input = React.memo((props: InputProps): React.JSX.Element => {
         onChange,
         onChangeText,
         placeholder,
-        keyboardType,
+        inputMode,
         secureTextEntry,
         value
     } = props;
@@ -61,7 +61,7 @@ export const Input = React.memo((props: InputProps): React.JSX.Element => {
                 id={id}
                 style={styles.input}
                 placeholder={placeholder}
-                // keyboardType={keyboardType ?? "ascii-capable"}
+                inputMode={inputMode || "none"}
                 secureTextEntry={secureTextEntry ?? false}
                 onChangeText={onChangeText}
                 value={value}

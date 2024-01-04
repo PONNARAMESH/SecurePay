@@ -1,6 +1,11 @@
 export interface IUserEmailInfo {
-    emailId: string;
+    email: string;
     password: string;
+}
+
+export interface IUserSignUpInfo extends IUserEmailInfo {
+    displayName: string;
+    phoneNumber: string;
 }
 
 export enum EUserLoginStatus {

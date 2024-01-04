@@ -7,8 +7,8 @@ import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 export function userLoginAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.UserCredential | Error> {
     return new Promise((resolve, reject) => {
         try {
-            const { emailId, password } = data;
-            auth().signInWithEmailAndPassword(emailId, password)
+            const { email, password } = data;
+            auth().signInWithEmailAndPassword(email, password)
                 .then((data) => {
                     // console.log("##API: ", data);
                     resolve(data);
@@ -34,11 +34,11 @@ export function userLoginAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.Us
     })
 }
 
-export function userSignUpAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.UserCredential | Error> {
+export function  userSignUpAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.UserCredential | Error> {
     return new Promise((resolve, reject) => {
         try {
-            const { emailId, password } = data;
-            auth().createUserWithEmailAndPassword(emailId, password)
+            const { email, password } = data;
+            auth().createUserWithEmailAndPassword(email, password)
                 .then((data) => {
                     // console.log("##API: ", data);
                     resolve(data);

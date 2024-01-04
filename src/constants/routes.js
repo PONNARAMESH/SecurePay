@@ -3,4 +3,5 @@ export const routeInfo = {
     SIGN_UP: 'Sing Up',
     DASHBOARD: 'Dashboard',
     HOME_SCREEN: 'Home',
+    ADD_TO_CONTACTS: 'Add to contacts',
 }

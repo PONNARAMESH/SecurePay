@@ -15,13 +15,14 @@ import {
   SIGN_UP_SUCCESSFUL,
 } from '../actionTypes';
 import { userLoginAPI, userSignOutAPI, userSignUpAPI } from '../../api/userAccount';
-import { IUserEmailInfo } from '../../types';
-import { AddNewRecordAPI } from '../../api/users';
+import { IUserEmailInfo, IUserSignUpInfo } from '../../types';
+import { AddNewRecordAPI, getRecordInfoByDocIdAPI } from '../../api/users';
+import { generateAccountNumber, maskAccountNumber, removeNullUndefined } from '../../utils';
 
 export function* singInSaga(action: { type: string, payload: IUserEmailInfo }) {
   try {
-    const resData: FirebaseAuthTypes.User = yield call(userLoginAPI, action?.payload);
-    // console.log('##res-data: ', resData);
+    const resData: FirebaseAuthTypes.UserCredential = yield call(userLoginAPI, action?.payload);
+    // console.log('##res-data: ', resData.user);
     const {
       displayName,
       email,
@@ -32,7 +33,9 @@ export function* singInSaga(action: { type: string, payload: IUserEmailInfo }) {
       providerId,
       // tenantId,
       uid,
-    } = resData;
+    } = resData?.user || {};
+    // const result = getRecordInfoByDocIdAPI(uid).then((data) => console.log("userInfo: ", data));
+    // console.log("##userInfo--: ", result);
     yield put(userSingInSuccessAction({
       displayName,
       email,
@@ -44,9 +47,7 @@ export function* singInSaga(action: { type: string, payload: IUserEmailInfo }) {
       // tenantId,
       uid,
     }));
-    // check for failed case as well and un-comment next line
   } catch (error: unknown) {
-    // console.log('%%%%%%%%%%%---ERROR: ', error);
     const {
       code,
       message,
@@ -63,8 +64,9 @@ export function* watchSingInSaga() {
   yield takeLatest(SIGN_IN_REQUEST, singInSaga);
 }
 
+/**************************************************************** */
+
 export function* singOutSaga(action: { type: string, payload: IUserEmailInfo }) {
-  // console.log('##sing-out-saga');
   try {
     const resData: boolean = yield call(userSignOutAPI);
     console.log('##res-data: ', resData);
@@ -83,26 +85,30 @@ export function* watchOutSignOutSaga() {
   yield takeLatest(SIGN_OUT_REQUEST, singOutSaga);
 }
 
-export function* singUpSaga(action: { type: string, payload: IUserEmailInfo }) {
-  // console.log('##sing-in-saga');
+/**************************************************************** */
+
+export function* singUpSaga(action: { type: string, payload: IUserSignUpInfo }) {
+  // console.log('##sing-in-saga: ', JSON.stringify(action, null, 4));
+  const { email, password, phoneNumber, displayName } = action?.payload;
   try {
-    const resData: FirebaseAuthTypes.UserCredential = yield call(userSignUpAPI, action?.payload);
+    const resData: FirebaseAuthTypes.UserCredential = yield call(userSignUpAPI, { email, password });
     const { additionalUserInfo, user } = resData;
-    console.log('##res-data: ', resData);
+    // console.log('##res-data: ', resData);
+    const newAccountId = generateAccountNumber();
     const loggedInUserInfo = {
-      displayName: user?.displayName,
       email: user?.email,
       emailVerified: user?.emailVerified,
       isAnonymous: user?.isAnonymous,
-      phoneNumber: user?.phoneNumber,
       photoURL: user?.photoURL,
       providerId: user?.providerId,
       // tenantId: // user?.tenantId,
       uid: user?.uid,
+      phoneNumber,
+      displayName,
     }
-    console.log("##loggedInUserInfo: ", JSON.stringify(loggedInUserInfo, null, 4));
+    // console.log("##loggedInUserInfo: ", JSON.stringify(loggedInUserInfo, null, 4));
     yield put(userSingUpSuccessAction({ ...loggedInUserInfo }));
-    yield call(AddNewRecordAPI, user?.uid, { ...loggedInUserInfo })
+    yield call(AddNewRecordAPI, user?.uid, removeNullUndefined({ ...loggedInUserInfo, accountNumber: newAccountId }))
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);
     const {
@@ -116,3 +122,6 @@ export function* singUpSaga(action: { type: string, payload: IUserEmailInfo }) {
 export function* watchSingUpSaga() {
   yield takeLatest(SIGN_UP_REQUEST, singUpSaga);
 }
+
+/**************************************************************** */
+

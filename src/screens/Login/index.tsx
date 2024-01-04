@@ -34,12 +34,12 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
     const dispatch = useDispatch();
 
     const { register, setValue, handleSubmit, formState: { errors }, reset, getValues } = useForm();
-    const { emailId, password } = getValues();
+    const { email, password } = getValues();
 
     const handleRest = () => {
         console.log("##restting the form data");
         reset({
-            emailId: '',
+            email: '',
             password: ''
         });
     }
@@ -82,18 +82,18 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     id={email_validation?.id}
                     name={email_validation?.name}
                     label={email_validation?.label}
-                    keyboardType="email-address"
+                    inputMode="email"
                     placeholder={email_validation?.placeholder}
                     onChangeText={text => setValue(email_validation?.id, text, { shouldValidate: true })}
                     errors={errors}
-                    value={emailId || ''}
+                    value={email || ''}
                 />
                 <Input
                     id={password_validation?.id}
                     name={password_validation?.name}
                     label={password_validation?.label}
                     secureTextEntry={true}
-                    keyboardType="ascii-capable"
+                    inputMode="text"
                     placeholder={password_validation?.placeholder}
                     onChangeText={text => setValue(password_validation?.id, text, { shouldValidate: true })}
                     errors={errors}

@@ -2,16 +2,18 @@ import React, { useEffect } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useDispatch } from "react-redux";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { userSingInSuccessAction } from '../../src/redux/actions';
 import LoginScreen from "../screens/Login";
 import SignUpScreen from "../screens/SignUp";
 import HomeScreen from "../screens/HomeScreen";
+import AddNewContactScreen from "../screens/AddNewContactScreen";
 import { routeInfo } from "../constants/routes";
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { ILoggedInUserInfo } from "../types";
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export function UnAuthorizedRoutes(): React.JSX.Element {
   return (
@@ -43,12 +45,16 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(props: TAut
   }, [])
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      {/* <Stack.Navigator>
         <Stack.Screen
           name={routeInfo?.HOME_SCREEN}
           component={HomeScreen}
         />
-      </Stack.Navigator>
+      </Stack.Navigator> */}
+      <Tab.Navigator>
+      <Tab.Screen name={routeInfo?.HOME_SCREEN} component={HomeScreen} />
+      <Tab.Screen name={routeInfo?.ADD_TO_CONTACTS} component={AddNewContactScreen} />
+    </Tab.Navigator>
     </NavigationContainer>
   );
 });
