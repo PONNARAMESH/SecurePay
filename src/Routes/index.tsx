@@ -1,23 +1,34 @@
-import React, { useEffect } from "react";
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useEffect, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useDispatch } from "react-redux";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Icon } from "@rneui/themed";
 
-import { userSingInSuccessAction } from '../../src/redux/actions';
+import {
+  userSingInSuccessAction,
+  userSingOutAction,
+} from "../../src/redux/actions";
 import LoginScreen from "../screens/Login";
 import SignUpScreen from "../screens/SignUp";
 import HomeScreen from "../screens/HomeScreen";
-import AddNewContactScreen from "../screens/AddNewContactScreen";
+import ContactsScreen from "../screens/ContactsScreen";
+import TransactionsScreen from "../screens/TransactionsScreen";
+import SendMoneyScreen from "../screens/SendMoneyScreen";
+import ReceiveMoneyScreen from "../screens/ReceiveMoneyScreen";
+import { mashreqBankLogo } from "../assets/images";
+
 import { routeInfo } from "../constants/routes";
 import { ILoggedInUserInfo } from "../types";
+import colors from "../assets/colors";
+import { View, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export function UnAuthorizedRoutes(): React.JSX.Element {
   return (
-    <NavigationContainer >
+    <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
           name={routeInfo?.LOG_IN}
@@ -32,17 +43,20 @@ export function UnAuthorizedRoutes(): React.JSX.Element {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
 
 export type TAuthorizedRouteProps = {
-  userInfo: ILoggedInUserInfo
+  userInfo: ILoggedInUserInfo;
 };
 
-export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(props: TAuthorizedRouteProps): React.JSX.Element {
+export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
+  props: TAuthorizedRouteProps
+): React.JSX.Element {
+  // const [activeScreeName, setActiveScreeName] = useState(routeInfo?.HOME_SCREEN || '');
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(userSingInSuccessAction(props.userInfo));
-  }, [])
+  }, []);
   return (
     <NavigationContainer>
       {/* <Stack.Navigator>
@@ -51,10 +65,103 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(props: TAut
           component={HomeScreen}
         />
       </Stack.Navigator> */}
-      <Tab.Navigator>
-      <Tab.Screen name={routeInfo?.HOME_SCREEN} component={HomeScreen} />
-      <Tab.Screen name={routeInfo?.ADD_TO_CONTACTS} component={AddNewContactScreen} />
-    </Tab.Navigator>
+      <Tab.Navigator
+        initialRouteName={routeInfo?.HOME_SCREEN}
+        screenOptions={{
+          // headerShown: false,
+          // header: props => <Text {...props}>{props.route.name} </Text>,
+          headerTitleStyle: { color: colors.white },
+          // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
+          headerRight: (props) => {
+            return (
+              <Icon
+                {...props}
+                color={colors.white}
+                name="power-off"
+                type="font-awesome"
+                onPress={() => dispatch(userSingOutAction())}
+              />
+            );
+          },
+          tabBarInactiveBackgroundColor: colors.white,
+          tabBarActiveTintColor: colors.appTheamColor,
+          tabBarInactiveTintColor: colors.black,
+          tabBarStyle: {
+            height: 40,
+            paddingHorizontal: 5,
+            paddingTop: 0,
+            backgroundColor: "rgba(227, 225, 225,1)",
+            position: "absolute",
+            borderTopWidth: 0,
+          },
+          headerBackground: (props) => (
+            <View style={{ shadowColor: "orange" }}></View>
+          ),
+          headerBackgroundContainerStyle: {
+            backgroundColor: colors.appTheamColor,
+            opacity: 0.8,
+          },
+        }}
+      >
+        <Tab.Screen
+          name={routeInfo?.HOME_SCREEN}
+          component={HomeScreen}
+          options={{
+            tabBarIcon: (props) => (
+              <Icon {...props} name="home" type="simpleLineIcons" />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name={routeInfo?.CONTACTS}
+          component={ContactsScreen}
+          options={{
+            tabBarIcon: (props) => (
+              <Icon
+                {...props}
+                name="person-add-alt-1"
+                type="MaterialIcons"
+                // color={"orange"}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name={routeInfo?.SEND_MONEY}
+          component={SendMoneyScreen}
+          options={{
+            tabBarIcon: (props) => (
+              <Icon
+                {...props}
+                name="bank-transfer-out"
+                type="material-community"
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name={routeInfo?.RECEIVE_MONEY}
+          component={ReceiveMoneyScreen}
+          options={{
+            tabBarIcon: (props) => (
+              <Icon
+                {...props}
+                name="bank-transfer-in"
+                type="material-community"
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name={routeInfo?.TRANSACTIONS}
+          component={TransactionsScreen}
+          options={{
+            tabBarIcon: (props) => (
+              <Icon {...props} name="bank-transfer" type="material-community" />
+            ),
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 });

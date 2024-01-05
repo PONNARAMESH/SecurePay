@@ -26,7 +26,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 
-export default function AddNewContactScreen(props: { navigation: any; }): React.JSX.Element {
+export default function SendMoneyScreen(props: { navigation: any; }): React.JSX.Element {
     const { navigation } = props;
     const isDarkMode = useColorScheme() === 'dark';
     const dispatch = useDispatch();
@@ -48,22 +48,8 @@ export default function AddNewContactScreen(props: { navigation: any; }): React.
                 style={[backgroundStyle]}
             >
                 <View style={styles.imageContainer}>
-                    <Image
-                        style={styles.tinyLogo}
-                        source={mashreqBankLogo}
-                    />
+                    <Text style={styles.pageTitle}>Send Money</Text>
                 </View>
-                <View style={styles.imageContainer}>
-                    <Text style={styles.pageTitle}>Add New Contact</Text>
-                </View>
-                <CustomButton
-                    title="Add New Contact"
-                    onPress={() => {
-                        // dispatch(userSingOutAction());
-                    }}
-                    color="blue"
-                />
-
             </ScrollView>
         </SafeAreaView>
     );

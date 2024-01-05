@@ -1,6 +1,7 @@
 export { findInputError } from './findInputError'
 export { isFormInvalid } from './isFormInvalid'
 
+export const initialBalance = 1000;
 let currentAccountNumber = 1000; // initial Sequence-value to generate a sequence of Account-numbers
 
 export function generateAccountNumber() {
