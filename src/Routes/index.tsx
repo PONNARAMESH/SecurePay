@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useDispatch } from "react-redux";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon } from "@rneui/themed";
+import { Icon, Image } from "@rneui/themed";
 
 import {
   userSingInSuccessAction,
@@ -71,6 +71,14 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
           // headerShown: false,
           // header: props => <Text {...props}>{props.route.name} </Text>,
           headerTitleStyle: { color: colors.white },
+          headerBackground: (props) => (
+            <View style={{ shadowColor: "orange" }}></View>
+          ),
+          headerBackgroundContainerStyle: {
+            backgroundColor: colors.appTheamColor,
+            opacity: 0.8,
+          },
+          // headerTitle: (props) => <Text style={{color: props.tintColor}}>{props.children}  <Image style={{width: 30, height: 30}} source={mashreqBankLogo} /></Text>,
           // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
           headerRight: (props) => {
             return (
@@ -93,13 +101,6 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
             backgroundColor: "rgba(227, 225, 225,1)",
             position: "absolute",
             borderTopWidth: 0,
-          },
-          headerBackground: (props) => (
-            <View style={{ shadowColor: "orange" }}></View>
-          ),
-          headerBackgroundContainerStyle: {
-            backgroundColor: colors.appTheamColor,
-            opacity: 0.8,
           },
         }}
       >

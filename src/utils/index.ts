@@ -40,6 +40,14 @@ export function maskAccountNumber(accountNumber: string) {
   }
 }
 
+export function convertIntoCurrent(value: number){
+  const IndianRupees = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'IND',
+  });
+  return IndianRupees.format(value);
+}
+
 export function generateTransactionId() {
   const randomDigits = Math.floor(Math.random() * 10000).toString().padStart(4, '0'); // Random 4-digit number
   const now = new Date();
