@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     pageTitle: {
         fontSize: 25,
         fontWeight: "bold",
-        color: colors.appTheamColor,
+        color: colors.appThemeColor,
     },
     tinyLogo: {
         width: 150,

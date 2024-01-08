@@ -75,7 +75,12 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
             <View style={{ shadowColor: "orange" }}></View>
           ),
           headerBackgroundContainerStyle: {
-            backgroundColor: colors.appTheamColor,
+            backgroundColor: colors.appThemeColor,
+            // box-shadow: 10px 10px 5px lightblue inset,
+            shadowOffset: {width: -2, height: 4},  
+            shadowColor: '#171717',  
+            shadowOpacity: 0.2,  
+            shadowRadius: 3,  
             opacity: 0.8,
           },
           // headerTitle: (props) => <Text style={{color: props.tintColor}}>{props.children}  <Image style={{width: 30, height: 30}} source={mashreqBankLogo} /></Text>,
@@ -92,13 +97,13 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
             );
           },
           tabBarInactiveBackgroundColor: colors.white,
-          tabBarActiveTintColor: colors.appTheamColor,
-          tabBarInactiveTintColor: colors.black,
+          tabBarActiveTintColor: colors.white,
+          tabBarInactiveTintColor: colors.appThemeColor,
           tabBarStyle: {
             height: 40,
-            paddingHorizontal: 5,
             paddingTop: 0,
-            backgroundColor: "rgba(227, 225, 225,1)",
+            // backgroundColor: "rgba(227, 225, 225,1)",
+            backgroundColor: colors.appThemeColor,
             position: "absolute",
             borderTopWidth: 0,
           },

@@ -10,7 +10,7 @@ export default {
     dark: '#444',
     darker: '#444',
     black: '#000',
-    appTheamColor: '#DC7633',
+    appThemeColor: '#DC7633',
     green: '#5DB075',
     blue: '#338ADC',
 }

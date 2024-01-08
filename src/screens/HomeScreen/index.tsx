@@ -44,7 +44,7 @@ export default function HomeScreen(props: {
   // console.log("##----accountInfo: ", accountInfo);
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    backgroundColor: "white",
   };
 
   return (
@@ -57,27 +57,30 @@ export default function HomeScreen(props: {
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle]}
       >
-        <View style={styles.imageContainer}>
-        </View>
+        <View style={styles.imageContainer}></View>
         <View style={styles.flexCenter}>
           <Text style={styles.greetings}>
             Hey, {accountInfo?.displayName || accountInfo?.email}
           </Text>
         </View>
         <View style={styles.flexCenter}>
-          <Text style={styles.welcomeMessage}>Welcome to Secure Pay App!!!</Text>
+          <Text style={styles.welcomeMessage}>
+            Welcome to Secure Pay App!!!
+          </Text>
         </View>
-        <Card>
-          <Card.Title>Here is your Account Info</Card.Title>
+        <Card containerStyle={[styles.card, styles.elevation]}>
+          <Card.Title style={styles.heading}>
+            Here is your Account Info
+          </Card.Title>
           <Card.Divider />
           <View>
-            <Text>
+            <Text style={[styles.heading, styles.textHighlighter]}>
               Account Number:{" "}
               {maskAccountNumber(accountInfo?.accountNumber ?? "")}
             </Text>
           </View>
           <View>
-            <Text>
+            <Text style={[styles.heading, styles.textHighlighter]}>
               Balance: {convertIntoCurrent(accountInfo?.balance ?? 0)}
             </Text>
           </View>
@@ -95,20 +98,11 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
-    gap: 10,
   },
   imageContainer: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
-    // // just for testing
-    // borderWidth: 2,
-    // borderColor: 'red',
-    // 'View': {
-    //   flex: 1,
-    //   flexDirection: "row",
-    //   justifyContent: "center",
-    // }
   },
   flexCenter: {
     flex: 1,
@@ -117,21 +111,49 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: colors.appTheamColor,
+    fontWeight: "900",
+    color: colors.appThemeColor,
   },
   greetings: {
-    fontSize: 20,
-    // fontWeight: "bold",
-    color: colors.green,
+    fontSize: 24,
+    fontWeight: "900",
+    color: colors.appThemeColor,
   },
   welcomeMessage: {
     fontSize: 15,
-    // fontWeight: "bold",
-    color: colors.green,
+    fontWeight: "900",
+    color: colors.appThemeColor,
   },
   tinyLogo: {
     width: 150,
     height: 150,
+  },
+
+  heading: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 13,
+    color: "#fcf1eb",
+  },
+  card: {
+    // backgroundColor: '#33dc76',
+    backgroundColor: "#DC7633",
+    opacity: 0.9,
+    borderRadius: 18,
+    paddingVertical: 20,
+    paddingHorizontal: 25,
+    marginVertical: 10,
+    marginHorizontal: 20,
+  },
+  elevation: {
+    // shadowColor: '#52006A',
+    elevation: 10,
+    shadowOffset: { width: -2, height: 4 },
+    shadowColor: "#171717",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  textHighlighter: {
+    color: "#fcf1eb",
   },
 });
