@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -25,7 +25,7 @@ import { userSingOutAction } from "../../redux/actions";
 import { useFetchAccountInfo } from "../../hooks";
 import { TRootState } from "../../redux/store";
 import { ILoggedInUserInfo } from "../../types";
-import { Card } from "@rneui/themed";
+import { Card, Switch } from "@rneui/themed";
 import { convertIntoCurrent, maskAccountNumber } from "../../utils";
 
 const windowWidth = Dimensions.get("window").width;
@@ -42,6 +42,14 @@ export default function HomeScreen(props: {
   const dispatch = useDispatch();
   const accountInfo = useFetchAccountInfo(loggedInUserInfo?.uid || "");
   // console.log("##----accountInfo: ", accountInfo);
+  const [
+    doYouWannaMaskSensitiveInfo,
+    setDoYouWannaMaskSensitiveInfo,
+  ] = useState(false);
+
+  const toggleSwitch = () => {
+    setDoYouWannaMaskSensitiveInfo(!doYouWannaMaskSensitiveInfo);
+  };
 
   const backgroundStyle = {
     backgroundColor: "white",
@@ -72,17 +80,29 @@ export default function HomeScreen(props: {
           <Card.Title style={styles.heading}>
             Here is your Account Info
           </Card.Title>
-          <Card.Divider />
+          <Card.Divider width={1} color={colors?.white} insetType="middle" />
           <View>
             <Text style={[styles.heading, styles.textHighlighter]}>
               Account Number:{" "}
-              {maskAccountNumber(accountInfo?.accountNumber ?? "")}
+              {doYouWannaMaskSensitiveInfo
+                ? (accountInfo?.accountNumber || "").match(/.{1,4}/g)?.join(" ")
+                : maskAccountNumber(accountInfo?.accountNumber ?? "")}
             </Text>
           </View>
           <View>
             <Text style={[styles.heading, styles.textHighlighter]}>
               Balance: {convertIntoCurrent(accountInfo?.balance ?? 0)}
             </Text>
+          </View>
+          <View style={styles.sensitiveInfoSwitch}>
+            <Text style={[styles.heading, styles.textHighlighter, styles.switchHelperText]}>
+              show sensitive info{" "}
+            </Text>
+            <Switch
+              // style={{borderColor: "black", borderWidth: 12, alignSelf: "flex-start"}}
+              value={doYouWannaMaskSensitiveInfo}
+              onValueChange={toggleSwitch}
+            />
           </View>
         </Card>
       </ScrollView>
@@ -128,9 +148,8 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
   },
-
   heading: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 13,
     color: "#fcf1eb",
@@ -155,5 +174,15 @@ const styles = StyleSheet.create({
   },
   textHighlighter: {
     color: "#fcf1eb",
+  },
+  switchHelperText: {
+    fontSize: 14
+  },
+  sensitiveInfoSwitch: {
+    marginTop: 10,
+    marginBottom: -5,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

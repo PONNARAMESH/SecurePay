@@ -1,5 +1,5 @@
-export { findInputError } from './findInputError'
-export { isFormInvalid } from './isFormInvalid'
+export { findInputError } from "./findInputError";
+export { isFormInvalid } from "./isFormInvalid";
 
 export const initialBalance = 1000;
 let currentAccountNumber = 1000; // initial Sequence-value to generate a sequence of Account-numbers
@@ -8,7 +8,8 @@ export function generateAccountNumber() {
   const bankCode = "501"; // Replace with the actual bank code
   const accountType = "01"; // Replace with the account type code
 
-  const accountNumber = bankCode + accountType + currentAccountNumber.toString().padStart(8, '0');
+  const accountNumber =
+    bankCode + accountType + currentAccountNumber.toString().padStart(8, "0");
   currentAccountNumber++; //increase it with +1, to be ready generate next account number;
   return accountNumber;
 }
@@ -28,7 +29,7 @@ export function maskAccountNumber(accountNumber: string) {
     const visiblePart = accountNumber.slice(-visibleDigits);
 
     // Replace the remaining characters with "*"
-    const maskedPart = '*'.repeat(accountNumber.length - visibleDigits);
+    const maskedPart = "*".repeat(accountNumber.length - visibleDigits);
 
     // Concatenate the masked and visible parts
     const maskedAccountNumber = maskedPart + visiblePart;
@@ -40,16 +41,18 @@ export function maskAccountNumber(accountNumber: string) {
   }
 }
 
-export function convertIntoCurrent(value: number){
-  const IndianRupees = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'IND',
+export function convertIntoCurrent(value: number) {
+  const IndianRupees = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "IND",
   });
   return IndianRupees.format(value);
 }
 
 export function generateTransactionId() {
-  const randomDigits = Math.floor(Math.random() * 10000).toString().padStart(4, '0'); // Random 4-digit number
+  const randomDigits = Math.floor(Math.random() * 10000)
+    .toString()
+    .padStart(4, "0"); // Random 4-digit number
   const now = new Date();
   const yyyy = now.getFullYear();
   const mm = now.getMonth();
@@ -58,7 +61,7 @@ export function generateTransactionId() {
   const MM = now.getMinutes();
   const ss = now.getSeconds();
   const ms = now.getMilliseconds();
-  return 'T' + yyyy + mm + dd + hh + MM + ss + ms + randomDigits;
+  return "T" + yyyy + mm + dd + hh + MM + ss + ms + randomDigits;
 }
 
 export function removeNullUndefined(obj: any) {
@@ -67,4 +70,17 @@ export function removeNullUndefined(obj: any) {
    * Output: {fuzz: 42}
    */
   return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
+}
+
+export function isUrlValid(inputUrl: string) {
+  const pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR IP (v4) address
+    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$", // fragment locator
+    "i"
+  );
+  return pattern.test(inputUrl);
 }
