@@ -61,8 +61,8 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
     <NavigationContainer>
       {/* <Stack.Navigator>
         <Stack.Screen
-          name={routeInfo?.HOME_SCREEN}
-          component={HomeScreen}
+          name={routeInfo?.SEND_MONEY}
+          component={SendMoneyScreen}
         />
       </Stack.Navigator> */}
       <Tab.Navigator

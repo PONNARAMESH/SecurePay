@@ -1,1 +1,1 @@
-export * from "./useFetchAccountInfo";
+export * from "./useFetchUserInfoById";

@@ -13,4 +13,5 @@ export default {
     appThemeColor: '#DC7633',
     green: '#5DB075',
     blue: '#338ADC',
+    purple: 'purple',
 }

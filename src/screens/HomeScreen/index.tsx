@@ -22,11 +22,11 @@ import { Input, CustomButton, Divider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { userSingOutAction } from "../../redux/actions";
-import { useFetchAccountInfo } from "../../hooks";
+import { useFetchUserInfoById } from "../../hooks";
 import { TRootState } from "../../redux/store";
 import { ILoggedInUserInfo } from "../../types";
 import { Card, Switch } from "@rneui/themed";
-import { convertIntoCurrent, maskAccountNumber } from "../../utils";
+import { convertIntoCurrency, maskAccountNumber } from "../../utils";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -40,7 +40,7 @@ export default function HomeScreen(props: {
     (store) => store?.user?.data
   ) as ILoggedInUserInfo | null;
   const dispatch = useDispatch();
-  const accountInfo = useFetchAccountInfo(loggedInUserInfo?.uid || "");
+  const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   // console.log("##----accountInfo: ", accountInfo);
   const [
     doYouWannaMaskSensitiveInfo,
@@ -84,18 +84,27 @@ export default function HomeScreen(props: {
           <View>
             <Text style={[styles.heading, styles.textHighlighter]}>
               Account Number:{" "}
-              {doYouWannaMaskSensitiveInfo
-                ? (accountInfo?.accountNumber || "").match(/.{1,4}/g)?.join(" ")
-                : maskAccountNumber(accountInfo?.accountNumber ?? "")}
+              {(doYouWannaMaskSensitiveInfo
+                ? accountInfo?.accountNumber || ""
+                : maskAccountNumber(accountInfo?.accountNumber ?? "")
+              )
+                .match(/.{1,4}/g)
+                ?.join(" ")}
             </Text>
           </View>
           <View>
             <Text style={[styles.heading, styles.textHighlighter]}>
-              Balance: {convertIntoCurrent(accountInfo?.balance ?? 0)}
+              Balance: {convertIntoCurrency(accountInfo?.balance ?? 0)}
             </Text>
           </View>
           <View style={styles.sensitiveInfoSwitch}>
-            <Text style={[styles.heading, styles.textHighlighter, styles.switchHelperText]}>
+            <Text
+              style={[
+                styles.heading,
+                styles.textHighlighter,
+                styles.switchHelperText,
+              ]}
+            >
               show sensitive info{" "}
             </Text>
             <Switch
@@ -157,7 +166,7 @@ const styles = StyleSheet.create({
   card: {
     // backgroundColor: '#33dc76',
     backgroundColor: "#DC7633",
-    opacity: 0.9,
+    opacity: 0.8,
     borderRadius: 18,
     paddingVertical: 20,
     paddingHorizontal: 25,
@@ -176,7 +185,7 @@ const styles = StyleSheet.create({
     color: "#fcf1eb",
   },
   switchHelperText: {
-    fontSize: 14
+    fontSize: 14,
   },
   sensitiveInfoSwitch: {
     marginTop: 10,

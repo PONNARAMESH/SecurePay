@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { getRecordInfoByDocIdAPI } from "../api/users";
 import { ILoggedInUserInfo, IUserAccountInfo } from "../types";
 
-export function useFetchAccountInfo(userId: string = "") {
+export function useFetchUserInfoById(userId: string = "") {
   // console.log("##userId: ", userId)
   const [
     userAccountInfo,
