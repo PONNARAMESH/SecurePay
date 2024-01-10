@@ -41,6 +41,32 @@ export function maskAccountNumber(accountNumber: string) {
   }
 }
 
+export function mashPhoneNumber(phoneNumber: string){
+  /**
+   * Input: accountNumber = '9876543210'
+   * Output: 'XXXXXX3210'
+   */
+  // Define the number of digits to reveal at the end
+  const visibleDigits = 4;
+
+  // Check if the account number is long enough to mask
+  if (phoneNumber.length > visibleDigits) {
+    // Extract the last 'visibleDigits' characters
+    const visiblePart = phoneNumber.slice(-visibleDigits);
+
+    // Replace the remaining characters with "*"
+    const maskedPart = "X".repeat(phoneNumber.length - visibleDigits);
+
+    // Concatenate the masked and visible parts
+    const maskedAccountNumber = maskedPart + visiblePart;
+
+    return maskedAccountNumber;
+  } else {
+    // If the account number is too short, return it as is
+    return phoneNumber;
+  }
+}
+
 export function convertIntoCurrency(value: number, withCurrencySymbol=false) {
   const options = !withCurrencySymbol ? {} : {
     style: "currency",

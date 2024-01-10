@@ -16,8 +16,8 @@ import {
 } from "react-native";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
-import TouchableScale from "react-native-touchable-scale"; // https://github.com/kohver/react-native-touchable-scale
-import LinearGradient from "react-native-linear-gradient"; // Only if no expo
+import TouchableScale from "react-native-touchable-scale";
+import LinearGradient from "react-native-linear-gradient";
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";

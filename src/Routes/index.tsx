@@ -145,7 +145,7 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
             ),
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name={routeInfo?.RECEIVE_MONEY}
           component={ReceiveMoneyScreen}
           options={{
@@ -157,7 +157,7 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
               />
             ),
           }}
-        />
+        /> */}
         <Tab.Screen
           name={routeInfo?.TRANSACTIONS}
           component={TransactionsScreen}
