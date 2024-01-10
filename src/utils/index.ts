@@ -41,7 +41,7 @@ export function maskAccountNumber(accountNumber: string) {
   }
 }
 
-export function mashPhoneNumber(phoneNumber: string){
+export function mashPhoneNumber(phoneNumber: string) {
   /**
    * Input: accountNumber = '9876543210'
    * Output: 'XXXXXX3210'
@@ -67,11 +67,13 @@ export function mashPhoneNumber(phoneNumber: string){
   }
 }
 
-export function convertIntoCurrency(value: number, withCurrencySymbol=false) {
-  const options = !withCurrencySymbol ? {} : {
-    style: "currency",
-    currency: "INR",
-  };
+export function convertIntoCurrency(value: number, withCurrencySymbol = false) {
+  const options = !withCurrencySymbol
+    ? {}
+    : {
+        style: "currency",
+        currency: "INR",
+      };
   const IndianRupees = new Intl.NumberFormat("en-IN", options);
   return IndianRupees.format(value);
 }
@@ -110,4 +112,11 @@ export function isUrlValid(inputUrl: string) {
     "i"
   );
   return pattern.test(inputUrl);
+}
+
+export function isItOutgoingTransaction(
+  loggedInfoUserPhoneNumber: string,
+  paymentSenderPhoneNumber: string
+) {
+  return loggedInfoUserPhoneNumber === paymentSenderPhoneNumber ? true : false;
 }

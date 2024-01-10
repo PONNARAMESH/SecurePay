@@ -52,7 +52,8 @@ export default function HomeScreen(props: {
   };
 
   const backgroundStyle = {
-    backgroundColor: "white",
+    // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    backgroundColor: Colors?.appThemeColorLight,
   };
 
   return (

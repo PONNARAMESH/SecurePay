@@ -1,7 +1,6 @@
 import React from "react";
 import {
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -11,16 +10,16 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { FlatList } from "react-native";
-import { Avatar, Image, ListItem } from "@rneui/themed";
+import { Avatar } from "@rneui/themed";
 import TouchableScale from "react-native-touchable-scale";
 
-import { convertIntoCurrency, isUrlValid, mashPhoneNumber } from "../../utils";
+import { convertIntoCurrency, isItOutgoingTransaction, isUrlValid, mashPhoneNumber } from "../../utils";
 import Colors from "../../assets/colors";
-import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { mashreqBankLogo } from "../../assets/images";
 import { TRootState } from "../../redux/store";
 import { useFetchUserInfoById } from "../../hooks";
+import { ITransactionInfo } from "../../types";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -40,7 +39,7 @@ export default function TransactionsScreen(props: {
   const DATA = [
     {
       id: "T202401063254023839",
-      sender: accountInfo?.phoneNumber || '',
+      sender: accountInfo?.phoneNumber || "",
       receiver: "8876543210",
       amount: "500.23",
       txnMessage: "give amount",
@@ -49,9 +48,8 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023840",
-      title: "Second Item",
       sender: "8876543200",
-      receiver: accountInfo?.phoneNumber || '',
+      receiver: accountInfo?.phoneNumber || "",
       amount: "1500.23",
       txnMessage: "give amount",
       txnType: "walletToWallet",
@@ -59,9 +57,8 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023841",
-      title: "Third Item",
       sender: "7676543210",
-      receiver: accountInfo?.phoneNumber || '',
+      receiver: accountInfo?.phoneNumber || "",
       amount: "1000.23",
       txnMessage: "give amount",
       txnType: "walletToWallet",
@@ -69,7 +66,7 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023842",
-      sender: accountInfo?.phoneNumber || '',
+      sender: accountInfo?.phoneNumber || "",
       receiver: "8876543233",
       amount: "500.23",
       txnMessage: "give amount",
@@ -78,8 +75,7 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023843",
-      title: "Second Item",
-      sender: accountInfo?.phoneNumber || '',
+      sender: accountInfo?.phoneNumber || "",
       receiver: "9876543210",
       amount: "1500.23",
       txnMessage: "give amount",
@@ -88,8 +84,7 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023844",
-      title: "Third Item",
-      sender: accountInfo?.phoneNumber || '',
+      sender: accountInfo?.phoneNumber || "",
       receiver: "8876543432",
       amount: "1000.23",
       txnMessage: "give amount",
@@ -99,7 +94,7 @@ export default function TransactionsScreen(props: {
     {
       id: "T202401063254023845",
       sender: "9876543210",
-      receiver: accountInfo?.phoneNumber || '',
+      receiver: accountInfo?.phoneNumber || "",
       amount: "500.23",
       txnMessage: "give amount",
       txnType: "walletToWallet",
@@ -107,9 +102,8 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023846",
-      title: "Second Item",
       sender: "777654324",
-      receiver: accountInfo?.phoneNumber || '',
+      receiver: accountInfo?.phoneNumber || "",
       amount: "1500.23",
       txnMessage: "give amount",
       txnType: "walletToWallet",
@@ -117,9 +111,8 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023847",
-      title: "Third Item",
       sender: "9876543277",
-      receiver: accountInfo?.phoneNumber || '',
+      receiver: accountInfo?.phoneNumber || "",
       amount: "1000.23",
       txnMessage: "give amount",
       txnType: "walletToWallet",
@@ -128,7 +121,7 @@ export default function TransactionsScreen(props: {
     {
       id: "T202401063254023848",
       sender: "9876543219",
-      receiver: accountInfo?.phoneNumber || '',
+      receiver: accountInfo?.phoneNumber || "",
       amount: "500.23",
       txnMessage: "give amount",
       txnType: "walletToWallet",
@@ -136,9 +129,8 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023849",
-      title: "Second Item",
       sender: "8876543287",
-      receiver: accountInfo?.phoneNumber || '',
+      receiver: accountInfo?.phoneNumber || "",
       amount: "1500.23",
       txnMessage: "give amount",
       txnType: "walletToWallet",
@@ -146,8 +138,7 @@ export default function TransactionsScreen(props: {
     },
     {
       id: "T202401063254023850",
-      title: "Third Item",
-      sender: accountInfo?.phoneNumber || '',
+      sender: accountInfo?.phoneNumber || "",
       receiver: "887654354",
       amount: "1000.23",
       txnMessage: "give amount",
@@ -157,14 +148,13 @@ export default function TransactionsScreen(props: {
   ];
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    backgroundColor: Colors?.appThemeColorLight,
   };
 
-  const isPaymentReceived = (paymentSenderPhoneNumber: string): boolean => {
-    return accountInfo?.phoneNumber !== paymentSenderPhoneNumber
-      ? true
-      : false;
-  };
+  // const isPaymentReceived = (paymentSenderPhoneNumber: string): boolean => {
+  //   return accountInfo?.phoneNumber !== paymentSenderPhoneNumber ? true : false;
+  // };
 
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
@@ -176,7 +166,14 @@ export default function TransactionsScreen(props: {
         data={DATA}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.listItemContainer]}>
+          <TouchableScale
+            style={[styles.listItemContainer]}
+            // onPress={props.onPress}
+            activeScale={0.95}
+            friction={50}
+            tension={100}
+          >
+            {/* <View style={[styles.listItemContainer]}> */}
             <View style={[styles.row1]}>
               <View style={[styles.txnTypeIconContainer]}>
                 <Avatar
@@ -185,25 +182,27 @@ export default function TransactionsScreen(props: {
                   icon={{
                     name: "arrow-up",
                     type: "fontisto",
-                    color: Colors.appThemeColor,
+                    color: Colors.green,
                   }}
                   iconStyle={{
-                    transform: isPaymentReceived(item.sender as string)
-                      ? "rotate(-135deg)"
-                      : "rotate(45deg)",
+                    transform: isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
+                      ? "rotate(45deg)"
+                      : "rotate(-135deg)",
                   }}
                   containerStyle={{ backgroundColor: Colors.white }}
                 />
               </View>
               <View style={[styles.targetUserInfo]}>
                 <Text style={styles.label}>
-                  {isPaymentReceived(item.sender as string)
-                    ? "Received from"
-                    : "Transferred to"}
+                  {isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
+                    ? "Transferred to"
+                    : "Received from"}
                 </Text>
                 <Text style={styles.receiverPhoneNumber}>
                   {mashPhoneNumber(
-                    (isPaymentReceived(item.sender as string) ? item.sender : item.receiver) as string
+                    (isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
+                      ? item.receiver
+                      : item.sender) as string
                   )}
                 </Text>
               </View>
@@ -219,9 +218,9 @@ export default function TransactionsScreen(props: {
               </Text>
               <View style={[styles.sourceAccountInfoContainer]}>
                 <Text style={[styles.transferType]}>
-                  {isPaymentReceived(item.sender as string)
-                    ? "Credited to"
-                    : "Debited from"}
+                  {isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
+                    ? "Debited from"
+                    : "Credited to"}
                 </Text>
                 <Avatar
                   size={32}
@@ -231,7 +230,8 @@ export default function TransactionsScreen(props: {
                 />
               </View>
             </View>
-          </View>
+            {/* </View> */}
+          </TouchableScale>
         )}
       />
     </SafeAreaView>
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     // borderWidth: 1,
     borderRadius: 10,
-    backgroundColor: Colors.appThemeColor,
+    backgroundColor: Colors.white,
     // backgroundColor: "#fafcfa",
   },
   row1: {
@@ -270,10 +270,10 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "800",
     fontSize: 18,
-    color: Colors.white,
+    // color: Colors.white,
   },
   receiverPhoneNumber: {
-    color: Colors.white,
+    // color: Colors.white,
   },
   amountContainer: {
     // width: "40%",
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   amount: {
     fontWeight: "800",
     fontSize: 18,
-    color: Colors.white,
+    color: Colors.appThemeColor
   },
   row2: {
     flex: 1,
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cratedAt: {
-    color: Colors.white,
+    // color: Colors.white,
   },
   sourceAccountInfoContainer: {
     flexDirection: "row",
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   transferType: {
-    color: Colors.white,
+    // color: Colors.white,
   },
   bankLogo: {
     width: 50,

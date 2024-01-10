@@ -37,3 +37,23 @@ export interface IUserAccountInfo extends ILoggedInUserInfo {
   balance: number | null;
   accountNumber: string;
 }
+
+export enum EnumTransactionStatusValues {
+  TTxnPending = "Pending",
+  TTxnSuccess = "Success",
+  TTxnFailed = "Failed",
+}
+
+export interface ITransactionInfo {
+  id: string;
+  sender: string;
+  receiver: string;
+  amount: string;
+  txnMessage: string;
+  txnType: string;
+  txnStatus:
+    | EnumTransactionStatusValues.TTxnPending
+    | EnumTransactionStatusValues.TTxnFailed
+    | EnumTransactionStatusValues.TTxnSuccess;
+  createdAt: string;
+}

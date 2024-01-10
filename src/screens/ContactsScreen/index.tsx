@@ -141,7 +141,8 @@ export default function ContactsScreen(props: {
   // console.log("##userInfo: ", userInfo);
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    backgroundColor: Colors?.appThemeColorLight,
   };
 
   return (
@@ -160,14 +161,16 @@ export default function ContactsScreen(props: {
             friction={90}
             tension={100} // These props are passed to the parent component (here TouchableScale)
             activeScale={0.95} //
-            containerStyle={{
+            containerStyle={[
+            styles.contactInfoContainer,
+            {
               marginHorizontal: 16,
               marginVertical: 8,
               borderRadius: 8,
-            }}
+            }]}
             ViewComponent={LinearGradient}
             linearGradientProps={{
-              colors: [Colors.appThemeColor, "white"],
+              colors: [Colors.appThemeColor, Colors.white],
               start: {x: 0, y: 0},
               end: {x: 2, y: 0},
             }}
@@ -233,14 +236,22 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     paddingLeft: 20,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
+  },
+  contactInfoContainer: {
+    elevation:  10  ,  
+    shadowColor: Colors.red,
+    shadowOffset: { width: -2, height: 4 },
+    shadowRadius: 3,
+    shadowOpacity: 0.9,
+    rowGap: 10,
   },
   ItemTitle:{
-    color: Colors?.white,
+    // color: Colors?.white,
     fontSize: 18,
   },
   ItemSubTitle: {
-    color: Colors?.white,
+    // color: Colors?.white,
     fontSize: 16,
   }
 });
