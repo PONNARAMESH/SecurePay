@@ -29,6 +29,7 @@ import {
     password_validation
 } from "../../utils/inputValidations";
 import { userSingUpAction } from "../../redux/actions";
+import { Avatar } from "@rneui/base";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -51,7 +52,8 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
     }
 
     const backgroundStyle = {
-        backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+        // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+        backgroundColor: Colors?.appThemeColorLight,
     };
 
     React.useEffect(() => {
@@ -81,10 +83,16 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                 style={[backgroundStyle]}
             >
                 <View style={styles.imageContainer}>
-                    <Image
+                    <Avatar
+                        size={100}
+                        rounded={true}
+                        source={mashreqBankLogo}
+                        // containerStyle={styles.tinyLogo}
+                    />
+                    {/* <Image
                         style={styles.tinyLogo}
                         source={mashreqBankLogo}
-                    />
+                    /> */}
                 </View>
                 <View style={styles.imageContainer}>
                     <Text style={styles.pageTitle}>Create Account</Text>
@@ -150,15 +158,15 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
                     <CustomButton
                         title="Sing UP"
                         onPress={handleSubmit(onSingUp)}
-                        color={colors?.blue}
+                        color={colors?.appThemeColor}
                     />
                 </View>
                 <Divider label="Or" color={"gray"} />
                 <CustomButton
-                    title="Log In"
+                    title="Already have an account? let's go to Log In.."
                     // onPress={() => { navigation?.navigate(routeInfo?.LOG_IN) }}
                     onPress={() => { navigation?.goBack() }}
-                    color={colors.green}
+                    color={colors.blue}
                 />
             </ScrollView>
         </SafeAreaView>

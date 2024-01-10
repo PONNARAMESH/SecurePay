@@ -93,6 +93,7 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
                 name="power-off"
                 type="font-awesome"
                 onPress={() => dispatch(userSingOutAction())}
+                iconStyle={{marginRight: 10}}
               />
             );
           },
