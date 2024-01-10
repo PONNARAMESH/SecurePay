@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -9,28 +8,19 @@ import {
   useColorScheme,
   View,
   Dimensions,
-  Alert,
   TextInput,
-  NativeSyntheticEvent,
-  TextInputEndEditingEventData,
 } from "react-native";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { Avatar, Badge, Icon, Button } from "@rneui/themed";
 
 import Colors from "../../assets/colors";
-import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton, Divider } from "../../components";
-import colors from "../../assets/colors";
-import { routeInfo } from "../../constants/routes";
-import { userSingOutAction } from "../../redux/actions";
 import { convertIntoCurrency } from "../../utils";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function SendMoneyScreen(props: any): React.JSX.Element {
-  const currentSymbol = '₹';
+  const currentSymbol = "₹";
   const { navigation, route } = props;
   const { phoneNumber } = props?.route?.params || {};
   console.log("###sendMoney-screen: ", phoneNumber);
@@ -38,25 +28,24 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
   const dispatch = useDispatch();
   const [wannaSetTxnMessage, setWannaSetTxnMessage] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
-  const [txnMessage, setTxnMessage] = useState<string >();
+  const [txnMessage, setTxnMessage] = useState<string>();
   // const userInfo = useSelector((store: any) => store.user);
   // console.log("##userInfo: ", userInfo);
 
   const handleTxnMessage = (text: string) => {
-    setTxnMessage(text)
-  }
+    setTxnMessage(text);
+  };
   const handleAmountChange = (value: string) => {
-    if(!Number.isNaN(Number(value))){
-      setAmount(value);     
+    value = value.replaceAll(",", "");
+    if (!Number.isNaN(Number(value))) {
+      setAmount(value);
     }
-  }
-  const handlePayment = () => {
+  };
+  const handlePayment = () => {};
 
-  }
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.white,
   };
-
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
@@ -67,13 +56,13 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={[styles.transactionsList]}
       >
-        <View style={styles.photoContainer}>
+        {/* <View style={styles.photoContainer}>
           <Avatar
             rounded
             source={{ uri: "https://randomuser.me/api/portraits/men/41.jpg" }}
             size="large"
           />
-        </View>
+        </View> */}
       </ScrollView>
       <View style={[styles.paymentInfo]}>
         <View style={[styles.senderInfoContainer]}>
@@ -91,9 +80,8 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
             </Text>
           </View>
         </View>
-        {
-          !wannaSetTxnMessage ? null : (
-            <TextInput
+        {!wannaSetTxnMessage ? null : (
+          <TextInput
             id="txnMessage"
             style={styles.txnMessageInput}
             placeholder="Message here..."
@@ -101,15 +89,9 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
             onChangeText={handleTxnMessage}
             value={txnMessage}
           />
-          )
-        }
+        )}
         <View style={[styles.inputTextboxContainer]}>
-          <Icon
-            size={20}
-            name="inr"
-            type="font-awesome"
-            color={Colors.white}
-          />
+          <Icon size={20} name="inr" type="font-awesome" color={Colors.white} />
           <TextInput
             id="amount"
             style={styles.amountInputBox}
@@ -118,7 +100,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
             inputMode="numeric"
             onChangeText={handleAmountChange}
             // onbluer={}
-            value={amount}
+            value={convertIntoCurrency(Number(amount))}
           />
           <View style={[styles.iconContainer]}>
             <Icon
@@ -140,15 +122,18 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
             /> */}
             <Button
               title="Pay"
-              titleStyle={{ color: Colors.appThemeColor, fontWeight: '700', paddingHorizontal: 10, }}
+              titleStyle={{
+                color: Colors.appThemeColor,
+                fontWeight: "700",
+                paddingHorizontal: 10,
+              }}
               buttonStyle={{
                 backgroundColor: Colors.white,
-                borderColor: 'transparent',
+                borderColor: "transparent",
                 borderWidth: 0,
                 borderRadius: 30,
               }}
             />
-
           </View>
         </View>
       </View>
@@ -212,4 +197,3 @@ const styles = StyleSheet.create({
   sendIcon: {},
   transactionMessage: {},
 });
-

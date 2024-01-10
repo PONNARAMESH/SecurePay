@@ -25,7 +25,7 @@ import { Input, CustomButton, Divider } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { userSingOutAction } from "../../redux/actions";
-import { Avatar, Icon, ListItem } from "@rneui/themed";
+import { Avatar, FAB, Icon, ListItem } from "@rneui/themed";
 import { isUrlValid } from "../../utils";
 import { TRootState } from "../../redux/store";
 import { NavigationState } from "@react-navigation/native";
@@ -200,28 +200,24 @@ export default function ContactsScreen(props: {
           <Text style={styles.header}>{title}</Text>
         )}
       />
-      <TouchableOpacity
+      <FAB
+        icon={{
+          name: "person-add-alt-1",
+          type: "material",
+          size: 26,
+          color: "white",
+        }}
+        onPress={() => {
+          Alert.alert("This feature is In-Progress!");
+        }}
+        color={Colors.blue}
         style={{
           borderWidth: 0,
           position: "absolute",
           bottom: 60,
           right: 10,
         }}
-        onPress={() => {
-          Alert.alert("Button is pressed");
-        }}
-      >
-        <Avatar
-          rounded
-          icon={{
-            name: "person-add-alt-1",
-            type: "material",
-            size: 26,
-            color: "white",
-          }}
-          containerStyle={{ backgroundColor: "orange", width: 50, height: 50 }}
-        />
-      </TouchableOpacity>
+      />
     </SafeAreaView>
   );
 }

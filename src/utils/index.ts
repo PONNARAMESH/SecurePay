@@ -41,11 +41,12 @@ export function maskAccountNumber(accountNumber: string) {
   }
 }
 
-export function convertIntoCurrency(value: number) {
-  const IndianRupees = new Intl.NumberFormat("en-IN", {
+export function convertIntoCurrency(value: number, withCurrencySymbol=false) {
+  const options = !withCurrencySymbol ? {} : {
     style: "currency",
     currency: "INR",
-  });
+  };
+  const IndianRupees = new Intl.NumberFormat("en-IN", options);
   return IndianRupees.format(value);
 }
 

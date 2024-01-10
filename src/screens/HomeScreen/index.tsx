@@ -94,7 +94,7 @@ export default function HomeScreen(props: {
           </View>
           <View>
             <Text style={[styles.heading, styles.textHighlighter]}>
-              Balance: {convertIntoCurrency(accountInfo?.balance ?? 0)}
+              Balance: {convertIntoCurrency(accountInfo?.balance ?? 0, true)}
             </Text>
           </View>
           <View style={styles.sensitiveInfoSwitch}>
