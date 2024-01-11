@@ -15,7 +15,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { Avatar, Badge, Icon, Button } from "@rneui/themed";
 
 import Colors from "../../assets/colors";
-import { convertIntoCurrency, isItOutgoingTransaction } from "../../utils";
+import {
+  convertIntoCurrency,
+  isItOutgoingTransaction,
+  isUrlValid,
+} from "../../utils";
 import { TRootState } from "../../redux/store";
 import { useFetchUserInfoById } from "../../hooks";
 import { EnumTransactionStatusValues, ITransactionInfo } from "../../types";
@@ -212,8 +216,27 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor={Colors.appThemeColor}
       />
+      <View style={[styles.subHeader]}>
+        {isUrlValid(accountInfo?.photoURL || "") ? (
+          <Avatar rounded source={{ uri: accountInfo?.photoURL || "" }} />
+        ) : (
+          <Avatar
+            rounded
+            icon={{
+              name: "person-outline",
+              type: "material",
+              size: 26,
+            }}
+            containerStyle={{ backgroundColor: "#c2c2c2" }}
+          />
+        )}
+        <View>
+          <Text style={styles.receiverName}>{accountInfo?.displayName}</Text>
+          <Text style={styles.receiverPhoneNumber}>{accountInfo?.phoneNumber}</Text>
+        </View>
+      </View>
       <SectionList
         sections={Object.keys(groupedTransactions).map((key) => ({
           title: key,
@@ -360,6 +383,16 @@ const styles = StyleSheet.create({
     height: windowHeight,
     paddingBottom: 50,
   },
+  subHeader: {
+    backgroundColor: Colors.appThemeColorMedium,
+    flexDirection: "row",
+    gap: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  receiverPhoneNumber: {
+
+  },
   transactionsList: {
     // backgroundColor: Colors.appThemeColor,
     opacity: 0.1,
@@ -430,7 +463,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: "80%",
 
-    elevation: 5,  
+    elevation: 5,
     shadowColor: Colors.red,
     shadowOffset: { width: -2, height: 4 },
     shadowRadius: 3,

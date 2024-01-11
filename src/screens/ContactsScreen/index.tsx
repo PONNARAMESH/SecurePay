@@ -149,7 +149,7 @@ export default function ContactsScreen(props: {
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor={Colors.appThemeColor}
       />
       <SectionList
         sections={DATA}
@@ -247,11 +247,11 @@ const styles = StyleSheet.create({
     rowGap: 10,
   },
   ItemTitle:{
-    // color: Colors?.white,
+    color: Colors?.white,
     fontSize: 18,
   },
   ItemSubTitle: {
-    // color: Colors?.white,
+    color: Colors?.white,
     fontSize: 16,
   }
 });

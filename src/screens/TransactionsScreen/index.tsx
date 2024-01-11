@@ -160,7 +160,7 @@ export default function TransactionsScreen(props: {
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor={Colors.appThemeColor}
       />
       <FlatList
         data={DATA}
@@ -177,11 +177,11 @@ export default function TransactionsScreen(props: {
             <View style={[styles.row1]}>
               <View style={[styles.txnTypeIconContainer]}>
                 <Avatar
-                  size={32}
+                  size={50}
                   rounded
                   icon={{
-                    name: "arrow-up",
-                    type: "fontisto",
+                    name: "arrow-up-circle",
+                    type: "material-community",
                     color: Colors.green,
                   }}
                   iconStyle={{
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   txnTypeIconContainer: {
-    width: "10%",
+    // width: "10%",
   },
   targetUserInfo: {
     width: "40%",

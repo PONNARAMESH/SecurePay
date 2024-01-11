@@ -41,7 +41,7 @@ export default function ReceiveMoneyScreen(props: { navigation: any; }): React.J
         <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
             <StatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={backgroundStyle.backgroundColor}
+                backgroundColor={Colors.appThemeColor}
             />
             <ScrollView
                 contentInsetAdjustmentBehavior="automatic"

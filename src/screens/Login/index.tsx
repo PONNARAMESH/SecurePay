@@ -65,7 +65,7 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
         <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
             <StatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={backgroundStyle.backgroundColor}
+                backgroundColor={Colors.appThemeColor}
             />
             <ScrollView
                 contentInsetAdjustmentBehavior="automatic"

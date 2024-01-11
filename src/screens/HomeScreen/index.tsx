@@ -60,7 +60,7 @@ export default function HomeScreen(props: {
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor={Colors.appThemeColor}
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
