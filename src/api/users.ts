@@ -1,16 +1,37 @@
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-import { fireStoreDB, collectionName } from "../firebase";
+import { fireStoreDB, collectionNameForUser } from "../firebase";
 import { IFilterOptions, IUserAccountInfo } from "../types";
 
 export async function getAllRecordInfoAPI(filterOptions?: IFilterOptions): Promise<IUserAccountInfo[]> {
   // console.log("##filterOptions: ", filterOptions);
   try {
   const { whereCondition} = filterOptions || {};
-    let collectionRef = fireStoreDB.collection(collectionName);
+    let collectionRef = fireStoreDB.collection(collectionNameForUser);
     if(whereCondition){
       collectionRef = collectionRef.where(whereCondition?.fieldPath, whereCondition?.opStr, whereCondition?.value) as FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData>
     }
     return collectionRef
+      .get()
+      .then((querySnapshot) => {
+        // console.log('Total users: ', querySnapshot.size);
+        let arr :IUserAccountInfo[] = [];
+        querySnapshot.forEach(documentSnapshot => {
+            // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+            arr.push(documentSnapshot.data() as IUserAccountInfo);
+        });
+        return arr;
+      });
+  } catch (error) {
+    console.log("###error: ", error);
+    throw error;
+  }
+}
+
+export async function getUserInfoByPhoneNumberAPI(phoneNumber: string): Promise<IUserAccountInfo[]> {
+  // console.log("##filterOptions: ", filterOptions);
+  try {
+    return fireStoreDB.collection(collectionNameForUser)
+      .where('phoneNumber', "==", phoneNumber)
       .get()
       .then((querySnapshot) => {
         // console.log('Total users: ', querySnapshot.size);
@@ -34,7 +55,7 @@ export function AddNewRecordAPI(
   // console.log("###adding-docId: ", {docId, data});
   try {
     return fireStoreDB
-      .collection(collectionName)
+      .collection(collectionNameForUser)
       .doc(docId)
       .set(data)
       .then((documentSnapshot) => {
@@ -52,7 +73,7 @@ export function updateRecordInfoByDocIdAPI(
 ) {
   try {
     return fireStoreDB
-      .collection(collectionName)
+      .collection(collectionNameForUser)
       .doc(docId)
       .update(data) // TODO: this line have to change according to Update action
       .then(() => {
@@ -71,7 +92,7 @@ export async function getRecordInfoByDocIdAPI(
 //   console.log("##requested-docId: ", docId);
   try {
     return await fireStoreDB
-      .collection(collectionName)
+      .collection(collectionNameForUser)
       .doc(docId)
       .get()
       .then((documentSnapshot) => {

@@ -47,13 +47,16 @@ export enum EnumTransactionStatusValues {
   TTxnFailed = "Failed",
 }
 
-export interface ITransactionInfo {
-  id: string;
+export interface INewPaymentInfo {
   sender: string;
   receiver: string;
   amount: string;
   txnMessage: string;
   txnType: string;
+}
+  
+export interface ITransactionInfo extends INewPaymentInfo {
+  id: string;
   txnStatus:
     | EnumTransactionStatusValues.TTxnPending
     | EnumTransactionStatusValues.TTxnFailed
