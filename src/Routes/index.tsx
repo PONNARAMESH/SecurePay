@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NativeStackHeaderProps, createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useDispatch } from "react-redux";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon, Image } from "@rneui/themed";
@@ -22,6 +22,7 @@ import { routeInfo } from "../constants/routes";
 import { ILoggedInUserInfo } from "../types";
 import colors from "../assets/colors";
 import { View, Text } from "react-native";
+import { color } from "@rneui/base";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -49,6 +50,60 @@ export type TAuthorizedRouteProps = {
   userInfo: ILoggedInUserInfo;
 };
 
+function LandingScreen(): React.JSX.Element {
+  return (
+    <Tab.Navigator
+      initialRouteName={routeInfo?.HOME_SCREEN}
+      screenOptions={{
+        headerShown: false,
+        tabBarInactiveBackgroundColor: colors.white,
+        tabBarActiveTintColor: colors.white,
+        tabBarInactiveTintColor: colors.appThemeColor,
+        tabBarStyle: {
+          height: 40,
+          paddingTop: 0,
+          // backgroundColor: "rgba(227, 225, 225,1)",
+          backgroundColor: colors.appThemeColor,
+          position: "absolute",
+          borderTopWidth: 0,
+        },
+      }}
+    >
+      <Tab.Screen
+        name={routeInfo?.HOME_SCREEN}
+        component={HomeScreen}
+        options={{
+          tabBarIcon: (props) => (
+            <Icon {...props} name="home" type="simpleLineIcons" />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={routeInfo?.CONTACTS}
+        component={ContactsScreen}
+        options={{
+          tabBarIcon: (props) => (
+            <Icon
+              {...props}
+              name="person-add-alt-1"
+              type="MaterialIcons"
+              // color={"orange"}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={routeInfo?.TRANSACTIONS}
+        component={TransactionsScreen}
+        options={{
+          tabBarIcon: (props) => (
+            <Icon {...props} name="bank-transfer" type="material-community" />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
 export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
   props: TAuthorizedRouteProps
 ): React.JSX.Element {
@@ -57,34 +112,21 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
   useEffect(() => {
     dispatch(userSingInSuccessAction(props.userInfo));
   }, []);
+  const { userInfo } = props;
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator>
-        <Stack.Screen
-          name={routeInfo?.SEND_MONEY}
-          component={SendMoneyScreen}
-        />
-      </Stack.Navigator> */}
-      <Tab.Navigator
-        initialRouteName={routeInfo?.HOME_SCREEN}
+      <Stack.Navigator
         screenOptions={{
-          // headerShown: false,
-          // header: props => <Text {...props}>{props.route.name} </Text>,
           headerTitleStyle: { color: colors.white },
-          headerBackground: (props) => (
+          headerBackground: () => (
             <View style={{ shadowColor: "orange" }}></View>
           ),
-          headerBackgroundContainerStyle: {
-            backgroundColor: colors.appThemeColor,
-            // box-shadow: 10px 10px 5px lightblue inset,
-            shadowOffset: {width: -2, height: 4},  
-            shadowColor: '#171717',  
-            shadowOpacity: 0.2,  
-            shadowRadius: 3,  
-            opacity: 0.8,
-          },
-          // headerTitle: (props) => <Text style={{color: props.tintColor}}>{props.children}  <Image style={{width: 30, height: 30}} source={mashreqBankLogo} /></Text>,
+          headerTintColor: colors.white,
+          // headerTitle: (props) => <Text {...props} >{props.children}</Text>,
           // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
+          headerStyle: {
+            backgroundColor: colors.appThemeColor,
+          },
           headerRight: (props) => {
             return (
               <Icon
@@ -93,82 +135,31 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
                 name="power-off"
                 type="font-awesome"
                 onPress={() => dispatch(userSingOutAction())}
-                iconStyle={{marginRight: 10}}
               />
             );
           },
-          tabBarInactiveBackgroundColor: colors.white,
-          tabBarActiveTintColor: colors.white,
-          tabBarInactiveTintColor: colors.appThemeColor,
-          tabBarStyle: {
-            height: 40,
-            paddingTop: 0,
-            // backgroundColor: "rgba(227, 225, 225,1)",
-            backgroundColor: colors.appThemeColor,
-            position: "absolute",
-            borderTopWidth: 0,
-          },
         }}
       >
-        <Tab.Screen
-          name={routeInfo?.HOME_SCREEN}
-          component={HomeScreen}
-          options={{
-            tabBarIcon: (props) => (
-              <Icon {...props} name="home" type="simpleLineIcons" />
-            ),
-          }}
+        <Stack.Screen
+          name={routeInfo?.LANDING_SCREEN}
+          component={LandingScreen}
         />
-        <Tab.Screen
-          name={routeInfo?.CONTACTS}
-          component={ContactsScreen}
-          options={{
-            tabBarIcon: (props) => (
-              <Icon
-                {...props}
-                name="person-add-alt-1"
-                type="MaterialIcons"
-                // color={"orange"}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
+        <Stack.Screen
+          // options={{
+          //   // headerLeft: (props) => <Icon {...props} color={ colors.white} name="arrow-back" type="IonIcons" />,
+          //   header: (props: NativeStackHeaderProps) => {
+          //     const {route: { params}} = props;
+          //     return (
+          //       <View style={{backgroundColor: colors.greenLight, borderWidth: 1}}>
+          //         <Text>Hello</Text>
+          //       </View>
+          //     );
+          //   },
+          // }}
           name={routeInfo?.SEND_MONEY}
           component={SendMoneyScreen}
-          options={{
-            tabBarIcon: (props) => (
-              <Icon
-                {...props}
-                name="bank-transfer-out"
-                type="material-community"
-              />
-            ),
-          }}
         />
-        {/* <Tab.Screen
-          name={routeInfo?.RECEIVE_MONEY}
-          component={ReceiveMoneyScreen}
-          options={{
-            tabBarIcon: (props) => (
-              <Icon
-                {...props}
-                name="bank-transfer-in"
-                type="material-community"
-              />
-            ),
-          }}
-        /> */}
-        <Tab.Screen
-          name={routeInfo?.TRANSACTIONS}
-          component={TransactionsScreen}
-          options={{
-            tabBarIcon: (props) => (
-              <Icon {...props} name="bank-transfer" type="material-community" />
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 });
