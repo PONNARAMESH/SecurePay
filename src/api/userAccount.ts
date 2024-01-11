@@ -1,4 +1,4 @@
-import { IUserEmailInfo } from "../types";
+import { IUserEmailInfo, IUserSignUpInfo } from "../types";
 import { firebaseInstance } from "../firebase";
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { Alert } from "react-native";
@@ -8,8 +8,8 @@ export function userLoginAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.Us
     return new Promise((resolve, reject) => {
         try {
             const { email, password } = data;
-            auth().signInWithEmailAndPassword(email, password)
-                .then((data) => {
+            firebaseInstance.auth().signInWithEmailAndPassword(email, password)
+                .then(async (data) => {
                     // console.log("##API: ", data);
                     resolve(data);
                 })
@@ -34,14 +34,23 @@ export function userLoginAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.Us
     })
 }
 
-export function  userSignUpAPI(data: IUserEmailInfo): Promise<FirebaseAuthTypes.UserCredential | Error> {
+export function  userSignUpAPI(data: IUserSignUpInfo): Promise<FirebaseAuthTypes.UserCredential | Error> {
     return new Promise((resolve, reject) => {
         try {
             const { email, password } = data;
             auth().createUserWithEmailAndPassword(email, password)
-                .then((data) => {
-                    // console.log("##API: ", data);
-                    resolve(data);
+                .then(async (res) => {
+                    // console.log("##API: ", res);
+                    firebaseInstance.auth().currentUser?.updateProfile({
+                        displayName: data.displayName
+                    }).then((updateRes) => {
+                        console.log("##updateRes: ", updateRes);
+                        resolve(res);
+                    }).catch((error) => {
+                        console.log("##updateRes-error: ", error);
+                        resolve(res);
+                    })
+                    // resolve(res);
                 })
                 .catch((error: any) => {
                     console.log("##error: ", error.message);
