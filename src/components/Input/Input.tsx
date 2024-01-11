@@ -63,7 +63,7 @@ export const Input = React.memo((props: InputProps): React.JSX.Element => {
                 id={id}
                 style={styles.input}
                 placeholder={placeholder}
-                placeholderTextColor={colors.appThemeColor}
+                // placeholderTextColor={colors.appThemeColor}
                 inputMode={inputMode || "none"}
                 secureTextEntry={secureTextEntry ?? false}
                 onChangeText={onChangeText}
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     input: {
-        backgroundColor: colors.appThemeColorMedium,
+        backgroundColor: colors.white,
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 10,

@@ -67,6 +67,7 @@ function LandingScreen(): React.JSX.Element {
           position: "absolute",
           borderTopWidth: 0,
         },
+        unmountOnBlur: true, // This right here will mount the component and reset your screen
       }}
     >
       <Tab.Screen

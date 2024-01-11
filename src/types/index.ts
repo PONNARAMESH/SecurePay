@@ -1,3 +1,5 @@
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+
 export interface IUserEmailInfo {
   email: string;
   password: string;
@@ -6,6 +8,7 @@ export interface IUserEmailInfo {
 export interface IUserSignUpInfo extends IUserEmailInfo {
   displayName: string;
   phoneNumber: string;
+  photoURL?: string;
 }
 
 export enum EUserLoginStatus {
@@ -56,4 +59,12 @@ export interface ITransactionInfo {
     | EnumTransactionStatusValues.TTxnFailed
     | EnumTransactionStatusValues.TTxnSuccess;
   createdAt: string;
+}
+
+export interface IFilterOptions {
+  whereCondition?: {
+    fieldPath: string,
+    opStr: FirebaseFirestoreTypes.WhereFilterOp, 
+    value: any
+  }
 }

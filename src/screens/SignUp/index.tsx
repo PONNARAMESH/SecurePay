@@ -64,7 +64,7 @@ export default function SignUpScreen(props: { navigation: any; route: any }): Re
         register(confirm_password_validation?.id, {
             validate: (val: string) => {
                 if (watch('password') != val) {
-                    return "Your passwords do no match";
+                    return "Your passwords do not match";
                 }
             },
             ...confirm_password_validation?.validation,

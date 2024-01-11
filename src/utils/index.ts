@@ -1,3 +1,5 @@
+import { IUserAccountInfo } from "../types";
+
 export { findInputError } from "./findInputError";
 export { isFormInvalid } from "./isFormInvalid";
 
@@ -119,4 +121,25 @@ export function isItOutgoingTransaction(
   paymentSenderPhoneNumber: string
 ) {
   return loggedInfoUserPhoneNumber === paymentSenderPhoneNumber ? true : false;
+}
+
+export function groupTheContactsBasedOnAlphabeticalOrder(contactsList: IUserAccountInfo[] | []) {
+  if(
+    !contactsList ||
+    !Array.isArray(contactsList) ||
+    !contactsList.length
+  ) {
+    return [];
+  }
+  let newObj: Record<string, IUserAccountInfo[]> = {};
+  for(let contact of contactsList) {
+    const letter = contact.displayName?.charAt(0).toLocaleUpperCase() || ' ';
+    if (newObj[letter]) {
+      newObj[letter].push(contact);
+    } else {
+      newObj[letter] = [];
+      newObj[letter].push(contact);
+    }
+  }
+  return newObj;
 }

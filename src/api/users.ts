@@ -1,20 +1,25 @@
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { fireStoreDB, collectionName } from "../firebase";
-import { IUserAccountInfo } from "../types";
+import { IFilterOptions, IUserAccountInfo } from "../types";
 
-export function getAllRecordInfoAPI(): Promise<
-  FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>
-> {
+export async function getAllRecordInfoAPI(filterOptions?: IFilterOptions): Promise<IUserAccountInfo[]> {
+  // console.log("##filterOptions: ", filterOptions);
   try {
-    return fireStoreDB
-      .collection(collectionName)
+  const { whereCondition} = filterOptions || {};
+    let collectionRef = fireStoreDB.collection(collectionName);
+    if(whereCondition){
+      collectionRef = collectionRef.where(whereCondition?.fieldPath, whereCondition?.opStr, whereCondition?.value) as FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData>
+    }
+    return collectionRef
       .get()
       .then((querySnapshot) => {
         // console.log('Total users: ', querySnapshot.size);
-        // querySnapshot.forEach(documentSnapshot => {
-        //     console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-        // });
-        return { ...querySnapshot };
+        let arr :IUserAccountInfo[] = [];
+        querySnapshot.forEach(documentSnapshot => {
+            // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+            arr.push(documentSnapshot.data() as IUserAccountInfo);
+        });
+        return arr;
       });
   } catch (error) {
     console.log("###error: ", error);
@@ -49,9 +54,10 @@ export function updateRecordInfoByDocIdAPI(
     return fireStoreDB
       .collection(collectionName)
       .doc(docId)
-      .set(data) // TODO: this line have to change according to Update action
-      .then((documentSnapshot) => {
+      .update(data) // TODO: this line have to change according to Update action
+      .then(() => {
         console.log("Updated successfully");
+        return true;
       });
   } catch (error) {
     console.log("###error: ", error);

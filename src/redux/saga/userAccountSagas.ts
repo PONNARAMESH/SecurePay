@@ -113,7 +113,7 @@ export function* singUpSaga(action: {
   try {
     const resData: FirebaseAuthTypes.UserCredential = yield call(
       userSignUpAPI,
-      { email, password }
+      { email, password, displayName, phoneNumber }
     );
     const { additionalUserInfo, user } = resData;
     // console.log('##res-data: ', resData);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Image,
   SafeAreaView,
@@ -13,6 +13,8 @@ import {
   Button,
   SectionList,
   TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
@@ -26,9 +28,12 @@ import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { userSingOutAction } from "../../redux/actions";
 import { Avatar, FAB, Icon, ListItem } from "@rneui/themed";
-import { isUrlValid } from "../../utils";
+import { groupTheContactsBasedOnAlphabeticalOrder, isUrlValid } from "../../utils";
 import { TRootState } from "../../redux/store";
 import { NavigationState } from "@react-navigation/native";
+import { useFetchMyContactsList } from "../../hooks/useFetchMyContactsList";
+import { ILoggedInUserInfo, IUserAccountInfo } from "../../types";
+import { useFetchUserInfoById } from "../../hooks";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -136,23 +141,83 @@ export default function ContactsScreen(props: {
 }): React.JSX.Element {
   const { navigation } = props;
   const isDarkMode = useColorScheme() === "dark";
+  const [refreshing, setRefreshing] = React.useState(false);
+  
   const dispatch = useDispatch();
-  const userInfo = useSelector((store: TRootState) => store?.user?.data);
-  // console.log("##userInfo: ", userInfo);
+  const loggedInUserInfo = useSelector<TRootState>(
+    (store) => store?.user?.data
+  ) as ILoggedInUserInfo | null;
+  const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
+  // console.log("##----accountInfo: ", accountInfo);
+
+  const {
+    fetchContactsInfoAPICall,
+    myContacts,
+    isFetchingMyContacts,
+    errorInfo
+  } = useFetchMyContactsList();
+
+  useEffect(() => {
+    fetchContactsInfoAPICall(accountInfo?.contactsList || []);
+  }, [accountInfo?.contactsList]);
+
+  // console.log("##contactsInfo: ", {myContacts, isFetchingMyContacts, errorInfo})
 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
     backgroundColor: Colors?.appThemeColorLight,
   };
 
+  const onRefresh = () => {    
+    fetchContactsInfoAPICall(accountInfo?.contactsList || []);
+  }
+  
+  const groupedContactsInfo = groupTheContactsBasedOnAlphabeticalOrder(myContacts || []);
+  // console.log("##groupedContactsInfo: ",groupedContactsInfo)
+  if(!myContacts?.length) {
+    
+    return (<SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
+      <StatusBar
+        barStyle={isDarkMode ? "light-content" : "dark-content"}
+        backgroundColor={Colors.appThemeColor}
+      />
+      <View style={[styles.emptyContainer]}>
+        <Icon
+          name="account-search"
+          type="material-community"
+          size={60}
+          color={Colors.gray}
+        />
+        <Text style={[styles.message]}>
+          Sorry! You don't have any contacts!!
+        </Text>
+      </View>
+    </SafeAreaView>)
+  }
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+      {/* <ActivityIndicator
+        animating={isFetchingMyContacts}
+        style={[styles.pageLoadingIndicator]}
+        size="large"
+        color={Colors.greenMedium} 
+      /> */}
       <SectionList
-        sections={DATA}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+        // sections={DATA}
+        sections={Object.keys(groupedContactsInfo).map((key) => ({
+          title: key,
+          data: groupedContactsInfo[key],
+        }))}
         keyExtractor={(item, index) => item.phoneNumber + index}
         renderItem={({ item }) => (
           <ListItem
@@ -175,7 +240,12 @@ export default function ContactsScreen(props: {
               end: {x: 2, y: 0},
             }}
             onPress={() => {
-              navigation.navigate(routeInfo.SEND_MONEY, {phoneNumber: item.phoneNumber})
+              navigation.navigate(
+                routeInfo.SEND_MONEY,
+                {
+                  receiverInfo: {...item},
+                }
+              )
             }}
           >
             {isUrlValid(item?.profilePic || "") ? (
@@ -233,6 +303,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingBottom: 50,
   },
+  emptyContainer: {
+    height: "100%",
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  message: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: Colors.gray,
+  },
+  pageLoadingIndicator: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    zIndex: 5,
+  },
   header: {
     fontSize: 20,
     paddingLeft: 20,
@@ -244,7 +332,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
     shadowRadius: 3,
     shadowOpacity: 0.9,
-    rowGap: 10,
+    // rowGap: 10,
   },
   ItemTitle:{
     color: Colors?.white,

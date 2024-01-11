@@ -10,6 +10,7 @@ import {
   Dimensions,
   TextInput,
   SectionList,
+  Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Avatar, Badge, Icon, Button } from "@rneui/themed";
@@ -32,7 +33,9 @@ const windowHeight = Dimensions.get("window").height;
 export default function SendMoneyScreen(props: any): React.JSX.Element {
   const currentSymbol = "₹";
   const { navigation, route } = props;
-  const { phoneNumber } = props?.route?.params || {};
+  const {
+    receiverInfo
+  } = props?.route?.params || {};
   // console.log("###sendMoney-screen: ", phoneNumber);
   const isDarkMode = useColorScheme() === "dark";
   const dispatch = useDispatch();
@@ -43,7 +46,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
     (store: TRootState) => store?.user?.data
   );
   const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
-  // console.log("##userInfo: ", loggedInUserInfo);
+  console.log("##userInfo: ", loggedInUserInfo);
   const DATA = [
     {
       id: "T202401063254023839",
@@ -166,6 +169,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
   };
   const handlePayment = () => {
     console.log("##newTxnInfo: ", { amount, txnMessage });
+    Alert.alert("Alert!", "This feature is still in progress");
   };
 
   const backgroundStyle = {
@@ -219,8 +223,8 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
         backgroundColor={Colors.appThemeColor}
       />
       <View style={[styles.subHeader]}>
-        {isUrlValid(accountInfo?.photoURL || "") ? (
-          <Avatar rounded source={{ uri: accountInfo?.photoURL || "" }} />
+        {isUrlValid(receiverInfo?.photoURL || "") ? (
+          <Avatar rounded source={{ uri: receiverInfo?.photoURL || "" }} />
         ) : (
           <Avatar
             rounded
@@ -233,8 +237,8 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
           />
         )}
         <View>
-          <Text style={styles.receiverName}>{accountInfo?.displayName}</Text>
-          <Text style={styles.receiverPhoneNumber}>{accountInfo?.phoneNumber}</Text>
+          <Text style={styles.receiverName}>{receiverInfo?.displayName}</Text>
+          <Text style={styles.receiverPhoneNumber}>{receiverInfo?.phoneNumber}</Text>
         </View>
       </View>
       <SectionList
