@@ -28,7 +28,10 @@ import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { userSingOutAction } from "../../redux/actions";
 import { Avatar, FAB, Icon, ListItem } from "@rneui/themed";
-import { groupTheContactsBasedOnAlphabeticalOrder, isUrlValid } from "../../utils";
+import {
+  groupTheContactsBasedOnAlphabeticalOrder,
+  isUrlValid,
+} from "../../utils";
 import { TRootState } from "../../redux/store";
 import { NavigationState } from "@react-navigation/native";
 import { useFetchMyContactsList } from "../../hooks/useFetchMyContactsList";
@@ -38,111 +41,13 @@ import { useFetchUserInfoById } from "../../hooks";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const DATA = [
-  {
-    title: "A",
-    data: [
-      {
-        displayName: "Aaron",
-        email: "Aaron@gmail.com",
-        accountNumber: "671890342783459",
-        phoneNumber: "9876543210",
-        profilePic: "http://test.web.com/users/<email_id>",
-      },
-      {
-        displayName: "Andrew",
-        email: "Andrew@gmail.com",
-        accountNumber: "671890342783460",
-        phoneNumber: "9876543211",
-        profilePic: "https://randomuser.me/api/portraits/men/36.jpg",
-      },
-    ],
-  },
-  {
-    title: "B",
-    data: [
-      {
-        displayName: "Benjamin",
-        email: "Benjamin@gmail.com",
-        accountNumber: "671890342783459",
-        phoneNumber: "9876543210",
-        profilePic: "http://test.web.com/users/<email_id>",
-      },
-      {
-        displayName: "Brandon",
-        email: "Brandon@gmail.com",
-        accountNumber: "671890342783460",
-        phoneNumber: "9876543211",
-        profilePic: "https://randomuser.me/api/portraits/men/36.jpg",
-      },
-    ],
-  },
-  {
-    title: "B",
-    data: [
-      {
-        displayName: "Benjamin",
-        email: "Benjamin@gmail.com",
-        accountNumber: "671890342783459",
-        phoneNumber: "9876543210",
-        profilePic: "http://test.web.com/users/<email_id>",
-      },
-      {
-        displayName: "Brandon",
-        email: "Brandon@gmail.com",
-        accountNumber: "671890342783460",
-        phoneNumber: "9876543211",
-        profilePic: "https://randomuser.me/api/portraits/men/36.jpg",
-      },
-    ],
-  },
-  {
-    title: "B",
-    data: [
-      {
-        displayName: "Benjamin",
-        email: "Benjamin@gmail.com",
-        accountNumber: "671890342783459",
-        phoneNumber: "9876543210",
-        profilePic: "http://test.web.com/users/<email_id>",
-      },
-      {
-        displayName: "Brandon",
-        email: "Brandon@gmail.com",
-        accountNumber: "671890342783460",
-        phoneNumber: "9876543211",
-        profilePic: "https://randomuser.me/api/portraits/men/36.jpg",
-      },
-    ],
-  },
-  {
-    title: "B",
-    data: [
-      {
-        displayName: "Benjamin",
-        email: "Benjamin@gmail.com",
-        accountNumber: "671890342783459",
-        phoneNumber: "9876543210",
-        profilePic: "http://test.web.com/users/<email_id>",
-      },
-      {
-        displayName: "Brandon",
-        email: "Brandon@gmail.com",
-        accountNumber: "671890342783460",
-        phoneNumber: "9876543211",
-        profilePic: "https://randomuser.me/api/portraits/men/36.jpg",
-      },
-    ],
-  },
-];
-
 export default function ContactsScreen(props: {
   navigation: any;
 }): React.JSX.Element {
   const { navigation } = props;
   const isDarkMode = useColorScheme() === "dark";
   const [refreshing, setRefreshing] = React.useState(false);
-  
+
   const dispatch = useDispatch();
   const loggedInUserInfo = useSelector<TRootState>(
     (store) => store?.user?.data
@@ -154,7 +59,7 @@ export default function ContactsScreen(props: {
     fetchContactsInfoAPICall,
     myContacts,
     isFetchingMyContacts,
-    errorInfo
+    errorInfo,
   } = useFetchMyContactsList();
 
   useEffect(() => {
@@ -168,31 +73,34 @@ export default function ContactsScreen(props: {
     backgroundColor: Colors?.appThemeColorLight,
   };
 
-  const onRefresh = () => {    
+  const onRefresh = () => {
     fetchContactsInfoAPICall(accountInfo?.contactsList || []);
-  }
-  
-  const groupedContactsInfo = groupTheContactsBasedOnAlphabeticalOrder(myContacts || []);
+  };
+
+  const groupedContactsInfo = groupTheContactsBasedOnAlphabeticalOrder(
+    myContacts || []
+  );
   // console.log("##groupedContactsInfo: ",groupedContactsInfo)
-  if(!myContacts?.length) {
-    
-    return (<SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
-      <StatusBar
-        barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={Colors.appThemeColor}
-      />
-      <View style={[styles.emptyContainer]}>
-        <Icon
-          name="account-search"
-          type="material-community"
-          size={60}
-          color={Colors.gray}
+  if (!myContacts?.length) {
+    return (
+      <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
+        <StatusBar
+          barStyle={isDarkMode ? "light-content" : "dark-content"}
+          backgroundColor={Colors.appThemeColor}
         />
-        <Text style={[styles.message]}>
-          Sorry! You don't have any contacts!!
-        </Text>
-      </View>
-    </SafeAreaView>)
+        <View style={[styles.emptyContainer]}>
+          <Icon
+            name="account-search"
+            type="material-community"
+            size={60}
+            color={Colors.gray}
+          />
+          <Text style={[styles.emptyMessage]}>
+            Sorry! You don't have any contacts!!
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
   }
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
@@ -208,10 +116,7 @@ export default function ContactsScreen(props: {
       /> */}
       <SectionList
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         // sections={DATA}
         sections={Object.keys(groupedContactsInfo).map((key) => ({
@@ -227,25 +132,23 @@ export default function ContactsScreen(props: {
             tension={100} // These props are passed to the parent component (here TouchableScale)
             activeScale={0.95} //
             containerStyle={[
-            styles.contactInfoContainer,
-            {
-              marginHorizontal: 16,
-              marginVertical: 8,
-              borderRadius: 8,
-            }]}
+              styles.contactInfoContainer,
+              {
+                marginHorizontal: 16,
+                marginVertical: 8,
+                borderRadius: 8,
+              },
+            ]}
             ViewComponent={LinearGradient}
             linearGradientProps={{
               colors: [Colors.appThemeColor, Colors.white],
-              start: {x: 0, y: 0},
-              end: {x: 2, y: 0},
+              start: { x: 0, y: 0 },
+              end: { x: 2, y: 0 },
             }}
             onPress={() => {
-              navigation.navigate(
-                routeInfo.SEND_MONEY,
-                {
-                  receiverInfo: {...item},
-                }
-              )
+              navigation.navigate(routeInfo.SEND_MONEY, {
+                receiverInfo: { ...item },
+              });
             }}
           >
             {isUrlValid(item?.profilePic || "") ? (
@@ -262,9 +165,15 @@ export default function ContactsScreen(props: {
               />
             )}
             <ListItem.Content>
-              <ListItem.Title style={[styles.ItemTitle]}>{item.displayName}</ListItem.Title>
-              <ListItem.Subtitle style={[styles.ItemSubTitle]}>{item.email}</ListItem.Subtitle>
-              <ListItem.Subtitle style={[styles.ItemSubTitle]}>{item.phoneNumber}</ListItem.Subtitle>
+              <ListItem.Title style={[styles.ItemTitle]}>
+                {item.displayName}
+              </ListItem.Title>
+              <ListItem.Subtitle style={[styles.ItemSubTitle]}>
+                {item.email}
+              </ListItem.Subtitle>
+              <ListItem.Subtitle style={[styles.ItemSubTitle]}>
+                {item.phoneNumber}
+              </ListItem.Subtitle>
             </ListItem.Content>
             <ListItem.Chevron size={40} color={Colors?.white} />
           </ListItem>
@@ -309,8 +218,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 20,
   },
-  message: {
+  emptyMessage: {
     fontSize: 20,
     fontWeight: "800",
     color: Colors.gray,
@@ -327,19 +237,19 @@ const styles = StyleSheet.create({
     // backgroundColor: "#fff",
   },
   contactInfoContainer: {
-    elevation:  10  ,  
+    elevation: 10,
     shadowColor: Colors.red,
     shadowOffset: { width: -2, height: 4 },
     shadowRadius: 3,
     shadowOpacity: 0.9,
     // rowGap: 10,
   },
-  ItemTitle:{
+  ItemTitle: {
     color: Colors?.white,
     fontSize: 18,
   },
   ItemSubTitle: {
     color: Colors?.white,
     fontSize: 16,
-  }
+  },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -26,6 +26,8 @@ import { useFetchUserInfoById } from "../../hooks";
 import { EnumTransactionStatusValues, ITransactionInfo } from "../../types";
 import TouchableScale from "react-native-touchable-scale";
 import { Divider } from "@rneui/base";
+import { useGetMutualTransactions } from "../../hooks/useGetMutualTransactions";
+import { makeNewTransactionRequestAction } from "../../redux/actions/transactions";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -33,9 +35,7 @@ const windowHeight = Dimensions.get("window").height;
 export default function SendMoneyScreen(props: any): React.JSX.Element {
   const currentSymbol = "₹";
   const { navigation, route } = props;
-  const {
-    receiverInfo
-  } = props?.route?.params || {};
+  const { receiverInfo } = props?.route?.params || {};
   // console.log("###sendMoney-screen: ", phoneNumber);
   const isDarkMode = useColorScheme() === "dark";
   const dispatch = useDispatch();
@@ -46,102 +46,25 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
     (store: TRootState) => store?.user?.data
   );
   const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
-  console.log("##userInfo: ", loggedInUserInfo);
-  const DATA = [
-    {
-      id: "T202401063254023839",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "8876543210",
-      amount: "500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Success",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023840",
-      sender: "8876543200",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Failed",
-      createdAt: "2024-01-11T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023841",
-      sender: "7676543210",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1000.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Pending",
-      createdAt: "2024-01-11T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023839",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "8876543210",
-      amount: "500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Success",
-      createdAt: "2024-01-11T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023840",
-      sender: "8876543200",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Failed",
-      createdAt: "2024-01-12T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023841",
-      sender: "7676543210",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1000.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Pending",
-      createdAt: "2024-01-12T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023839",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "8876543210",
-      amount: "500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Success",
-      createdAt: "2024-01-12T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023840",
-      sender: "8876543200",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Failed",
-      createdAt: "2024-01-13T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023841",
-      sender: "7676543210",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1000.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      txnStatus: "Pending",
-      createdAt: "2024-01-13T06:55:54.914Z",
-    },
-  ];
+  const {
+    isFetchingMutualTransactions,
+    getMutualTransactionAPICall,
+    mutualTransactions,
+  } = useGetMutualTransactions();
+
+  useEffect(() => {
+    getMutualTransactionAPICall({
+      senderPhoneNumber: accountInfo?.phoneNumber as string,
+      receiverPhoneNumber: receiverInfo?.phoneNumber,
+    });
+    return () => {};
+  }, [accountInfo?.phoneNumber, receiverInfo?.phoneNumber]);
+
+  // console.log("##userInfo: ", loggedInUserInfo);
+  // console.log("##mutualTransactions: ", mutualTransactions);
 
   const groupedTransactions = groupTheTransactionsBasedOnDate(
-    (DATA || []) as ITransactionInfo[]
+    (mutualTransactions || []) as ITransactionInfo[]
   );
 
   function groupTheTransactionsBasedOnDate(txnArray: ITransactionInfo[]) {
@@ -168,14 +91,27 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
     }
   };
   const handlePayment = () => {
-    console.log("##newTxnInfo: ", { amount, txnMessage });
-    Alert.alert("Alert!", "This feature is still in progress");
+    // console.log("##newTxnInfo: ", { amount, txnMessage });
+    // console.log("##accountInfo: ", accountInfo);
+    if (Number(amount) > Number(accountInfo?.balance)) {
+      Alert.alert("Error!", "Insufficient balance :(");
+      return;
+    }
+    const payload = {
+      sender: accountInfo?.phoneNumber as string,
+      receiver: receiverInfo?.phoneNumber,
+      amount: amount,
+      txnMessage: txnMessage || "",
+      txnType: "WalletToWallet",
+    };
+    dispatch(makeNewTransactionRequestAction(payload))
   };
 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
     backgroundColor: Colors?.appThemeColorLight,
   };
+
   function getStatusIcon(txnStatus: string): React.ReactNode {
     // throw new Error("Function not implemented.");
     switch (txnStatus) {
@@ -238,59 +174,75 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
         )}
         <View>
           <Text style={styles.receiverName}>{receiverInfo?.displayName}</Text>
-          <Text style={styles.receiverPhoneNumber}>{receiverInfo?.phoneNumber}</Text>
+          <Text style={styles.receiverPhoneNumber}>
+            {receiverInfo?.phoneNumber}
+          </Text>
         </View>
       </View>
-      <SectionList
-        sections={Object.keys(groupedTransactions).map((key) => ({
-          title: key,
-          data: groupedTransactions[key],
-        }))}
-        keyExtractor={(item, index) => item.id + index}
-        renderItem={({ item }) => (
-          <TouchableScale
-            style={[
-              styles.chatMessageBox,
-              {
-                alignSelf: isItOutgoingTransaction(
-                  accountInfo?.phoneNumber as string,
-                  item.sender as string
-                )
-                  ? "flex-start"
-                  : "flex-end",
-              },
-            ]}
-            // onPress={props.onPress}
-            activeScale={0.95}
-            friction={50}
-            tension={100}
-          >
-            <Text style={styles.amountContainer}>
-              {convertIntoCurrency(Number(item.amount), true)}
-            </Text>
-            <Text
-              style={[styles.txnMessageContainer, { maxWidth: "100%" }]}
-              ellipsizeMode="tail"
-              numberOfLines={1}
+      {!mutualTransactions?.length ? (
+        <View style={[styles.emptyContainer]}>
+          <Icon
+            name="account-search"
+            type="material-community"
+            size={60}
+            color={Colors.gray}
+          />
+          <Text style={[styles.emptyMessage]}>
+            Sorry! There are no mutual transactions as of now!!
+          </Text>
+        </View>
+      ) : (
+        <SectionList
+          sections={Object.keys(groupedTransactions).map((key) => ({
+            title: key,
+            data: groupedTransactions[key],
+          }))}
+          keyExtractor={(item, index) => item.id + index}
+          renderItem={({ item }) => (
+            <TouchableScale
+              style={[
+                styles.chatMessageBox,
+                {
+                  alignSelf: isItOutgoingTransaction(
+                    accountInfo?.phoneNumber as string,
+                    item.sender as string
+                  )
+                    ? "flex-start"
+                    : "flex-end",
+                },
+              ]}
+              // onPress={props.onPress}
+              activeScale={0.95}
+              friction={50}
+              tension={100}
             >
-              {item.txnMessage || ""}
-            </Text>
-            <Divider color="black" />
-            <View style={[styles.txnStatusContainer]}>
-              {getStatusIcon(item.txnStatus)}
-              <Text style={[styles.txnStatus]}>
-                {getStatusMessage(item.txnStatus)}
+              <Text style={styles.amountContainer}>
+                {convertIntoCurrency(Number(item.amount), true)}
               </Text>
-              <View style={styles.rightArrowIcon}>
-                <Icon name="right" type="antdesign" color={Colors.gray} />
+              <Text
+                style={[styles.txnMessageContainer, { maxWidth: "100%" }]}
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                {item.txnMessage || ""}
+              </Text>
+              <Divider color="black" />
+              <View style={[styles.txnStatusContainer]}>
+                {getStatusIcon(item.txnStatus)}
+                <Text style={[styles.txnStatus]}>
+                  {getStatusMessage(item.txnStatus)}
+                </Text>
+                <View style={styles.rightArrowIcon}>
+                  <Icon name="right" type="antdesign" color={Colors.gray} />
+                </View>
               </View>
-            </View>
-          </TouchableScale>
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.header}>{title}</Text>
-        )}
-      />
+            </TouchableScale>
+          )}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.header}>{title}</Text>
+          )}
+        />
+      )}
       <View style={[styles.paymentInfo]}>
         <View style={[styles.receiverInfoContainer]}>
           <Text style={[styles.label]}>Transferring Money to:</Text>
@@ -385,7 +337,20 @@ const styles = StyleSheet.create({
     flex: 1,
     width: windowWidth,
     height: windowHeight,
-    paddingBottom: 50,
+    // paddingBottom: 50,
+  },
+  emptyContainer: {
+    height: "100%",
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  emptyMessage: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: Colors.gray,
   },
   subHeader: {
     backgroundColor: Colors.appThemeColorMedium,
@@ -394,9 +359,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
-  receiverPhoneNumber: {
-
-  },
+  receiverPhoneNumber: {},
   transactionsList: {
     // backgroundColor: Colors.appThemeColor,
     opacity: 0.1,
@@ -472,7 +435,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
     shadowRadius: 3,
     shadowOpacity: 0.9,
-    rowGap: 10,
   },
   amountContainer: {
     fontWeight: "900",
@@ -481,6 +443,7 @@ const styles = StyleSheet.create({
   },
   txnMessageContainer: {
     fontSize: 14,
+    margin: 5,
   },
   txnStatusContainer: {
     marginTop: 10,

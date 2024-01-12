@@ -1,0 +1,79 @@
+import { EnumTransactionStatusValues } from "../../types";
+import {
+  GET_MY_TRANSACTIONS_FAILED,
+  GET_MY_TRANSACTIONS_REQUEST,
+  GET_MY_TRANSACTIONS_SUCCESS,
+  GET_TRANSACTION_INFO_BY_ID_FAILED,
+  GET_TRANSACTION_INFO_BY_ID_REQUEST,
+  GET_TRANSACTION_INFO_BY_ID_SUCCESS,
+  NEW_TRANSACTION_FAILED,
+  NEW_TRANSACTION_REQUEST,
+  NEW_TRANSACTION_SUCCESS,
+} from "../actionTypes";
+
+const initialState = {
+  isFetchingTransactions: false,
+  transactions: [],
+  isFetchingTransactionsInfo: false,
+  transactionInfo: null,
+  paymentStatus: EnumTransactionStatusValues.TTxnInitiated,
+};
+export default function paymentTransactionReducers(
+  state = initialState,
+  action: { type: string; payload: any }
+) {
+  switch (action.type) {
+    case NEW_TRANSACTION_REQUEST:
+      return {
+        ...state,
+        paymentStatus: EnumTransactionStatusValues.TTxnInitiated,
+      };
+    case NEW_TRANSACTION_SUCCESS:
+      return {
+        ...state,
+        paymentStatus: EnumTransactionStatusValues.TTxnSuccess,
+      };
+    case NEW_TRANSACTION_FAILED:
+      return {
+        ...state,
+        paymentStatus: EnumTransactionStatusValues.TTxnFailed,
+      };
+    case GET_TRANSACTION_INFO_BY_ID_REQUEST:
+      return {
+        ...state,
+        isFetchingTransactionsInfo: true,
+        transactionInfo: null,
+      };
+    case GET_TRANSACTION_INFO_BY_ID_SUCCESS:
+      return {
+        ...state,
+        isFetchingTransactionsInfo: false,
+        transactionInfo: action.payload,
+      };
+    case GET_TRANSACTION_INFO_BY_ID_FAILED:
+      return {
+        ...state,
+        isFetchingTransactionsInfo: false,
+        transactionInfo: null,
+      };
+    case GET_MY_TRANSACTIONS_REQUEST:
+      return {
+        ...state,
+        isFetchingTransactions: true,
+      };
+    case GET_MY_TRANSACTIONS_SUCCESS:
+      return {
+        ...state,
+        isFetchingTransactions: false,
+        transactions: action.payload,
+      };
+    case GET_MY_TRANSACTIONS_FAILED:
+      return {
+        ...state,
+        isFetchingTransactions: false,
+        transactions: [],
+      };
+    default:
+      return state;
+  }
+}

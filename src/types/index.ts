@@ -42,6 +42,7 @@ export interface IUserAccountInfo extends ILoggedInUserInfo {
 }
 
 export enum EnumTransactionStatusValues {
+  TTxnInitiated = "Initiated",
   TTxnPending = "Pending",
   TTxnSuccess = "Success",
   TTxnFailed = "Failed",
@@ -70,4 +71,9 @@ export interface IFilterOptions {
     opStr: FirebaseFirestoreTypes.WhereFilterOp, 
     value: any
   }
+}
+
+export interface IGetMutualTransactionsPayload {
+  senderPhoneNumber: string,
+  receiverPhoneNumber: string,
 }

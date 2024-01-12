@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { FlatList } from "react-native";
-import { Avatar } from "@rneui/themed";
+import { Avatar, Icon } from "@rneui/themed";
 import TouchableScale from "react-native-touchable-scale";
 
 import { convertIntoCurrency, isItOutgoingTransaction, isUrlValid, mashPhoneNumber } from "../../utils";
@@ -19,7 +19,8 @@ import { routeInfo } from "../../constants/routes";
 import { mashreqBankLogo } from "../../assets/images";
 import { TRootState } from "../../redux/store";
 import { useFetchUserInfoById } from "../../hooks";
-import { ITransactionInfo } from "../../types";
+import { EnumTransactionStatusValues, ITransactionInfo } from "../../types";
+import { getMyTransactionsRequestAction } from "../../redux/actions/transactions";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -30,131 +31,95 @@ export default function TransactionsScreen(props: {
   const { navigation } = props;
   const isDarkMode = useColorScheme() === "dark";
   const dispatch = useDispatch();
-  const loggedInUserInfo = useSelector(
-    (store: TRootState) => store?.user?.data
+
+  const {
+    loggedInUserInfo,
+    transactionsInfo
+  } = useSelector(
+    (store: TRootState) => ({
+      loggedInUserInfo: store?.user?.data,
+      transactionsInfo: store?.payments,
+    })
   );
+
   const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   // const { phoneNumber } = loggedInUserInfo || {};
-  console.log("##userInfo: ", accountInfo);
-  const DATA = [
-    {
-      id: "T202401063254023839",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "8876543210",
-      amount: "500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023840",
-      sender: "8876543200",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023841",
-      sender: "7676543210",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1000.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023842",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "8876543233",
-      amount: "500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023843",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "9876543210",
-      amount: "1500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023844",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "8876543432",
-      amount: "1000.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023845",
-      sender: "9876543210",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023846",
-      sender: "777654324",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023847",
-      sender: "9876543277",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1000.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023848",
-      sender: "9876543219",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023849",
-      sender: "8876543287",
-      receiver: accountInfo?.phoneNumber || "",
-      amount: "1500.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-    {
-      id: "T202401063254023850",
-      sender: accountInfo?.phoneNumber || "",
-      receiver: "887654354",
-      amount: "1000.23",
-      txnMessage: "give amount",
-      txnType: "walletToWallet",
-      createdAt: "2024-01-10T06:55:54.914Z",
-    },
-  ];
+  // console.log("##userInfo: ", accountInfo);
+  // console.log("##transactions: ", transactionsInfo.transactions);
+
+  useEffect(() => {
+    dispatch(getMyTransactionsRequestAction(accountInfo?.phoneNumber as string))
+  }, [accountInfo?.phoneNumber])
 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
     backgroundColor: Colors?.appThemeColorLight,
   };
 
-  // const isPaymentReceived = (paymentSenderPhoneNumber: string): boolean => {
-  //   return accountInfo?.phoneNumber !== paymentSenderPhoneNumber ? true : false;
-  // };
+  function getStatusIcon(txnStatus: string): React.ReactNode {
+    // throw new Error("Function not implemented.");
+    switch (txnStatus) {
+      case EnumTransactionStatusValues.TTxnSuccess:
+        return (
+          // <Icon name="checkcircleo" type="antdesign" color={Colors.green} />
+          <Avatar
+            size={32}
+            rounded
+            source={mashreqBankLogo}
+            containerStyle={{ backgroundColor: Colors.white }}
+          />
+        );
+      case EnumTransactionStatusValues.TTxnFailed:
+        return <Icon name="closecircleo" type="antdesign" color={Colors.red} />;
+      case EnumTransactionStatusValues.TTxnPending:
+        return (
+          <Icon
+            name="exclamationcircleo"
+            type="antdesign"
+            color={Colors.orange}
+          />
+        );
+      default:
+        return (
+          <Icon name="questioncircleo" type="antdesign" color={Colors.blue} />
+        );
+    }
+  }
+  if(!transactionsInfo?.transactions?.length) {    
+    return (<SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
+      <StatusBar
+        barStyle={isDarkMode ? "light-content" : "dark-content"}
+        backgroundColor={Colors.appThemeColor}
+      />
+      <View style={[styles.emptyContainer]}>
+        <Icon
+          name="account-search"
+          type="material-community"
+          size={60}
+          color={Colors.gray}
+        />
+        <Text style={[styles.emptyMessage]}>
+          Sorry! You don't have any transactions!!
+        </Text>
+      </View>
+    </SafeAreaView>)
+  }
+
+  function getTextBasedOnTxnStatus(txnStatus: string, sender: string, loggedInUserPhoneNumber: string): string {
+    // throw new Error("Function not implemented.");
+    switch(txnStatus){
+      case EnumTransactionStatusValues.TTxnSuccess: 
+        return isItOutgoingTransaction(loggedInUserPhoneNumber, sender as string)
+          ? "Debited from"
+          : "Credited to"
+      case EnumTransactionStatusValues.TTxnFailed:
+        return "Failed!";
+      case EnumTransactionStatusValues.TTxnPending:
+        return "Pending!";
+      case EnumTransactionStatusValues.TTxnInitiated:
+        return "Initiated";
+    }
+  }
 
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
@@ -163,7 +128,7 @@ export default function TransactionsScreen(props: {
         backgroundColor={Colors.appThemeColor}
       />
       <FlatList
-        data={DATA}
+        data={transactionsInfo?.transactions || []}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableScale
@@ -214,20 +179,17 @@ export default function TransactionsScreen(props: {
             </View>
             <View style={[styles.row2]}>
               <Text style={[styles.cratedAt]}>
-                {new Date().toLocaleDateString()}
+                {new Date(item?.createdAt || null).toLocaleDateString()}
               </Text>
               <View style={[styles.sourceAccountInfoContainer]}>
                 <Text style={[styles.transferType]}>
-                  {isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
-                    ? "Debited from"
-                    : "Credited to"}
+                  {
+                    getTextBasedOnTxnStatus(item.txnStatus, item.sender, accountInfo?.phoneNumber as string)
+                  }
                 </Text>
-                <Avatar
-                  size={32}
-                  rounded
-                  source={mashreqBankLogo}
-                  containerStyle={{ backgroundColor: Colors.white }}
-                />
+                {
+                  getStatusIcon(item.txnStatus)
+                }
               </View>
             </View>
             {/* </View> */}
@@ -246,6 +208,19 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: 40,
     gap: 10,
+  },
+  emptyContainer: {
+    height: "100%",
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  emptyMessage: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: Colors.gray,
   },
   listItemContainer: {
     marginVertical: 2,

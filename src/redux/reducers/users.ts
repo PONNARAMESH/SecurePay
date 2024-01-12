@@ -35,5 +35,7 @@ export function userReducers(state = initialState, action: {type: string, payloa
             error: action.payload,            
             isFetching: true,
         }
+        default:
+          return state;
     }
 }
