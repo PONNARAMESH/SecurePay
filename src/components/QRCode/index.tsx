@@ -1,5 +1,7 @@
 import React from "react";
 import QRCode, { QRCodeProps } from "react-native-qrcode-svg";
+import { mashreqBankLogo } from "../../assets/images";
+import colors from "../../assets/colors";
 
 const QRCODE = (props: QRCodeProps) => {
   const { value, getRef } = props;
@@ -8,8 +10,10 @@ const QRCODE = (props: QRCodeProps) => {
       value={value}
       size={250}
       color="black"
-      backgroundColor="white"
+      backgroundColor={colors?.white}
       getRef={getRef}
+      quietZone={15}
+      // logo={mashreqBankLogo}
     />
   );
 };

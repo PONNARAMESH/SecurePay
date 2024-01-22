@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import {
   NativeStackHeaderProps,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 import { useDispatch } from "react-redux";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon, Image } from "@rneui/themed";
+import { Icon } from "@rneui/themed";
 
 import {
   userSingInSuccessAction,
@@ -25,7 +25,6 @@ import { routeInfo } from "../constants/routes";
 import { ILoggedInUserInfo } from "../types";
 import colors from "../assets/colors";
 import { View, Text, StyleSheet } from "react-native";
-import { color } from "@rneui/base";
 import QRScannerScreen from "../screens/QRScannerScreen";
 
 const Stack = createNativeStackNavigator();
@@ -34,41 +33,40 @@ const Tab = createBottomTabNavigator();
 const getCustomHeaderOptions = (navigation: any, dispatch: any) => {
   return {
     headerTitleStyle: { color: colors.white },
-        headerBackground: () => <View style={styles.headerBackground}></View>,
-        headerTintColor: colors.white,
-        // headerTitle: (props) => <Text {...props} >{props.children}</Text>,
-        // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
-        headerBackgroundContainerStyle: {
-          backgroundColor: colors.appThemeColor,
-        },
-        headerStyle: {
-            backgroundColor: colors.appThemeColor,
-        },
-        headerRight: (props: any) => {
-          console.log("##header-props: ", props);
-          return (
-            <View style={[styles.headerRight, { paddingRight: 15 }]}>
-              <Icon
-                {...props}
-                color={colors.white}
-                name="qrcode"
-                type="antdesign"
-                onPress={() => {
-                  navigation.navigate(routeInfo?.QR_SCANNER);
-                }}
-              />
-              <Icon
-                {...props}
-                color={colors.white}
-                name="power-off"
-                type="font-awesome"
-                onPress={() => dispatch(userSingOutAction())}
-              />
-            </View>
-          );
-        },
-  }
-}
+    headerBackground: () => <View style={styles.headerBackground}></View>,
+    headerTintColor: colors.white,
+    // headerTitle: (props) => <Text {...props} >{props.children}</Text>,
+    // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
+    headerBackgroundContainerStyle: {
+      backgroundColor: colors.appThemeColor,
+    },
+    headerStyle: {
+      backgroundColor: colors.appThemeColor,
+    },
+    headerRight: (props: any) => {
+      return (
+        <View style={[styles.headerRight, { paddingRight: 15 }]}>
+          <Icon
+            {...props}
+            color={colors.white}
+            name="qrcode"
+            type="antdesign"
+            onPress={() => {
+              navigation.navigate(routeInfo?.QR_SCANNER);
+            }}
+          />
+          <Icon
+            {...props}
+            color={colors.white}
+            name="power-off"
+            type="font-awesome"
+            onPress={() => dispatch(userSingOutAction())}
+          />
+        </View>
+      );
+    },
+  };
+};
 export function UnAuthorizedRoutes(): React.JSX.Element {
   return (
     <NavigationContainer>
@@ -105,7 +103,6 @@ function LandingScreen(): React.JSX.Element {
         tabBarStyle: {
           height: 40,
           paddingTop: 0,
-          // backgroundColor: "rgba(227, 225, 225,1)",
           backgroundColor: colors.appThemeColor,
           position: "absolute",
           borderTopWidth: 0,
@@ -127,12 +124,7 @@ function LandingScreen(): React.JSX.Element {
         component={ContactsScreen}
         options={{
           tabBarIcon: (props) => (
-            <Icon
-              {...props}
-              name="person-add-alt-1"
-              type="MaterialIcons"
-              // color={"orange"}
-            />
+            <Icon {...props} name="person-add-alt-1" type="MaterialIcons" />
           ),
         }}
       />
@@ -150,7 +142,11 @@ function LandingScreen(): React.JSX.Element {
         component={ReceiveMoneyScreen}
         options={{
           tabBarIcon: (props) => (
-            <Icon {...props} name="bank-transfer-in" type="material-community" />
+            <Icon
+              {...props}
+              name="bank-transfer-in"
+              type="material-community"
+            />
           ),
         }}
       />
@@ -166,46 +162,9 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
     dispatch(userSingInSuccessAction(props.userInfo));
   }, []);
   const { userInfo } = props;
-  // const navigator = useNavigation();
   return (
     <NavigationContainer>
-      <Stack.Navigator
-      // screenOptions={{
-      //   headerTitleStyle: { color: colors.white },
-      //   headerBackground: () => (
-      //     <View style={styles.headerBackground}></View>
-      //   ),
-      //   headerTintColor: colors.white,
-      //   // headerTitle: (props) => <Text {...props} >{props.children}</Text>,
-      //   // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
-      //   headerStyle: {
-      //     backgroundColor: colors.appThemeColor,
-      //   },
-      //   headerRight: (props) => {
-      //     console.log("##header-props: ", props);
-      //     return (
-      //       <View style={[styles.headerRight]}>
-      //         {/* <Icon
-      //           {...props}
-      //           color={colors.white}
-      //           name="qrcode"
-      //           type="antdesign"
-      //           onPress={() => {
-      //             navigator.navigate(routeInfo?.QR_SCANNER)
-      //           }}
-      //         /> */}
-      //         <Icon
-      //           {...props}
-      //           color={colors.white}
-      //           name="power-off"
-      //           type="font-awesome"
-      //           onPress={() => dispatch(userSingOutAction())}
-      //         />
-      //       </View>
-      //     );
-      //   },
-      // }}
-      >
+      <Stack.Navigator>
         <Stack.Screen
           name={routeInfo?.LANDING_SCREEN}
           component={LandingScreen}

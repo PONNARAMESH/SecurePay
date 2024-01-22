@@ -1,24 +1,17 @@
 import React, { useRef, useState } from "react";
 import {
-  Image,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
   Dimensions,
   Alert,
   Linking,
-  TouchableOpacity,
-  // Button,
 } from "react-native";
 
 import Colors from "../../assets/colors";
 import colors from "../../assets/colors";
-import stylesCopy from "./scanStyle";
-import QRCODE from "../../components/QRCode";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import { RNCamera } from "react-native-camera";
 import { Icon } from "@rneui/themed";
@@ -32,8 +25,6 @@ export default function QRScannerScreen(props: {
 }): React.JSX.Element {
   const { navigation } = props;
   const isDarkMode = useColorScheme() === "dark";
-  const qrCodeRef = useRef();
-  const [productQRref, setProductQRref] = useState();
   const [isFlashOn, setIsFlashOn] = useState(false);
 
   const backgroundStyle = {
@@ -41,13 +32,8 @@ export default function QRScannerScreen(props: {
     backgroundColor: Colors?.appThemeColorLight,
   };
 
-  const QRCodeData = {
-    displayName: "john",
-    mobileNumber: "9876543216",
-    amount: 0,
-  };
   const onSuccess = (e: any) => {
-    console.log("##Data-received-after-scanning: ", e);
+    // console.log("##Data-received-after-scanning: ", e.data);
     Linking.openURL(e.data).catch((err) =>
       console.error("An error occured", err)
     );
@@ -58,13 +44,6 @@ export default function QRScannerScreen(props: {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      {/* <QRCODE
-          value={JSON.stringify(QRCodeData)}
-          size={250}
-          color="black"
-          backgroundColor="white"
-          getRef={(c) => setProductQRref(c)}
-        /> */}
       <QRCodeScanner
         onRead={onSuccess}
         flashMode={

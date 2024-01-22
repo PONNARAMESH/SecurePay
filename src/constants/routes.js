@@ -1,5 +1,5 @@
 export const routeInfo = {
-  LANDING_SCREEN: 'Home',
+  LANDING_SCREEN: 'Dashboard',
   LOG_IN: 'Log In',
   SIGN_UP: 'Sing Up',
   DASHBOARD: 'Dashboard',
