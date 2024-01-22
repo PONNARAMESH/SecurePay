@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { NativeStackHeaderProps, createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import {
+  NativeStackHeaderProps,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import { useDispatch } from "react-redux";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon, Image } from "@rneui/themed";
@@ -21,12 +24,51 @@ import { mashreqBankLogo } from "../assets/images";
 import { routeInfo } from "../constants/routes";
 import { ILoggedInUserInfo } from "../types";
 import colors from "../assets/colors";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { color } from "@rneui/base";
+import QRScannerScreen from "../screens/QRScannerScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const getCustomHeaderOptions = (navigation: any, dispatch: any) => {
+  return {
+    headerTitleStyle: { color: colors.white },
+        headerBackground: () => <View style={styles.headerBackground}></View>,
+        headerTintColor: colors.white,
+        // headerTitle: (props) => <Text {...props} >{props.children}</Text>,
+        // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
+        headerBackgroundContainerStyle: {
+          backgroundColor: colors.appThemeColor,
+        },
+        headerStyle: {
+            backgroundColor: colors.appThemeColor,
+        },
+        headerRight: (props: any) => {
+          console.log("##header-props: ", props);
+          return (
+            <View style={[styles.headerRight, { paddingRight: 15 }]}>
+              <Icon
+                {...props}
+                color={colors.white}
+                name="qrcode"
+                type="antdesign"
+                onPress={() => {
+                  navigation.navigate(routeInfo?.QR_SCANNER);
+                }}
+              />
+              <Icon
+                {...props}
+                color={colors.white}
+                name="power-off"
+                type="font-awesome"
+                onPress={() => dispatch(userSingOutAction())}
+              />
+            </View>
+          );
+        },
+  }
+}
 export function UnAuthorizedRoutes(): React.JSX.Element {
   return (
     <NavigationContainer>
@@ -51,11 +93,12 @@ export type TAuthorizedRouteProps = {
 };
 
 function LandingScreen(): React.JSX.Element {
+  const dispatch = useDispatch();
   return (
     <Tab.Navigator
       initialRouteName={routeInfo?.HOME_SCREEN}
-      screenOptions={{
-        headerShown: false,
+      screenOptions={({ route, navigation }) => ({
+        ...getCustomHeaderOptions(navigation, dispatch),
         tabBarInactiveBackgroundColor: colors.white,
         tabBarActiveTintColor: colors.white,
         tabBarInactiveTintColor: colors.appThemeColor,
@@ -68,7 +111,7 @@ function LandingScreen(): React.JSX.Element {
           borderTopWidth: 0,
         },
         unmountOnBlur: true, // This right here will mount the component and reset your screen
-      }}
+      })}
     >
       <Tab.Screen
         name={routeInfo?.HOME_SCREEN}
@@ -102,6 +145,15 @@ function LandingScreen(): React.JSX.Element {
           ),
         }}
       />
+      <Tab.Screen
+        name={routeInfo?.RECEIVE_MONEY}
+        component={ReceiveMoneyScreen}
+        options={{
+          tabBarIcon: (props) => (
+            <Icon {...props} name="bank-transfer-in" type="material-community" />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -114,53 +166,76 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
     dispatch(userSingInSuccessAction(props.userInfo));
   }, []);
   const { userInfo } = props;
+  // const navigator = useNavigation();
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{
-          headerTitleStyle: { color: colors.white },
-          headerBackground: () => (
-            <View style={{ shadowColor: "orange" }}></View>
-          ),
-          headerTintColor: colors.white,
-          // headerTitle: (props) => <Text {...props} >{props.children}</Text>,
-          // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
-          headerStyle: {
-            backgroundColor: colors.appThemeColor,
-          },
-          headerRight: (props) => {
-            return (
-              <Icon
-                {...props}
-                color={colors.white}
-                name="power-off"
-                type="font-awesome"
-                onPress={() => dispatch(userSingOutAction())}
-              />
-            );
-          },
-        }}
+      // screenOptions={{
+      //   headerTitleStyle: { color: colors.white },
+      //   headerBackground: () => (
+      //     <View style={styles.headerBackground}></View>
+      //   ),
+      //   headerTintColor: colors.white,
+      //   // headerTitle: (props) => <Text {...props} >{props.children}</Text>,
+      //   // headerLeft: (props) => <Icon {...props} color={"orange"} name="arrow-back" type="IonIcons" />,
+      //   headerStyle: {
+      //     backgroundColor: colors.appThemeColor,
+      //   },
+      //   headerRight: (props) => {
+      //     console.log("##header-props: ", props);
+      //     return (
+      //       <View style={[styles.headerRight]}>
+      //         {/* <Icon
+      //           {...props}
+      //           color={colors.white}
+      //           name="qrcode"
+      //           type="antdesign"
+      //           onPress={() => {
+      //             navigator.navigate(routeInfo?.QR_SCANNER)
+      //           }}
+      //         /> */}
+      //         <Icon
+      //           {...props}
+      //           color={colors.white}
+      //           name="power-off"
+      //           type="font-awesome"
+      //           onPress={() => dispatch(userSingOutAction())}
+      //         />
+      //       </View>
+      //     );
+      //   },
+      // }}
       >
         <Stack.Screen
           name={routeInfo?.LANDING_SCREEN}
           component={LandingScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
-          // options={{
-          //   // headerLeft: (props) => <Icon {...props} color={ colors.white} name="arrow-back" type="IonIcons" />,
-          //   header: (props: NativeStackHeaderProps) => {
-          //     const {route: { params}} = props;
-          //     return (
-          //       <View style={{backgroundColor: colors.greenLight, borderWidth: 1}}>
-          //         <Text>Hello</Text>
-          //       </View>
-          //     );
-          //   },
-          // }}
+          options={({ route, navigation }) => ({
+            ...getCustomHeaderOptions(navigation, dispatch),
+          })}
           name={routeInfo?.SEND_MONEY}
           component={SendMoneyScreen}
+        />
+        <Stack.Screen
+          options={({ route, navigation }) => ({
+            ...getCustomHeaderOptions(navigation, dispatch),
+          })}
+          name={routeInfo?.QR_SCANNER}
+          component={QRScannerScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
+});
+
+const styles = StyleSheet.create({
+  headerBackground: {
+    shadowColor: "orange",
+  },
+  headerRight: {
+    flexDirection: "row",
+    gap: 40,
+  },
 });
