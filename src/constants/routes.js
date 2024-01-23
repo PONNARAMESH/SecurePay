@@ -8,5 +8,7 @@ export const routeInfo = {
   TRANSACTIONS: 'Transactions',
   SEND_MONEY: 'Send Money',
   RECEIVE_MONEY: 'Receive Money',
-  QR_SCANNER: 'QR Scanner'
+  QR_SCANNER: 'QR Scanner',
+  PAYMENT_STATUS: 'Payment Status',
+  TRANSACTIONS_INFO: 'Transactions Info',
 };

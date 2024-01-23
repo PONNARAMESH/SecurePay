@@ -10,10 +10,10 @@ export function makeNewTransactionRequestAction(data: INewPaymentInfo) {
     })
 }
 
-export function makeNewTransactionRequestSuccessAction() {
+export function makeNewTransactionRequestSuccessAction(data: ITransactionInfo) {
     return ({
         type: NEW_TRANSACTION_SUCCESS,
-        // payload: data,
+        payload: data,
     })
 }
 

@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import {
-  Image,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -10,32 +8,23 @@ import {
   View,
   Dimensions,
   Alert,
-  Button,
   SectionList,
-  TouchableOpacity,
   RefreshControl,
-  ActivityIndicator,
 } from "react-native";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
 import TouchableScale from "react-native-touchable-scale";
 import LinearGradient from "react-native-linear-gradient";
 
 import Colors from "../../assets/colors";
-import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton, Divider } from "../../components";
-import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
-import { userSingOutAction } from "../../redux/actions";
 import { Avatar, FAB, Icon, ListItem } from "@rneui/themed";
 import {
   groupTheContactsBasedOnAlphabeticalOrder,
   isUrlValid,
 } from "../../utils";
 import { TRootState } from "../../redux/store";
-import { NavigationState } from "@react-navigation/native";
 import { useFetchMyContactsList } from "../../hooks/useFetchMyContactsList";
-import { ILoggedInUserInfo, IUserAccountInfo } from "../../types";
+import { ILoggedInUserInfo } from "../../types";
 import { useFetchUserInfoById } from "../../hooks";
 
 const windowWidth = Dimensions.get("window").width;
@@ -48,7 +37,6 @@ export default function ContactsScreen(props: {
   const isDarkMode = useColorScheme() === "dark";
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const dispatch = useDispatch();
   const loggedInUserInfo = useSelector<TRootState>(
     (store) => store?.user?.data
   ) as ILoggedInUserInfo | null;

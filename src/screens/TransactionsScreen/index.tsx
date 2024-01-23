@@ -20,7 +20,7 @@ import { mashreqBankLogo } from "../../assets/images";
 import { TRootState } from "../../redux/store";
 import { useFetchUserInfoById } from "../../hooks";
 import { EnumTransactionStatusValues, ITransactionInfo } from "../../types";
-import { getMyTransactionsRequestAction } from "../../redux/actions/transactions";
+import { getMyTransactionsRequestAction, getTransactionsInfoByIdRequestAction } from "../../redux/actions/transactions";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -121,6 +121,12 @@ export default function TransactionsScreen(props: {
     }
   }
 
+  const onPress = (transactionId: string) => {
+    navigation.navigate(routeInfo.TRANSACTIONS_INFO, {
+      transactionId,
+    });
+  }
+  
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
@@ -133,7 +139,7 @@ export default function TransactionsScreen(props: {
         renderItem={({ item }) => (
           <TouchableScale
             style={[styles.listItemContainer]}
-            // onPress={props.onPress}
+            onPress={() => onPress(item.id)}
             activeScale={0.95}
             friction={50}
             tension={100}

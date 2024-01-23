@@ -27,51 +27,60 @@ export default function paymentTransactionReducers(
       return {
         ...state,
         paymentStatus: EnumTransactionStatusValues.TTxnInitiated,
+        transactionInfo: null,
       };
     case NEW_TRANSACTION_SUCCESS:
       return {
         ...state,
         paymentStatus: EnumTransactionStatusValues.TTxnSuccess,
+        transactionInfo: action.payload
       };
     case NEW_TRANSACTION_FAILED:
       return {
         ...state,
         paymentStatus: EnumTransactionStatusValues.TTxnFailed,
+        transactionInfo: null,
       };
     case GET_TRANSACTION_INFO_BY_ID_REQUEST:
       return {
         ...state,
         isFetchingTransactionsInfo: true,
         transactionInfo: null,
+        paymentStatus: null,
       };
     case GET_TRANSACTION_INFO_BY_ID_SUCCESS:
       return {
         ...state,
         isFetchingTransactionsInfo: false,
         transactionInfo: action.payload,
+        paymentStatus: null,
       };
     case GET_TRANSACTION_INFO_BY_ID_FAILED:
       return {
         ...state,
         isFetchingTransactionsInfo: false,
         transactionInfo: null,
+        paymentStatus: null,
       };
     case GET_MY_TRANSACTIONS_REQUEST:
       return {
         ...state,
         isFetchingTransactions: true,
+        paymentStatus: null,
       };
     case GET_MY_TRANSACTIONS_SUCCESS:
       return {
         ...state,
         isFetchingTransactions: false,
         transactions: action.payload,
+        paymentStatus: null,
       };
     case GET_MY_TRANSACTIONS_FAILED:
       return {
         ...state,
         isFetchingTransactions: false,
         transactions: [],
+        paymentStatus: null,
       };
     default:
       return state;

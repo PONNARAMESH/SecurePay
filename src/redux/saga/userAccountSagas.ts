@@ -86,7 +86,7 @@ export function* singOutSaga(action: {
 }) {
   try {
     const resData: boolean = yield call(userSignOutAPI);
-    console.log("##res-data: ", resData);
+    // console.log("##res-data: ", resData);
     yield put(userSingOutSuccessAction());
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);

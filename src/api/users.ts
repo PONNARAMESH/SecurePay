@@ -27,7 +27,7 @@ export async function getAllRecordInfoAPI(filterOptions?: IFilterOptions): Promi
   }
 }
 
-export async function getUserInfoByPhoneNumberAPI(phoneNumber: string): Promise<IUserAccountInfo[]> {
+export async function getUserInfoByPhoneNumberAPI(phoneNumber: string): Promise<IUserAccountInfo | null> {
   // console.log("##filterOptions: ", filterOptions);
   try {
     return fireStoreDB.collection(collectionNameForUser)
@@ -40,7 +40,8 @@ export async function getUserInfoByPhoneNumberAPI(phoneNumber: string): Promise<
             // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
             arr.push(documentSnapshot.data() as IUserAccountInfo);
         });
-        return arr;
+        if(arr.length) return arr[0];
+        return null;
       });
   } catch (error) {
     console.log("###error: ", error);

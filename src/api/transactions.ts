@@ -33,7 +33,7 @@ export async function makePayment(payload: INewPaymentInfo) {
   const createdAt = new Date().toJSON(); // creating time-stamp for the transaction
   const txnType = "WalletToWallet"; // mean, transferring from PhoneNumber-to-PhoneNumber
 
-  if (!senderAccountInfo || !senderAccountInfo[0]) {
+  if (!senderAccountInfo) {
     // payerInfo not found
     await insertNewTransaction(newTxnId, {
       ...payload,
@@ -44,7 +44,7 @@ export async function makePayment(payload: INewPaymentInfo) {
       createdAt,
     });
   }
-  if (!receiverAccountInfo || !receiverAccountInfo[0]) {
+  if (!receiverAccountInfo) {
     // receiverInfo not found
     await insertNewTransaction(newTxnId, {
       ...payload,
@@ -56,7 +56,7 @@ export async function makePayment(payload: INewPaymentInfo) {
     });
   }
 
-  const { uid, balance } = senderAccountInfo[0];
+  const { uid, balance } = senderAccountInfo || {};
 
   if (Number(payload?.amount) > Number(balance)) {
     // Insufficient-balance
@@ -74,20 +74,27 @@ export async function makePayment(payload: INewPaymentInfo) {
     balance: Number(balance || 0) - Number(payload.amount),
   });
   // Credit into receiver account
-  await updateRecordInfoByDocIdAPI(receiverAccountInfo[0]?.uid as string, {
+  await updateRecordInfoByDocIdAPI(receiverAccountInfo?.uid as string, {
     balance:
-      Number(receiverAccountInfo[0]?.balance || 0) + Number(payload.amount),
+      Number(receiverAccountInfo?.balance || 0) + Number(payload.amount),
   });
 
-  // Insufficient-balance
-  await insertNewTransaction(newTxnId, {
+  const paymentInfo = {
     ...payload,
     id: newTxnId,
     txnStatus: EnumTransactionStatusValues.TTxnSuccess,
     failedMessage: null,
     txnType,
     createdAt,
-  });
+  };
+
+  // sufficient-balance
+  const res = await insertNewTransaction(newTxnId, { ...paymentInfo });
+  if(res) {
+    return paymentInfo;
+  } else {
+    throw res;
+  }
 }
 
 export function insertNewTransaction(
@@ -113,7 +120,7 @@ export function insertNewTransaction(
 export async function getTransactionInfoByTxnId(
   txnId: string
 ): Promise<ITransactionInfo | null> {
-  // console.log("##txnId: ", txnId);
+  console.log("##txnId: ", txnId);
   try {
     return fireStoreDB
       .collection(collectionNameForTransactions)
@@ -124,8 +131,9 @@ export async function getTransactionInfoByTxnId(
         let arr: ITransactionInfo[] = [];
         querySnapshot.forEach((documentSnapshot) => {
           // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-          return documentSnapshot.data() as ITransactionInfo;
+          arr.push(documentSnapshot.data() as ITransactionInfo);
         });
+        if(arr.length) return arr[0];
         return null;
       });
   } catch (error) {

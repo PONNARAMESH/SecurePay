@@ -63,6 +63,7 @@ export interface ITransactionInfo extends INewPaymentInfo {
     | EnumTransactionStatusValues.TTxnFailed
     | EnumTransactionStatusValues.TTxnSuccess;
   createdAt: string;
+  failedMessage?: string | null;
 }
 
 export interface IFilterOptions {

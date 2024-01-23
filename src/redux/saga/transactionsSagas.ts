@@ -28,9 +28,9 @@ export function* makeNewTransactionSaga(action: {
   payload: INewPaymentInfo;
 }) {
   try {
-    const resData: boolean = yield call(makePayment, action.payload);
-    console.log("##res-data: ", resData);
-    yield put(makeNewTransactionRequestSuccessAction());
+    const resData: ITransactionInfo = yield call(makePayment, action.payload);
+    // console.log("##res-data: ", resData);
+    yield put(makeNewTransactionRequestSuccessAction(resData));
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);
     const {
@@ -56,7 +56,7 @@ export function* getTransactionInfoByIdSaga(action: {
       getTransactionInfoByTxnId,
       action.payload
     );
-    console.log("##res-data: ", resData);
+    // console.log("##transaction-info: ", resData);
     if (!resData) {
       yield put(
         getTransactionsInfoByIdRequestFailureAction({
@@ -95,7 +95,7 @@ export function* getMyTransactionsSaga(action: {
       getMyTransactionsAPI,
       action.payload
     );
-    console.log("##res-data: ", resData);
+    // console.log("##res-data: ", resData);
     yield put(getMyTransactionsRequestSuccessAction(resData));
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);

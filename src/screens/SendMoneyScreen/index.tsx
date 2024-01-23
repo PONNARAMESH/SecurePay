@@ -28,6 +28,7 @@ import TouchableScale from "react-native-touchable-scale";
 import { Divider } from "@rneui/base";
 import { useGetMutualTransactions } from "../../hooks/useGetMutualTransactions";
 import { makeNewTransactionRequestAction } from "../../redux/actions/transactions";
+import { routeInfo } from "../../constants/routes";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -38,6 +39,8 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
   const { receiverInfo } = props?.route?.params || {};
   // console.log("###sendMoney-screen: ", phoneNumber);
   const isDarkMode = useColorScheme() === "dark";
+  const paymentsData = useSelector((store: TRootState) => store?.payments);
+  console.log("##paymentsData: ", paymentsData);
   const dispatch = useDispatch();
   const [wannaSetTxnMessage, setWannaSetTxnMessage] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
@@ -60,6 +63,13 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
     return () => {};
   }, [accountInfo?.phoneNumber, receiverInfo?.phoneNumber]);
 
+  useEffect(() => {
+    if([EnumTransactionStatusValues.TTxnSuccess, EnumTransactionStatusValues.TTxnFailed].includes(paymentsData?.paymentStatus as any)){
+      navigation.navigate(routeInfo.PAYMENT_STATUS, {
+        transactionInfo: paymentsData.transactionInfo,
+      });
+    }
+  }, [paymentsData?.paymentStatus])
   // console.log("##userInfo: ", loggedInUserInfo);
   // console.log("##mutualTransactions: ", mutualTransactions);
 
@@ -152,6 +162,12 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
     }
   }
 
+  const onPress = (transactionId: string) => {
+    navigation.navigate(routeInfo.TRANSACTIONS_INFO, {
+      transactionId,
+    });
+  }  
+
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
@@ -211,7 +227,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
                     : "flex-end",
                 },
               ]}
-              // onPress={props.onPress}
+              onPress={() => onPress(item.id)}
               activeScale={0.95}
               friction={50}
               tension={100}

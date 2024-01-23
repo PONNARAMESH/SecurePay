@@ -26,6 +26,8 @@ import { ILoggedInUserInfo } from "../types";
 import colors from "../assets/colors";
 import { View, Text, StyleSheet } from "react-native";
 import QRScannerScreen from "../screens/QRScannerScreen";
+import PaymentStatusScreen from "../screens/PaymentStatusScreen";
+import TransactionInfoScreen from "../screens/TransactionInfoScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -183,6 +185,20 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
           })}
           name={routeInfo?.QR_SCANNER}
           component={QRScannerScreen}
+        />
+        <Stack.Screen
+          options={({ route, navigation }) => ({
+            ...getCustomHeaderOptions(navigation, dispatch),
+          })}
+          name={routeInfo?.PAYMENT_STATUS}
+          component={PaymentStatusScreen}
+        />
+        <Stack.Screen
+          options={({ route, navigation }) => ({
+            ...getCustomHeaderOptions(navigation, dispatch),
+          })}
+          name={routeInfo?.TRANSACTIONS_INFO}
+          component={TransactionInfoScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
