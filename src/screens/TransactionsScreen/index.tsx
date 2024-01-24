@@ -13,14 +13,22 @@ import { FlatList } from "react-native";
 import { Avatar, Icon } from "@rneui/themed";
 import TouchableScale from "react-native-touchable-scale";
 
-import { convertIntoCurrency, isItOutgoingTransaction, isUrlValid, mashPhoneNumber } from "../../utils";
+import {
+  convertIntoCurrency,
+  isItOutgoingTransaction,
+  isUrlValid,
+  mashPhoneNumber,
+} from "../../utils";
 import Colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { mashreqBankLogo } from "../../assets/images";
 import { TRootState } from "../../redux/store";
 import { useFetchUserInfoById } from "../../hooks";
 import { EnumTransactionStatusValues, ITransactionInfo } from "../../types";
-import { getMyTransactionsRequestAction, getTransactionsInfoByIdRequestAction } from "../../redux/actions/transactions";
+import {
+  getMyTransactionsRequestAction,
+  getTransactionsInfoByIdRequestAction,
+} from "../../redux/actions/transactions";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -32,10 +40,7 @@ export default function TransactionsScreen(props: {
   const isDarkMode = useColorScheme() === "dark";
   const dispatch = useDispatch();
 
-  const {
-    loggedInUserInfo,
-    transactionsInfo
-  } = useSelector(
+  const { loggedInUserInfo, transactionsInfo } = useSelector(
     (store: TRootState) => ({
       loggedInUserInfo: store?.user?.data,
       transactionsInfo: store?.payments,
@@ -48,8 +53,10 @@ export default function TransactionsScreen(props: {
   // console.log("##transactions: ", transactionsInfo.transactions);
 
   useEffect(() => {
-    dispatch(getMyTransactionsRequestAction(accountInfo?.phoneNumber as string))
-  }, [accountInfo?.phoneNumber])
+    dispatch(
+      getMyTransactionsRequestAction(accountInfo?.phoneNumber as string)
+    );
+  }, [accountInfo?.phoneNumber]);
 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
@@ -85,33 +92,44 @@ export default function TransactionsScreen(props: {
         );
     }
   }
-  if(!transactionsInfo?.transactions?.length) {    
-    return (<SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
-      <StatusBar
-        barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={Colors.appThemeColor}
-      />
-      <View style={[styles.emptyContainer]}>
-        <Icon
-          name="account-search"
-          type="material-community"
-          size={60}
-          color={Colors.gray}
+
+  // If There is no data to show, displaying proper message
+  if (!transactionsInfo?.transactions?.length) {
+    return (
+      <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
+        <StatusBar
+          barStyle={isDarkMode ? "light-content" : "dark-content"}
+          backgroundColor={Colors.appThemeColor}
         />
-        <Text style={[styles.emptyMessage]}>
-          Sorry! You don't have any transactions!!
-        </Text>
-      </View>
-    </SafeAreaView>)
+        <View style={[styles.emptyContainer]}>
+          <Icon
+            name="account-search"
+            type="material-community"
+            size={60}
+            color={Colors.gray}
+          />
+          <Text style={[styles.emptyMessage]}>
+            Sorry! You don't have any transactions!!
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
   }
 
-  function getTextBasedOnTxnStatus(txnStatus: string, sender: string, loggedInUserPhoneNumber: string): string {
+  function getTextBasedOnTxnStatus(
+    txnStatus: string,
+    sender: string,
+    loggedInUserPhoneNumber: string
+  ): string | undefined {
     // throw new Error("Function not implemented.");
-    switch(txnStatus){
-      case EnumTransactionStatusValues.TTxnSuccess: 
-        return isItOutgoingTransaction(loggedInUserPhoneNumber, sender as string)
+    switch (txnStatus) {
+      case EnumTransactionStatusValues.TTxnSuccess:
+        return isItOutgoingTransaction(
+          loggedInUserPhoneNumber,
+          sender as string
+        )
           ? "Debited from"
-          : "Credited to"
+          : "Credited to";
       case EnumTransactionStatusValues.TTxnFailed:
         return "Failed!";
       case EnumTransactionStatusValues.TTxnPending:
@@ -125,8 +143,13 @@ export default function TransactionsScreen(props: {
     navigation.navigate(routeInfo.TRANSACTIONS_INFO, {
       transactionId,
     });
-  }
-  
+  };
+
+  const sortedTransactionsData = ([...transactionsInfo?.transactions] || []).sort(
+    (a: ITransactionInfo, b: ITransactionInfo) =>
+      new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
+  );
+
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
@@ -134,7 +157,7 @@ export default function TransactionsScreen(props: {
         backgroundColor={Colors.appThemeColor}
       />
       <FlatList
-        data={transactionsInfo?.transactions || []}
+        data={sortedTransactionsData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableScale
@@ -156,7 +179,10 @@ export default function TransactionsScreen(props: {
                     color: Colors.green,
                   }}
                   iconStyle={{
-                    transform: isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
+                    transform: isItOutgoingTransaction(
+                      accountInfo?.phoneNumber as string,
+                      item.sender as string
+                    )
                       ? "rotate(45deg)"
                       : "rotate(-135deg)",
                   }}
@@ -165,13 +191,19 @@ export default function TransactionsScreen(props: {
               </View>
               <View style={[styles.targetUserInfo]}>
                 <Text style={styles.label}>
-                  {isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
+                  {isItOutgoingTransaction(
+                    accountInfo?.phoneNumber as string,
+                    item.sender as string
+                  )
                     ? "Transferred to"
                     : "Received from"}
                 </Text>
                 <Text style={styles.receiverPhoneNumber}>
                   {mashPhoneNumber(
-                    (isItOutgoingTransaction(accountInfo?.phoneNumber as string, item.sender as string)
+                    (isItOutgoingTransaction(
+                      accountInfo?.phoneNumber as string,
+                      item.sender as string
+                    )
                       ? item.receiver
                       : item.sender) as string
                   )}
@@ -189,13 +221,13 @@ export default function TransactionsScreen(props: {
               </Text>
               <View style={[styles.sourceAccountInfoContainer]}>
                 <Text style={[styles.transferType]}>
-                  {
-                    getTextBasedOnTxnStatus(item.txnStatus, item.sender, accountInfo?.phoneNumber as string)
-                  }
+                  {getTextBasedOnTxnStatus(
+                    item.txnStatus,
+                    item.sender,
+                    accountInfo?.phoneNumber as string
+                  )}
                 </Text>
-                {
-                  getStatusIcon(item.txnStatus)
-                }
+                {getStatusIcon(item.txnStatus)}
               </View>
             </View>
             {/* </View> */}
@@ -264,7 +296,7 @@ const styles = StyleSheet.create({
   amount: {
     fontWeight: "800",
     fontSize: 18,
-    color: Colors.appThemeColor
+    color: Colors.appThemeColor,
   },
   row2: {
     flex: 1,
