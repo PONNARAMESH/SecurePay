@@ -131,6 +131,15 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
             </View>
           </View>
           <View style={[styles.sectionContainer]}>
+            <Text style={[styles.sectionLabel]}>Date & Time</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
+              <Text style={[styles.sectionValue]}>
+                {new Date(transactionInfo?.createdAt || '').toLocaleString()}
+              </Text>
+              {/* <Icon name="copy1" type="ant-design" color={Colors.appThemeColor}/> */}
+            </View>
+          </View>
+          <View style={[styles.sectionContainer]}>
             <Text style={[styles.sectionLabel]}>
               {isItOutgoingTransaction(
                 loggedInUserInfo?.phoneNumber as string,
