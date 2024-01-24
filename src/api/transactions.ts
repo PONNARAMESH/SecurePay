@@ -108,7 +108,7 @@ export function insertNewTransaction(
       .doc(docId)
       .set(data)
       .then((documentSnapshot) => {
-        console.log("New Txn created successfully");
+        // console.log("New Txn created successfully");
         return true;
       });
   } catch (error) {
@@ -120,7 +120,7 @@ export function insertNewTransaction(
 export async function getTransactionInfoByTxnId(
   txnId: string
 ): Promise<ITransactionInfo | null> {
-  console.log("##txnId: ", txnId);
+  // console.log("##txnId: ", txnId);
   try {
     return fireStoreDB
       .collection(collectionNameForTransactions)
@@ -145,7 +145,7 @@ export async function getTransactionInfoByTxnId(
 export async function getMyTransactionsAPI(
   myPhoneNumber: string
 ): Promise<ITransactionInfo[] | []> {
-  console.log("##myPhoneNumber: ", myPhoneNumber);
+  // console.log("##myPhoneNumber: ", myPhoneNumber);
   try {
     return (
       fireStoreDB

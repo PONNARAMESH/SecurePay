@@ -9,6 +9,7 @@ import {
   NEW_TRANSACTION_FAILED,
   NEW_TRANSACTION_REQUEST,
   NEW_TRANSACTION_SUCCESS,
+  RESET_TRANSACTION_INFO_BY_ID,
 } from "../actionTypes";
 
 const initialState = {
@@ -59,6 +60,13 @@ export default function paymentTransactionReducers(
       return {
         ...state,
         isFetchingTransactionsInfo: false,
+        transactionInfo: null,
+        paymentStatus: null,
+      };
+    case RESET_TRANSACTION_INFO_BY_ID:
+      return {
+        ...state,
+        isFetchingTransactionsInfo: true,
         transactionInfo: null,
         paymentStatus: null,
       };

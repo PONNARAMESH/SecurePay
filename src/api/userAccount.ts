@@ -44,7 +44,7 @@ export function  userSignUpAPI(data: IUserSignUpInfo): Promise<FirebaseAuthTypes
                     firebaseInstance.auth().currentUser?.updateProfile({
                         displayName: data.displayName
                     }).then((updateRes) => {
-                        console.log("##updateRes: ", updateRes);
+                        // console.log("##updateRes: ", updateRes);
                         resolve(res);
                     }).catch((error) => {
                         console.log("##updateRes-error: ", error);

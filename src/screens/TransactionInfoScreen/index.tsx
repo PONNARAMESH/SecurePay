@@ -60,7 +60,7 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
       }
     })
     .then(res => {
-      console.log("$$$res: ", JSON.stringify(res, null, 4))
+      // console.log("$$$res: ", JSON.stringify(res, null, 4))
       setTransactionInfo(res.txnInfo);
       setReceiverAccountInfo(res.userAccountInfo);
     })

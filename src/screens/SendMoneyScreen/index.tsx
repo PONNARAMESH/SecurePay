@@ -27,7 +27,7 @@ import { EnumTransactionStatusValues, ITransactionInfo } from "../../types";
 import TouchableScale from "react-native-touchable-scale";
 import { Divider } from "@rneui/base";
 import { useGetMutualTransactions } from "../../hooks/useGetMutualTransactions";
-import { makeNewTransactionRequestAction } from "../../redux/actions/transactions";
+import { makeNewTransactionRequestAction, resetTransactionInfoByIdAction } from "../../redux/actions/transactions";
 import { routeInfo } from "../../constants/routes";
 
 const windowWidth = Dimensions.get("window").width;
@@ -40,7 +40,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
   // console.log("###sendMoney-screen: ", phoneNumber);
   const isDarkMode = useColorScheme() === "dark";
   const paymentsData = useSelector((store: TRootState) => store?.payments);
-  console.log("##paymentsData: ", paymentsData);
+  // console.log("##paymentsData: ", paymentsData);
   const dispatch = useDispatch();
   const [wannaSetTxnMessage, setWannaSetTxnMessage] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
@@ -61,13 +61,23 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
       receiverPhoneNumber: receiverInfo?.phoneNumber,
     });
     return () => {};
-  }, [accountInfo?.phoneNumber, receiverInfo?.phoneNumber]);
+  }, [accountInfo?.phoneNumber, receiverInfo?.phoneNumber, paymentsData?.paymentStatus]);
 
   useEffect(() => {
     if([EnumTransactionStatusValues.TTxnSuccess, EnumTransactionStatusValues.TTxnFailed].includes(paymentsData?.paymentStatus as any)){
+      getMutualTransactionAPICall({
+        senderPhoneNumber: accountInfo?.phoneNumber as string,
+        receiverPhoneNumber: receiverInfo?.phoneNumber,
+      });
       navigation.navigate(routeInfo.PAYMENT_STATUS, {
         transactionInfo: paymentsData.transactionInfo,
       });
+      setWannaSetTxnMessage(false);
+      setAmount('');
+      setTxnMessage('');
+    }
+    return () => {
+      dispatch(resetTransactionInfoByIdAction());
     }
   }, [paymentsData?.paymentStatus])
   // console.log("##userInfo: ", loggedInUserInfo);
@@ -79,8 +89,17 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
 
   function groupTheTransactionsBasedOnDate(txnArray: ITransactionInfo[]) {
     const newObj: Record<string, ITransactionInfo[]> = {};
+    // checking for null / undefined / empty-array cases
+    if(!txnArray || !txnArray.length){
+      return newObj;
+    }
+
+    // sort the transactions
+    txnArray.sort((a,b) => new Date(a.createdAt).valueOf() - new Date(b.createdAt).valueOf());
+
+    // and them grouping the transactions by Date
     for (let txn of txnArray) {
-      let day = new Date(txn.createdAt).toLocaleString();
+      let day = new Date(txn.createdAt).toDateString();
       if (newObj[day]) {
         newObj[day].push(txn);
       } else {
@@ -114,7 +133,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
       txnMessage: txnMessage || "",
       txnType: "WalletToWallet",
     };
-    dispatch(makeNewTransactionRequestAction(payload))
+    dispatch(makeNewTransactionRequestAction(payload));
   };
 
   const backgroundStyle = {
@@ -271,7 +290,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
               ellipsizeMode="tail"
               numberOfLines={1}
             >
-              {accountInfo?.displayName || "--"}
+              {receiverInfo?.displayName || "--"}
             </Text>
             <Icon
               iconStyle={{ paddingLeft: 15 }}
