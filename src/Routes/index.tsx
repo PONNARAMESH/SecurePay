@@ -187,9 +187,15 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
           component={QRScannerScreen}
         />
         <Stack.Screen
-          options={({ route, navigation }) => ({
-            ...getCustomHeaderOptions(navigation, dispatch),
-          })}
+          options={({ route, navigation }) => {
+            return {
+              headerTitleStyle: { color: colors.white },
+              headerTintColor: colors.white,
+              headerStyle: {
+                backgroundColor: colors.greenMedium,
+              },
+            };
+          }}
           name={routeInfo?.PAYMENT_STATUS}
           component={PaymentStatusScreen}
         />

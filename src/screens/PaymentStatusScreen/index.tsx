@@ -6,6 +6,7 @@ import {
   useColorScheme,
   View,
   Dimensions,
+  StatusBar,
 } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -49,6 +50,10 @@ export default function PaymentStatusScreen(props: any): React.JSX.Element {
 
   return (
     <SafeAreaView style={[styles.screenContainer]}>
+      <StatusBar
+        barStyle={isDarkMode ? "light-content" : "dark-content"}
+        backgroundColor={Colors.greenMedium}
+      />
       <View style={[styles.contentContainer]}>
         <View style={[styles.iconContainer]}>
           <Icon
@@ -67,7 +72,14 @@ export default function PaymentStatusScreen(props: any): React.JSX.Element {
           </Text>
         </View>
         <View style={[styles.buttonContainer]}>
-          <Button color={Colors.greenLight} style={styles.viewDetailsButton}
+          <Button
+            color={Colors.greenLight}
+            style={styles.viewDetailsButton}
+            buttonStyle={{
+              borderColor: 'white',
+              borderWidth: 1,
+              borderRadius: 30,
+            }}
             onPress={handleViewTransactionInfo}
           >
             view details
@@ -85,7 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: windowWidth,
     height: windowHeight,
-    backgroundColor: Colors.green,
+    backgroundColor: Colors.greenMedium,
   },
   contentContainer: {
     marginTop: 100,
@@ -110,9 +122,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   viewDetailsButton: {
-    backgroundColor: "green",
+    backgroundColor: Colors.greenMedium,
     borderWidth: 1,
     borderColor: Colors.white,
-    padding: 10,
+    padding: 30,
   },
 });
