@@ -28,6 +28,7 @@ export function* makeNewTransactionSaga(action: {
   payload: INewPaymentInfo;
 }) {
   try {
+    // console.log("##payload: ", action?.payload);
     const resData: ITransactionInfo = yield call(makePayment, action.payload);
     // console.log("##res-data: ", resData);
     yield put(makeNewTransactionRequestSuccessAction(resData));

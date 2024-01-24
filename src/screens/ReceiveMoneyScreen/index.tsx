@@ -52,12 +52,7 @@ export default function ReceiveMoneyScreen(props: {
   };
 
   const QRCodeData = {
-    displayName,
-    email,
     phoneNumber,
-    photoURL,
-    uid,
-    accountNumber,
   };
 
   return (

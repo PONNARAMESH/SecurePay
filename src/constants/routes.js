@@ -11,4 +11,5 @@ export const routeInfo = {
   QR_SCANNER: 'QR Scanner',
   PAYMENT_STATUS: 'Payment Status',
   TRANSACTIONS_INFO: 'Transactions Info',
+  MAKE_QR_CODE_PAYMENT_INFO: 'QR Code Payment',
 };
