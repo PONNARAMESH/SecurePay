@@ -7,7 +7,6 @@ import {
   useColorScheme,
   View,
   Dimensions,
-  Alert,
   SectionList,
   RefreshControl,
 } from "react-native";
@@ -23,9 +22,10 @@ import {
   isUrlValid,
 } from "../../utils";
 import { TRootState } from "../../redux/store";
-import { useFetchMyContactsList } from "../../hooks/useFetchMyContactsList";
 import { ILoggedInUserInfo } from "../../types";
 import { useFetchUserInfoById } from "../../hooks";
+import { getAllMyContactsRequestAction } from "../../redux/actions/contacts";
+import { IContactsReducer } from "../../redux/reducers";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -36,22 +36,22 @@ export default function ContactsScreen(props: {
   const { navigation } = props;
   const isDarkMode = useColorScheme() === "dark";
   const [refreshing, setRefreshing] = React.useState(false);
+  const dispatch = useDispatch();
 
   const loggedInUserInfo = useSelector<TRootState>(
     (store) => store?.user?.data
   ) as ILoggedInUserInfo | null;
+  const { myContacts, isFetchingMyContacts } = useSelector<TRootState>(
+    (store) => store.contacts
+  ) as IContactsReducer;
+
   const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   // console.log("##----accountInfo: ", accountInfo);
 
-  const {
-    fetchContactsInfoAPICall,
-    myContacts,
-    isFetchingMyContacts,
-    errorInfo,
-  } = useFetchMyContactsList();
-
   useEffect(() => {
-    fetchContactsInfoAPICall(accountInfo?.contactsList || []);
+    dispatch(
+      getAllMyContactsRequestAction(accountInfo?.phoneNumber as string)
+    );
   }, [accountInfo?.contactsList]);
 
   // console.log("##contactsInfo: ", {myContacts, isFetchingMyContacts, errorInfo})
@@ -62,7 +62,9 @@ export default function ContactsScreen(props: {
   };
 
   const onRefresh = () => {
-    fetchContactsInfoAPICall(accountInfo?.contactsList || []);
+    dispatch(
+      getAllMyContactsRequestAction(accountInfo?.phoneNumber as string)
+    );
   };
 
   const groupedContactsInfo = groupTheContactsBasedOnAlphabeticalOrder(
@@ -87,6 +89,25 @@ export default function ContactsScreen(props: {
             Sorry! You don't have any contacts!!
           </Text>
         </View>
+        <FAB
+          icon={{
+            name: "person-add-alt-1",
+            type: "material",
+            size: 26,
+            color: "white",
+          }}
+          onPress={() => {
+            // Alert.alert("This feature is In-Progress!");
+            navigation.navigate(routeInfo?.ADD_NEW_CONTACT);
+          }}
+          color={Colors.blue}
+          style={{
+            borderWidth: 0,
+            position: "absolute",
+            bottom: 60,
+            right: 10,
+          }}
+        />
       </SafeAreaView>
     );
   }
@@ -178,7 +199,7 @@ export default function ContactsScreen(props: {
           color: "white",
         }}
         onPress={() => {
-          Alert.alert("This feature is In-Progress!");
+          navigation.navigate(routeInfo?.ADD_NEW_CONTACT);
         }}
         color={Colors.blue}
         style={{

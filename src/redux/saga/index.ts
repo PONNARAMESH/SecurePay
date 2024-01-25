@@ -11,6 +11,10 @@ import {
   watchOutMakeNewTransactionSaga,
 } from "./transactionsSagas";
 
+import {
+  watchOutGetAllMyContactsSaga
+} from "./contactSagas";
+
 // RootSaga.js
 export default function* rootSaga() {
   yield all([
@@ -23,6 +27,9 @@ export default function* rootSaga() {
     watchOutMakeNewTransactionSaga(),
     watchOutGetTransactionInfoByIdSaga(),
     watchOutGetMyTransactionsSaga(),
+
+    /** My-Contacts-Sagas */
+    watchOutGetAllMyContactsSaga(),
     // Add more sagas as needed
   ]);
 }

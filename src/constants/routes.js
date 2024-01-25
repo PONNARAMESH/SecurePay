@@ -12,4 +12,5 @@ export const routeInfo = {
   PAYMENT_STATUS: 'Payment Status',
   TRANSACTIONS_INFO: 'Transactions Info',
   MAKE_QR_CODE_PAYMENT_INFO: 'QR Code Payment',
+  ADD_NEW_CONTACT: 'Add New Contact',
 };

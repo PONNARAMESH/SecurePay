@@ -29,6 +29,7 @@ import QRScannerScreen from "../screens/QRScannerScreen";
 import PaymentStatusScreen from "../screens/PaymentStatusScreen";
 import TransactionInfoScreen from "../screens/TransactionInfoScreen";
 import MakeQRCodePaymentScreen from "../screens/MakeQRCodePaymentScreen";
+import AddNewContactScreen from "../screens/AddNewContactScreen/inded";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -213,6 +214,14 @@ export const AuthorizedRoutes = React.memo(function AuthorizedRoutes(
           })}
           name={routeInfo?.MAKE_QR_CODE_PAYMENT_INFO}
           component={MakeQRCodePaymentScreen}
+        />
+        <Stack.Screen
+          options={({ route, navigation }) => {
+            const {headerRight, ...resetOptions} = getCustomHeaderOptions(navigation, dispatch);
+            return resetOptions
+          }}
+          name={routeInfo?.ADD_NEW_CONTACT}
+          component={AddNewContactScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -76,7 +76,7 @@ export function updateRecordInfoByDocIdAPI(
     return fireStoreDB
       .collection(collectionNameForUser)
       .doc(docId)
-      .update(data) // TODO: this line have to change according to Update action
+      .update(data)
       .then(() => {
         console.log("Updated successfully");
         return true;

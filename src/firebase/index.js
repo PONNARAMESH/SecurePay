@@ -11,6 +11,7 @@ const firebaseInstance = firebase;
 const fireStoreDB = firebaseInstance.firestore();
 const collectionNameForUser = 'users';
 const collectionNameForTransactions = 'Transactions';
+const collectionNameForContactsList = 'myContacts';
 
 export default firebaseInstance;
 
@@ -18,5 +19,6 @@ export {
   firebaseInstance,
   fireStoreDB,
   collectionNameForUser,
-  collectionNameForTransactions
+  collectionNameForTransactions,
+  collectionNameForContactsList
 };

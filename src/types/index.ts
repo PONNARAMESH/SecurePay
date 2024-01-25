@@ -78,3 +78,11 @@ export interface IGetMutualTransactionsPayload {
   senderPhoneNumber: string,
   receiverPhoneNumber: string,
 }
+
+export interface IContactInfo {
+  id: string,
+  parentId: string,
+  displayName: string,
+  phoneNumber: string,
+  email: string,
+}
