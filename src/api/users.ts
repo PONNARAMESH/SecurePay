@@ -28,7 +28,7 @@ export async function getAllRecordInfoAPI(filterOptions?: IFilterOptions): Promi
 }
 
 export async function getUserInfoByPhoneNumberAPI(phoneNumber: string): Promise<IUserAccountInfo | null> {
-  // console.log("##filterOptions: ", filterOptions);
+  // console.log("##phoneNumber: ", phoneNumber);
   try {
     return fireStoreDB.collection(collectionNameForUser)
       .where('phoneNumber', "==", phoneNumber)
