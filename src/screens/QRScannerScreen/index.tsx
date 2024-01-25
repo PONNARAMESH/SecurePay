@@ -88,14 +88,6 @@ export default function QRScannerScreen(props: {
         <View style={styles.modalBackground}>
           <View style={styles.activityIndicatorWrapper}>
             <ActivityIndicator animating={isLoading} size={50} color={Colors.appThemeColor} />
-            
-            {/* If you want to image set source here */}
-            {/* <Image
-              source={require('../assets/images/loader.gif')}
-              style={{ height: 80, width: 80 }}
-              resizeMode="contain"
-              resizeMethod="resize"
-            /> */}
           </View>
         </View>
       </Modal>

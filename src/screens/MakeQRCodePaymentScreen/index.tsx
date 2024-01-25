@@ -118,7 +118,7 @@ export default function MakeQRCodePaymentScreen(props: any): React.JSX.Element {
             overlayStyle={{ backgroundColor: "red" }}
           >
             <Dialog.Title title="Dialog Title" />
-            <Text>Dialog body text. Add relevant information here.</Text>
+            <Text>Something went wrong! Please try again.</Text>
             <Button
               title="try again"
               onPress={toggleDialogShowErrorPopUp}
