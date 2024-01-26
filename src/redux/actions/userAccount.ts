@@ -1,5 +1,5 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { ILoggedInUserInfo, IUserEmailInfo } from "../../types";
+import { ILoggedInUserInfo, IUserEmailInfo, IUserSignUpInfo } from "../../types";
 import {
     SIGN_IN_REQUEST,
     SIGN_IN_SUCCESSFUL,
@@ -55,7 +55,7 @@ export function userSingOutFailureAction(error: any) {
 }
 
 // ACTION_CREATORS FOR SING_UP
-export function userSingUpAction(data: IUserEmailInfo) {
+export function userSingUpAction(data: IUserSignUpInfo) {
     return ({
         type: SIGN_UP_REQUEST,
         payload: data,

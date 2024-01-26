@@ -3,6 +3,8 @@ import { useFormContext } from "react-hook-form";
 
 import { findInputError, isFormInvalid } from '../../utils';
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import colors from "../../assets/colors";
+import { color } from "@rneui/base";
 
 export type InputProps = {
     id: string;
@@ -13,7 +15,7 @@ export type InputProps = {
     onChange?: (data: any) => void;
     onChangeText?: (data: any) => void;
     placeholder: string;
-    keyboardType?: "ascii-capable" | "ascii-capable-number-pad" | "decimal-pad" | "default" | "email-address" | "name-phone-pad" | "number-pad" | "numbers-and-punctuation" | "numeric" | "phone-pad" | "twitter" | "url" | "visible-password" | "web-search";
+    inputMode?: 'decimal'| 'email'| 'none' | 'numeric' | 'search' | 'tel' | 'text' | 'url';
     secureTextEntry?: boolean;
     value?: string;
 };
@@ -27,7 +29,7 @@ export const Input = React.memo((props: InputProps): React.JSX.Element => {
         onChange,
         onChangeText,
         placeholder,
-        keyboardType,
+        inputMode,
         secureTextEntry,
         value
     } = props;
@@ -61,7 +63,8 @@ export const Input = React.memo((props: InputProps): React.JSX.Element => {
                 id={id}
                 style={styles.input}
                 placeholder={placeholder}
-                // keyboardType={keyboardType ?? "ascii-capable"}
+                // placeholderTextColor={colors.appThemeColor}
+                inputMode={inputMode || "none"}
                 secureTextEntry={secureTextEntry ?? false}
                 onChangeText={onChangeText}
                 value={value}
@@ -86,7 +89,8 @@ const styles = StyleSheet.create({
         textTransform: 'capitalize',
         marginVertical: 3,
         fontSize: 15,
-        color: "#000",
+        // color: "#000",
+        color: colors?.appThemeColor,
         fontWeight: "bold",
     },
     errorMessage: {
@@ -98,7 +102,8 @@ const styles = StyleSheet.create({
         borderRadius: 0.375,
         color: '#EF4444',
         // backgroundColor: '#FEE2E2',
-        margin: 0
+        margin: 0,
+        fontWeight: "700",
     },
     textArea: {
         maxHeight: 20,
@@ -108,11 +113,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     input: {
-        backgroundColor: "#F4F6F6",
+        backgroundColor: colors.white,
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 10,
         borderWidth: 1,
+        borderColor: colors.appThemeColor,
         fontSize: 15,
+        color: colors.black
     },
 });

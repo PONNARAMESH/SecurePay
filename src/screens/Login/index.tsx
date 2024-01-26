@@ -24,6 +24,7 @@ import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import { email_validation, password_validation } from "../../utils/inputValidations";
 import { userSingInAction } from "../../redux/actions/userAccount";
+import { Avatar } from "@rneui/themed";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -34,12 +35,12 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
     const dispatch = useDispatch();
 
     const { register, setValue, handleSubmit, formState: { errors }, reset, getValues } = useForm();
-    const { emailId, password } = getValues();
+    const { email, password } = getValues();
 
     const handleRest = () => {
         console.log("##restting the form data");
         reset({
-            emailId: '',
+            email: '',
             password: ''
         });
     }
@@ -56,24 +57,31 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
     // console.log('##errors: ', errors);
 
     const backgroundStyle = {
-        backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+        // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+        backgroundColor: Colors?.appThemeColorLight,
     };
 
     return (
         <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
             <StatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={backgroundStyle.backgroundColor}
+                backgroundColor={Colors.appThemeColor}
             />
             <ScrollView
                 contentInsetAdjustmentBehavior="automatic"
                 style={[backgroundStyle]}
             >
                 <View style={styles.imageContainer}>
-                    <Image
+                    <Avatar
+                        size={100}
+                        rounded={true}
+                        source={mashreqBankLogo}
+                        // containerStyle={styles.tinyLogo}
+                    />
+                    {/* <Image
                         style={styles.tinyLogo}
                         source={mashreqBankLogo}
-                    />
+                    /> */}
                 </View>
                 <View style={styles.imageContainer}>
                     <Text style={styles.pageTitle}>Log In to your Account</Text>
@@ -82,18 +90,18 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     id={email_validation?.id}
                     name={email_validation?.name}
                     label={email_validation?.label}
-                    keyboardType="email-address"
+                    inputMode="email"
                     placeholder={email_validation?.placeholder}
                     onChangeText={text => setValue(email_validation?.id, text, { shouldValidate: true })}
                     errors={errors}
-                    value={emailId || ''}
+                    value={email || ''}
                 />
                 <Input
                     id={password_validation?.id}
                     name={password_validation?.name}
                     label={password_validation?.label}
                     secureTextEntry={true}
-                    keyboardType="ascii-capable"
+                    inputMode="text"
                     placeholder={password_validation?.placeholder}
                     onChangeText={text => setValue(password_validation?.id, text, { shouldValidate: true })}
                     errors={errors}
@@ -108,7 +116,7 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
                     <CustomButton
                         title="Log In"
                         onPress={handleSubmit(onSubmit)}
-                        color={colors.green}
+                        color={colors.appThemeColor}
                     />
                 </View>
                 <View style={styles.forgotPasswordContainer}>
@@ -119,7 +127,7 @@ export default function LoginScreen(props: { navigation: any; }): React.JSX.Elem
 
                 <Divider label="Or" color={"gray"} />
                 <CustomButton
-                    title="Registration/Sing Up"
+                    title="Don't have account? click here..."
                     onPress={() => { navigation?.navigate(routeInfo?.SIGN_UP) }}
                     color={colors.blue}
                 />
@@ -149,11 +157,12 @@ const styles = StyleSheet.create({
     pageTitle: {
         fontSize: 25,
         fontWeight: "bold",
-        color: colors.appTheamColor,
+        color: colors.appThemeColor,
     },
     tinyLogo: {
         width: 150,
         height: 150,
+        borderRadius: 75,
     },
     separator: {
         marginVertical: 20,
@@ -176,6 +185,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     forgotPasswordText: {
-        color: colors.green,
+        // color: colors.green,
     }
 });

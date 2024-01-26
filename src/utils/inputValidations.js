@@ -69,10 +69,10 @@ export const confirm_password_validation = {
 };
 
 export const email_validation = {
-  name: 'Email Id',
+  name: 'Email',
   label: 'Email address',
   type: 'email',
-  id: 'emailId',
+  id: 'email',
   placeholder: 'Ex: john@gmail.com',
   validation: {
     required: {
@@ -82,6 +82,43 @@ export const email_validation = {
     pattern: {
       value:
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      message: 'not valid',
+    },
+  },
+};
+
+export const full_name_validation = {
+  name: 'Full Name',
+  label: 'Full Name',
+  type: 'text',
+  id: 'displayName',
+  placeholder: 'Ex: Tom cruise',
+  validation: {
+    required: {
+      value: true,
+      message: 'required',
+    },
+    pattern: {
+      value: /[\w\ ]{5,30}/,
+      message: 'not valid',
+    },
+  },
+};
+
+export const mobile_number_validation = {
+  name: 'Mobile Number',
+  label: 'Mobile Number',
+  type: 'tel',
+  id: 'phoneNumber',
+  placeholder: 'Ex: 9876543210',
+  valueAsNumber: true,
+  validation: {
+    required: {
+      value: true,
+      message: 'required',
+    },
+    pattern: {
+      value:/^[\d]{10}$/,
       message: 'not valid',
     },
   },

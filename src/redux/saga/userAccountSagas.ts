@@ -1,5 +1,5 @@
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import { takeEvery, put, call, takeLatest } from 'redux-saga/effects';
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { takeEvery, put, call, takeLatest } from "redux-saga/effects";
 import {
   userSingInSuccessAction,
   userSingInFailureAction,
@@ -7,20 +7,34 @@ import {
   userSingOutSuccessAction,
   userSingOutFailureAction,
   userSingUpSuccessAction,
-} from '../actions';
+} from "../actions";
 import {
   SIGN_IN_REQUEST,
   SIGN_OUT_REQUEST,
   SIGN_UP_REQUEST,
   SIGN_UP_SUCCESSFUL,
-} from '../actionTypes';
-import { userLoginAPI, userSignOutAPI, userSignUpAPI } from '../../api/users';
-import { IUserEmailInfo } from '../../types';
+} from "../actionTypes";
+import {
+  userLoginAPI,
+  userSignOutAPI,
+  userSignUpAPI,
+} from "../../api/userAccount";
+import { IUserEmailInfo, IUserSignUpInfo } from "../../types";
+import { AddNewRecordAPI, getRecordInfoByDocIdAPI } from "../../api/users";
+import {
+  generateAccountNumber,
+  initialBalance,
+  maskAccountNumber,
+  removeNullUndefined,
+} from "../../utils";
 
-export function* singInSaga(action: { type: string, payload: IUserEmailInfo }) {
+export function* singInSaga(action: { type: string; payload: IUserEmailInfo }) {
   try {
-    const resData:FirebaseAuthTypes.User = yield call(userLoginAPI, action?.payload);
-    // console.log('##res-data: ', resData);
+    const resData: FirebaseAuthTypes.UserCredential = yield call(
+      userLoginAPI,
+      action?.payload
+    );
+    // console.log('##res-data: ', resData.user);
     const {
       displayName,
       email,
@@ -31,21 +45,23 @@ export function* singInSaga(action: { type: string, payload: IUserEmailInfo }) {
       providerId,
       // tenantId,
       uid,
-    } = resData;
-    yield put(userSingInSuccessAction({
-      displayName,
-      email,
-      emailVerified,
-      isAnonymous,
-      phoneNumber,
-      photoURL,
-      providerId,
-      // tenantId,
-      uid,
-    }));
-    // check for failed case as well and un-comment next line
-  } catch (error: unknown) {
-    // console.log('%%%%%%%%%%%---ERROR: ', error);
+    } = resData?.user || {};
+    // const result = getRecordInfoByDocIdAPI(uid).then((data) => console.log("userInfo: ", data));
+    // console.log("##userInfo--: ", result);
+    yield put(
+      userSingInSuccessAction({
+        displayName,
+        email,
+        emailVerified,
+        isAnonymous,
+        phoneNumber,
+        photoURL,
+        providerId,
+        // tenantId,
+        uid,
+      })
+    );
+  } catch (error) {
     const {
       code,
       message,
@@ -62,11 +78,15 @@ export function* watchSingInSaga() {
   yield takeLatest(SIGN_IN_REQUEST, singInSaga);
 }
 
-export function* singOutSaga(action: { type: string, payload: IUserEmailInfo }) {
-  // console.log('##sing-out-saga');
+/**************************************************************** */
+
+export function* singOutSaga(action: {
+  type: string;
+  payload: IUserEmailInfo;
+}) {
   try {
     const resData: boolean = yield call(userSignOutAPI);
-    console.log('##res-data: ', resData);
+    // console.log("##res-data: ", resData);
     yield put(userSingOutSuccessAction());
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);
@@ -82,33 +102,44 @@ export function* watchOutSignOutSaga() {
   yield takeLatest(SIGN_OUT_REQUEST, singOutSaga);
 }
 
-export function* singUpSaga(action: { type: string, payload: IUserEmailInfo }) {
-  // console.log('##sing-in-saga');
+/**************************************************************** */
+
+export function* singUpSaga(action: {
+  type: string;
+  payload: IUserSignUpInfo;
+}) {
+  // console.log('##sing-in-saga: ', JSON.stringify(action, null, 4));
+  const { email, password, phoneNumber, displayName } = action?.payload;
   try {
-    const resData:FirebaseAuthTypes.User = yield call(userSignUpAPI, action?.payload);
+    const resData: FirebaseAuthTypes.UserCredential = yield call(
+      userSignUpAPI,
+      { email, password, displayName, phoneNumber }
+    );
+    const { additionalUserInfo, user } = resData;
     // console.log('##res-data: ', resData);
-    const {
-      displayName,
-      email,
-      emailVerified,
-      isAnonymous,
+    const newAccountId = generateAccountNumber();
+    const loggedInUserInfo = {
+      email: user?.email,
+      emailVerified: user?.emailVerified,
+      isAnonymous: user?.isAnonymous,
+      photoURL: user?.photoURL,
+      providerId: user?.providerId,
+      // tenantId: // user?.tenantId,
+      uid: user?.uid,
       phoneNumber,
-      photoURL,
-      providerId,
-      // tenantId,
-      uid,
-    } = resData;
-    yield put(userSingUpSuccessAction({
       displayName,
-      email,
-      emailVerified,
-      isAnonymous,
-      phoneNumber,
-      photoURL,
-      providerId,
-      // tenantId,
-      uid,
-    }));
+    };
+    // console.log("##loggedInUserInfo: ", JSON.stringify(loggedInUserInfo, null, 4));
+    yield put(userSingUpSuccessAction({ ...loggedInUserInfo }));
+    yield call(
+      AddNewRecordAPI,
+      user?.uid,
+      removeNullUndefined({
+        ...loggedInUserInfo,
+        accountNumber: newAccountId,
+        balance: initialBalance,
+      })
+    );
   } catch (error) {
     // console.log('%%%%%%%%%%%---ERROR: ', error);
     const {
@@ -122,3 +153,5 @@ export function* singUpSaga(action: { type: string, payload: IUserEmailInfo }) {
 export function* watchSingUpSaga() {
   yield takeLatest(SIGN_UP_REQUEST, singUpSaga);
 }
+
+/**************************************************************** */
