@@ -33,12 +33,12 @@ export interface ILoggedInUserInfo {
   providerId?: string | null;
   tenantId?: string | null;
   uid: string | null;
-  contactsList: string[] | null;
 }
 
 export interface IUserAccountInfo extends ILoggedInUserInfo {
   balance: number | null;
   accountNumber: string;
+  contactsList: string[] | null;
 }
 
 export enum EnumTransactionStatusValues {
