@@ -53,14 +53,6 @@ export default function LoginScreen(props: {
   } = useForm();
   const { email, password } = getValues();
 
-  const handleRest = () => {
-    // console.log("##restting the form data");
-    reset({
-      email: "",
-      password: "",
-    });
-  };
-
   const onSubmit = (data: any) => {
     setIsLoading(true);
     setErrorInfo("");
@@ -186,11 +178,6 @@ export default function LoginScreen(props: {
           value={password || ""}
         />
         <View style={styles.buttonsContainer}>
-          {/* <CustomButton
-                        title="Reset"
-                        onPress={handleRest}
-                        color="lightblue"
-                    /> */}
           <Button
             title="Log In"
             buttonStyle={[

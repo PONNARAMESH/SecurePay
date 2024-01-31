@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -9,16 +8,16 @@ import {
   useColorScheme,
   View,
   Dimensions,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { useForm } from "react-hook-form";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton, Divider } from "../../components";
+import { Divider, Input } from "../../components";
 import colors from "../../assets/colors";
-import { routeInfo } from "../../constants/routes";
 import {
   confirm_password_validation,
   email_validation,
@@ -28,7 +27,8 @@ import {
 } from "../../utils/inputValidations";
 import { userSingUpAction } from "../../redux/actions";
 import { Avatar } from "@rneui/base";
-import { Button } from "@rneui/themed";
+import { Button, Icon } from "@rneui/themed";
+import { TRootState } from "../../redux/store";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -40,6 +40,11 @@ export default function SignUpScreen(props: {
   const { navigation } = props;
   const isDarkMode = useColorScheme() === "dark";
   const dispatch = useDispatch();
+  const [errorInfo, setErrorInfo] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const loggedInUserInfo = useSelector((store: TRootState) => store?.user);
+  // console.log("###loggedInUserInfo: ", loggedInUserInfo);
+  
   const {
     register,
     setValue,
@@ -57,21 +62,13 @@ export default function SignUpScreen(props: {
     confirmPassword,
   } = getValues();
 
-  const handleRest = () => {
-    console.log("##restting the form data");
-    reset({});
-  };
-
   const onSingUp = (data: any) => {
+    setIsLoading(true);
+    setErrorInfo("");
     dispatch(userSingUpAction(data));
   };
 
-  const backgroundStyle = {
-    // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
-    backgroundColor: Colors?.appThemeColorLight,
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     register(full_name_validation?.id, full_name_validation?.validation);
     register(
       mobile_number_validation?.id,
@@ -88,14 +85,81 @@ export default function SignUpScreen(props: {
       ...confirm_password_validation?.validation,
     });
   }, [register]);
-
+  
+  useEffect(() => {
+    const { code, message } = loggedInUserInfo?.error || {};
+    if (code) {
+      const errorMessage = (message || "").split("]")[1];
+      setErrorInfo(errorMessage.trim() || "Something went wrong!");
+      setIsLoading(false);
+    }
+  }, [loggedInUserInfo?.error]);
   // console.log('##errors: ', errors);
+
+  const resetErrorInfo = () => setErrorInfo("");
+
+  const backgroundStyle = {
+    // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    backgroundColor: Colors?.appThemeColorLight,
+  };
+
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={isLoading}
+        style={{ zIndex: 1100 }}
+        onRequestClose={() => {
+          setIsLoading(false);
+        }}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator
+              animating={isLoading}
+              size={50}
+              color={Colors.appThemeColor}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={errorInfo ? true : false}
+        style={{ zIndex: 1100 }}
+        onRequestClose={resetErrorInfo}
+      >
+        <View style={styles.modalBackgroundForError}>
+          <View style={styles.activityIndicatorWrapperForError}>
+            <View>
+              <Icon
+                name="closecircleo"
+                size={40}
+                type="antdesign"
+                color={Colors.red}
+                containerStyle={{ margin: 10 }}
+              />
+            </View>
+            <Text style={[styles.errorIcon]}> Error!</Text>
+            <Text style={[styles.errorMessage]}>{errorInfo}</Text>
+            <View style={[styles.modelButtonContainer]}>
+              <Button
+                title="wanna try again?"
+                buttonStyle={{
+                  backgroundColor: Colors.appThemeColor,
+                }}
+                onPress={resetErrorInfo}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle]}
@@ -107,10 +171,6 @@ export default function SignUpScreen(props: {
             source={mashreqBankLogo}
             // containerStyle={styles.tinyLogo}
           />
-          {/* <Image
-                        style={styles.tinyLogo}
-                        source={mashreqBankLogo}
-                    /> */}
         </View>
         <View style={styles.imageContainer}>
           <Text style={styles.pageTitle}>Create Account</Text>
@@ -182,11 +242,6 @@ export default function SignUpScreen(props: {
           value={confirmPassword || ""}
         />
         <View style={styles.buttonsContainer}>
-          {/* <CustomButton
-                        title="Reset"
-                        onPress={handleRest}
-                        color="lightblue"
-                    /> */}
           <Button
             title="Sing UP"
             buttonStyle={[
@@ -195,7 +250,7 @@ export default function SignUpScreen(props: {
                 backgroundColor: Colors.appThemeColor,
               },
             ]}
-            // titleStyle={{ fontWeight: 'bold' }}
+            titleStyle={{ fontWeight: 'bold' }}
             onPress={handleSubmit(onSingUp)}
           />
         </View>
@@ -208,7 +263,7 @@ export default function SignUpScreen(props: {
               backgroundColor: Colors.blue,
             },
           ]}
-          // titleStyle={{ fontWeight: 'bold' }}
+          titleStyle={{ fontWeight: 'bold' }}
           onPress={() => {
             navigation?.goBack();
           }}
@@ -227,6 +282,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingRight: 20,
     gap: 10,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  modalBackgroundForError: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapperForError: {
+    // display: 'flex',
+    alignItems: "center",
+    padding: 10,
+    justifyContent: "space-around",
+    backgroundColor: Colors.white,
+    width: 300,
+    minHeight: 300,
+    borderRadius: 20,
+    gap: -50,
+  },
+  errorIcon: {
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  errorMessage: {
+    fontSize: 18,
+  },
+  modelButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // gap: 10,
   },
   imageContainer: {
     flex: 1,
