@@ -103,13 +103,19 @@ function LandingScreen(): React.JSX.Element {
         ...getCustomHeaderOptions(navigation, dispatch),
         tabBarInactiveBackgroundColor: colors.white,
         tabBarActiveTintColor: colors.white,
+        tabBarActiveBackgroundColor: colors.appThemeColor,
         tabBarInactiveTintColor: colors.appThemeColor,
         tabBarStyle: {
-          height: 40,
-          paddingTop: 0,
-          backgroundColor: colors.appThemeColor,
-          position: "absolute",
-          borderTopWidth: 0,
+          // backgroundColor: colors.appThemeColor,
+          // position: "absolute",
+          // borderTopWidth: 0,
+          shadowOffset: {
+            width: 0,
+            height: 12,
+          },
+          shadowOpacity: 0.58,
+          shadowRadius: 16.0,
+          // elevation: 24,
         },
         unmountOnBlur: true, // This right here will mount the component and reset your screen
       })}
