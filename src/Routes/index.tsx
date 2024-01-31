@@ -109,6 +109,7 @@ function LandingScreen(): React.JSX.Element {
           // backgroundColor: colors.appThemeColor,
           // position: "absolute",
           // borderTopWidth: 0,
+          shadowColor: colors.red,
           shadowOffset: {
             width: 0,
             height: 12,

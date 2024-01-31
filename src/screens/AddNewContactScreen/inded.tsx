@@ -106,7 +106,7 @@ export default function AddNewContactScreen(props: {
 
   const toggleIsLoading = () => setIsLoading(false);
   const resetErrorInfo = () => setErrorInfo("");
-  const handleEditFromNewContactScreen = () => {
+  const handleExitFromNewContactScreen = () => {
     navigation.goBack();
   };
   return (
@@ -167,7 +167,7 @@ export default function AddNewContactScreen(props: {
                 buttonStyle={{
                   backgroundColor: Colors.appThemeColor,
                 }}
-                onPress={handleEditFromNewContactScreen}
+                onPress={handleExitFromNewContactScreen}
               />
             </View>
           </View>

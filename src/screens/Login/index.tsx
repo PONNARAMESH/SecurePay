@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -10,6 +10,8 @@ import {
   View,
   Dimensions,
   TouchableHighlight,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
@@ -25,7 +27,8 @@ import {
   password_validation,
 } from "../../utils/inputValidations";
 import { userSingInAction } from "../../redux/actions/userAccount";
-import { Avatar, Button } from "@rneui/themed";
+import { Avatar, Button, Icon } from "@rneui/themed";
+import { TRootState } from "../../redux/store";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -35,6 +38,10 @@ export default function LoginScreen(props: {
   const { navigation } = props;
   const isDarkMode = useColorScheme() === "dark";
   const dispatch = useDispatch();
+  const [errorInfo, setErrorInfo] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const loggedInUserInfo = useSelector((store: TRootState) => store?.user);
+  console.log("###999: ", loggedInUserInfo);
 
   const {
     register,
@@ -47,7 +54,7 @@ export default function LoginScreen(props: {
   const { email, password } = getValues();
 
   const handleRest = () => {
-    console.log("##restting the form data");
+    // console.log("##restting the form data");
     reset({
       email: "",
       password: "",
@@ -55,6 +62,8 @@ export default function LoginScreen(props: {
   };
 
   const onSubmit = (data: any) => {
+    setIsLoading(true);
+    setErrorInfo("");
     dispatch(userSingInAction(data));
   };
 
@@ -63,6 +72,14 @@ export default function LoginScreen(props: {
     register(password_validation.id, password_validation.validation);
   }, [register]);
 
+  React.useEffect(() => {
+    const { code, message } = loggedInUserInfo?.error || {};
+    if (code) {
+      const errorMessage = (message || "").split("]")[1];
+      setErrorInfo(errorMessage.trim() || "Something went wrong!");
+      setIsLoading(false);
+    }
+  }, [loggedInUserInfo?.error]);
   // console.log('##errors: ', errors);
 
   const backgroundStyle = {
@@ -70,12 +87,65 @@ export default function LoginScreen(props: {
     backgroundColor: Colors?.appThemeColorLight,
   };
 
+  const resetErrorInfo = () => setErrorInfo("");
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={isLoading}
+        style={{ zIndex: 1100 }}
+        onRequestClose={() => {
+          setIsLoading(false);
+        }}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator
+              animating={isLoading}
+              size={50}
+              color={Colors.appThemeColor}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={errorInfo ? true : false}
+        style={{ zIndex: 1100 }}
+        onRequestClose={resetErrorInfo}
+      >
+        <View style={styles.modalBackgroundForError}>
+          <View style={styles.activityIndicatorWrapperForError}>
+            <View>
+              <Icon
+                name="closecircleo"
+                size={40}
+                type="antdesign"
+                color={Colors.red}
+                containerStyle={{ margin: 10 }}
+              />
+            </View>
+            <Text style={[styles.errorIcon]}> Error!</Text>
+            <Text style={[styles.errorMessage]}>{errorInfo}</Text>
+            <View style={[styles.modelButtonContainer]}>
+              <Button
+                title="wanna try again?"
+                buttonStyle={{
+                  backgroundColor: Colors.appThemeColor,
+                }}
+                onPress={resetErrorInfo}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle]}
@@ -85,12 +155,7 @@ export default function LoginScreen(props: {
             size={100}
             rounded={true}
             source={mashreqBankLogo}
-            // containerStyle={styles.tinyLogo}
           />
-          {/* <Image
-                        style={styles.tinyLogo}
-                        source={mashreqBankLogo}
-                    /> */}
         </View>
         <View style={styles.imageContainer}>
           <Text style={styles.pageTitle}>Log In to your Account</Text>
@@ -172,6 +237,50 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     gap: 10,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  modalBackgroundForError: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapperForError: {
+    // display: 'flex',
+    alignItems: "center",
+    padding: 10,
+    justifyContent: "space-around",
+    backgroundColor: Colors.white,
+    width: 300,
+    minHeight: 300,
+    borderRadius: 20,
+    gap: -50,
+  },
+  errorIcon: {
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  errorMessage: {
+    fontSize: 18,
+  },
+  modelButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // gap: 10,
   },
   imageContainer: {
     flex: 1,
