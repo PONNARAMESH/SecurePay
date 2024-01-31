@@ -7,6 +7,8 @@ import {
   useColorScheme,
   View,
   Dimensions,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -35,8 +37,17 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
   const { transactionId } = props?.route?.params || {};
   const isDarkMode = useColorScheme() === "dark";
   const [expanded, setExpanded] = React.useState<boolean>(true);
-  const [transactionInfo, setTransactionInfo] = React.useState<ITransactionInfo | null>(null);
-  const [receiverAccountInfo, setReceiverAccountInfo] = React.useState<IUserAccountInfo | null>(null);
+  const [
+    transactionInfo,
+    setTransactionInfo,
+  ] = React.useState<ITransactionInfo | null>(null);
+  const [
+    receiverAccountInfo,
+    setReceiverAccountInfo,
+  ] = React.useState<IUserAccountInfo | null>(null);
+  const [isFetchingAccountInfo, setIsFetchingAccountInfo] = React.useState<
+    boolean
+  >(false);
 
   const loggedInUserInfo = useSelector(
     (store: TRootState) => store?.user?.data
@@ -51,23 +62,28 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
   };
 
   useEffect(() => {
+    setIsFetchingAccountInfo(true);
     getTransactionInfoByTxnId(transactionId)
-    .then(async (txnInfo) => {
-      const userAccountInfo = await getUserInfoByPhoneNumberAPI(txnInfo?.receiver as string);
-      return {
-        txnInfo,
-        userAccountInfo,
-      }
-    })
-    .then(res => {
-      // console.log("$$$res: ", JSON.stringify(res, null, 4))
-      setTransactionInfo(res.txnInfo);
-      setReceiverAccountInfo(res.userAccountInfo);
-    })
-    .catch(error => {
-      console.log("##error: ", error);
-    })
-  }, [transactionId])
+      .then(async (txnInfo) => {
+        const userAccountInfo = await getUserInfoByPhoneNumberAPI(
+          txnInfo?.receiver as string
+        );
+        return {
+          txnInfo,
+          userAccountInfo,
+        };
+      })
+      .then((res) => {
+        // console.log("$$$res: ", JSON.stringify(res, null, 4))
+        setTransactionInfo(res.txnInfo);
+        setReceiverAccountInfo(res.userAccountInfo);
+        setIsFetchingAccountInfo(false);
+      })
+      .catch((error) => {
+        console.log("##error: ", error);
+        setIsFetchingAccountInfo(false);
+      });
+  }, [transactionId]);
 
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
@@ -75,6 +91,25 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={isFetchingAccountInfo}
+        style={{ zIndex: 1100 }}
+        // onRequestClose={() => {
+        //   setIsLoading(false);
+        // }}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator
+              animating={isFetchingAccountInfo}
+              size={50}
+              color={Colors.appThemeColor}
+            />
+          </View>
+        </View>
+      </Modal>
       <View style={[styles.transactionInfoContainer]}>
         <Text style={[styles?.paidToText]}> Paid to</Text>
         <View style={[styles.receiverInfoContainer]}>
@@ -92,7 +127,7 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
                 size: 26,
                 color: Colors.black,
               }}
-              containerStyle={{ backgroundColor: "#c2c2c2",  }}
+              containerStyle={{ backgroundColor: "#c2c2c2" }}
             />
           )}
           <Text style={styles.receiverNameContainer}>
@@ -123,18 +158,24 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
         >
           <View style={[styles.sectionContainer]}>
             <Text style={[styles.sectionLabel]}>Transaction Id</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
-              <Text style={[styles.sectionValue]}>
-                {transactionInfo?.id}
-              </Text>
-              <Icon name="copy1" type="ant-design" color={Colors.appThemeColor}/>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text style={[styles.sectionValue]}>{transactionInfo?.id}</Text>
+              <Icon
+                name="copy1"
+                type="ant-design"
+                color={Colors.appThemeColor}
+              />
             </View>
           </View>
           <View style={[styles.sectionContainer]}>
             <Text style={[styles.sectionLabel]}>Date & Time</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
               <Text style={[styles.sectionValue]}>
-                {new Date(transactionInfo?.createdAt || '').toLocaleString()}
+                {new Date(transactionInfo?.createdAt || "").toLocaleString()}
               </Text>
               {/* <Icon name="copy1" type="ant-design" color={Colors.appThemeColor}/> */}
             </View>
@@ -192,7 +233,10 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
                 size: 26,
                 color: Colors.white,
               }}
-              containerStyle={{ backgroundColor: Colors.appThemeColor, borderRadius: 10, }}
+              containerStyle={{
+                backgroundColor: Colors.appThemeColor,
+                borderRadius: 10,
+              }}
             />
             <Text style={[styles.buttonLabel]}>Send Again</Text>
           </View>
@@ -204,7 +248,10 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
                 size: 26,
                 color: Colors.white,
               }}
-              containerStyle={{ backgroundColor: Colors.appThemeColor, borderRadius: 10, }}
+              containerStyle={{
+                backgroundColor: Colors.appThemeColor,
+                borderRadius: 10,
+              }}
             />
             <Text style={[styles.buttonLabel]}>View History</Text>
           </View>
@@ -216,7 +263,10 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
                 size: 26,
                 color: Colors.white,
               }}
-              containerStyle={{ backgroundColor: Colors.appThemeColor, borderRadius: 10, }}
+              containerStyle={{
+                backgroundColor: Colors.appThemeColor,
+                borderRadius: 10,
+              }}
             />
             <Text style={[styles.buttonLabel]}>Share Receipt</Text>
           </View>
@@ -231,6 +281,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: windowWidth,
     height: windowHeight,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   transactionInfoContainer: {
     margin: 10,
@@ -294,8 +357,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: "auto",
   },
-  iconContainer: {
-  },
+  iconContainer: {},
   accountInfoContainer: {
     width: "60%",
     rowGap: 20,
@@ -327,6 +389,6 @@ const styles = StyleSheet.create({
   buttonLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.appThemeColor
+    color: Colors.appThemeColor,
   },
 });

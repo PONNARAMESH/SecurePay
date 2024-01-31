@@ -9,16 +9,20 @@ export function useFetchUserInfoById(userId: string = "") {
     userAccountInfo,
     setUserAccountInfo,
   ] = useState<IUserAccountInfo | null>(null);
+  const [isFetchingAccountInfo, setIsFetchingAccountInfo] = useState<boolean>(true);
   useEffect(() => {
+    setIsFetchingAccountInfo(true);
     getRecordInfoByDocIdAPI(userId)
       .then((res) => {
         // console.log('##AccountInfo: ', res);
         res && setUserAccountInfo(res);
+        setIsFetchingAccountInfo(false);
       })
       .catch((error) => {
         // console.log("##error: ", error);
+        setIsFetchingAccountInfo(false);
         return error;
       });
   }, [userId]);
-  return userAccountInfo;
+  return {userAccountInfo, isFetchingAccountInfo};
 }

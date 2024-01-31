@@ -10,6 +10,8 @@ import {
   View,
   Dimensions,
   Alert,
+  Modal,
+  ActivityIndicator,
   // Button,
 } from "react-native";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
@@ -40,7 +42,7 @@ export default function HomeScreen(props: {
     (store) => store?.user?.data
   ) as ILoggedInUserInfo | null;
   const dispatch = useDispatch();
-  const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
+  const {userAccountInfo: accountInfo, isFetchingAccountInfo} = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   // console.log("##----accountInfo: ", accountInfo);
   const [
     doYouWannaMaskSensitiveInfo,
@@ -62,6 +64,25 @@ export default function HomeScreen(props: {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={isFetchingAccountInfo}
+        style={{ zIndex: 1100 }}
+        // onRequestClose={() => {
+        //   setIsLoading(false);
+        // }}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator
+              animating={isFetchingAccountInfo}
+              size={50}
+              color={Colors.appThemeColor}
+            />
+          </View>
+        </View>
+      </Modal>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle]}
@@ -128,6 +149,19 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   imageContainer: {
     flex: 1,

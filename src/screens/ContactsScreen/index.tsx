@@ -9,6 +9,8 @@ import {
   Dimensions,
   SectionList,
   RefreshControl,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import TouchableScale from "react-native-touchable-scale";
@@ -45,13 +47,14 @@ export default function ContactsScreen(props: {
     (store) => store.contacts
   ) as IContactsReducer;
 
-  const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
+  const {
+    userAccountInfo: accountInfo,
+    isFetchingAccountInfo,
+  } = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   // console.log("##----accountInfo: ", accountInfo);
 
   useEffect(() => {
-    dispatch(
-      getAllMyContactsRequestAction(accountInfo?.phoneNumber as string)
-    );
+    dispatch(getAllMyContactsRequestAction(accountInfo?.phoneNumber as string));
   }, [accountInfo?.contactsList]);
 
   // console.log("##contactsInfo: ", {myContacts, isFetchingMyContacts, errorInfo})
@@ -62,9 +65,7 @@ export default function ContactsScreen(props: {
   };
 
   const onRefresh = () => {
-    dispatch(
-      getAllMyContactsRequestAction(accountInfo?.phoneNumber as string)
-    );
+    dispatch(getAllMyContactsRequestAction(accountInfo?.phoneNumber as string));
   };
 
   const groupedContactsInfo = groupTheContactsBasedOnAlphabeticalOrder(
@@ -78,6 +79,25 @@ export default function ContactsScreen(props: {
           barStyle={isDarkMode ? "light-content" : "dark-content"}
           backgroundColor={Colors.appThemeColor}
         />
+        <Modal
+          transparent={true}
+          animationType={"none"}
+          visible={isFetchingAccountInfo || isFetchingMyContacts}
+          style={{ zIndex: 1100 }}
+          // onRequestClose={() => {
+          //   setIsLoading(false);
+          // }}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.activityIndicatorWrapper}>
+              <ActivityIndicator
+                animating={isFetchingAccountInfo || isFetchingMyContacts}
+                size={50}
+                color={Colors.appThemeColor}
+              />
+            </View>
+          </View>
+        </Modal>
         <View style={[styles.emptyContainer]}>
           <Icon
             name="account-search"
@@ -132,7 +152,7 @@ export default function ContactsScreen(props: {
           title: key,
           data: groupedContactsInfo[key],
         }))}
-        keyExtractor={(item, index) => item.phoneNumber + index}
+        keyExtractor={(item, index) => item?.phoneNumber + index}
         renderItem={({ item }) => (
           <ListItem
             bottomDivider
@@ -175,13 +195,13 @@ export default function ContactsScreen(props: {
             )}
             <ListItem.Content>
               <ListItem.Title style={[styles.ItemTitle]}>
-                {item.displayName}
+                {item?.displayName}
               </ListItem.Title>
               <ListItem.Subtitle style={[styles.ItemSubTitle]}>
-                {item.email}
+                {item?.email}
               </ListItem.Subtitle>
               <ListItem.Subtitle style={[styles.ItemSubTitle]}>
-                {item.phoneNumber}
+                {item?.phoneNumber}
               </ListItem.Subtitle>
             </ListItem.Content>
             <ListItem.Chevron size={40} color={Colors?.white} />
@@ -220,6 +240,19 @@ const styles = StyleSheet.create({
     height: windowHeight,
     paddingHorizontal: 10,
     paddingBottom: 50,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   emptyContainer: {
     height: "100%",

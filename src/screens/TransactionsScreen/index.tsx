@@ -7,6 +7,8 @@ import {
   useColorScheme,
   View,
   Dimensions,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { FlatList } from "react-native";
@@ -47,7 +49,10 @@ export default function TransactionsScreen(props: {
     })
   );
 
-  const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
+  const {
+    userAccountInfo: accountInfo,
+    isFetchingAccountInfo,
+  } = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   // const { phoneNumber } = loggedInUserInfo || {};
   // console.log("##userInfo: ", accountInfo);
   // console.log("##transactions: ", transactionsInfo.transactions);
@@ -145,7 +150,9 @@ export default function TransactionsScreen(props: {
     });
   };
 
-  const sortedTransactionsData = ([...transactionsInfo?.transactions] || []).sort(
+  const sortedTransactionsData = (
+    [...transactionsInfo?.transactions] || []
+  ).sort(
     (a: ITransactionInfo, b: ITransactionInfo) =>
       new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
   );
@@ -156,6 +163,30 @@ export default function TransactionsScreen(props: {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={
+          isFetchingAccountInfo || transactionsInfo?.isFetchingTransactionsInfo
+        }
+        style={{ zIndex: 1100 }}
+        // onRequestClose={() => {
+        //   setIsLoading(false);
+        // }}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator
+              animating={
+                isFetchingAccountInfo ||
+                transactionsInfo?.isFetchingTransactionsInfo
+              }
+              size={50}
+              color={Colors.appThemeColor}
+            />
+          </View>
+        </View>
+      </Modal>
       <FlatList
         data={sortedTransactionsData}
         keyExtractor={(item) => item.id}
@@ -246,6 +277,19 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: 40,
     gap: 10,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   emptyContainer: {
     height: "100%",

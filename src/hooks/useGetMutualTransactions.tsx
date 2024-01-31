@@ -14,11 +14,11 @@ export function useGetMutualTransactions() {
 
   function getMutualTransactionAPICall(payload: IGetMutualTransactionsPayload) {
     // console.log("##payload: ", payload)
-    setIsFetchingMutualTransactions(false);
+    setIsFetchingMutualTransactions(true);
     getMutualTransactionsAPI({ ...payload })
       .then((res) => {
         // console.log('##Mutual-transactions: ', res);
-        setIsFetchingMutualTransactions(true);
+        setIsFetchingMutualTransactions(false);
         res && setMutualTransactions(res);
       })
       .catch((error) => {

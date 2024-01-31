@@ -47,7 +47,10 @@ export default function AddNewContactScreen(props: {
   const loggedInUserInfo = useSelector(
     (store: TRootState) => store?.user?.data
   );
-  const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
+  const {
+    userAccountInfo: accountInfo,
+    isFetchingAccountInfo,
+  } = useFetchUserInfoById(loggedInUserInfo?.uid || "");
 
   const [errorInfo, setErrorInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -149,7 +152,7 @@ export default function AddNewContactScreen(props: {
                 size={40}
                 type="antdesign"
                 color={Colors.red}
-                containerStyle={{margin: 10,}}
+                containerStyle={{ margin: 10 }}
               />
               <Text style={[styles.errorIcon]}> Error!</Text>
               <Text style={[styles.errorMessage]}>{errorInfo}</Text>
