@@ -9,8 +9,6 @@ import {
   Dimensions,
   SectionList,
   RefreshControl,
-  Modal,
-  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import TouchableScale from "react-native-touchable-scale";
@@ -28,6 +26,7 @@ import { ILoggedInUserInfo } from "../../types";
 import { useFetchUserInfoById } from "../../hooks";
 import { getAllMyContactsRequestAction } from "../../redux/actions/contacts";
 import { IContactsReducer } from "../../redux/reducers";
+import { PageLoadSpinner } from "../../components";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -79,25 +78,7 @@ export default function ContactsScreen(props: {
           barStyle={isDarkMode ? "light-content" : "dark-content"}
           backgroundColor={Colors.appThemeColor}
         />
-        <Modal
-          transparent={true}
-          animationType={"none"}
-          visible={isFetchingAccountInfo || isFetchingMyContacts}
-          style={{ zIndex: 1100 }}
-          // onRequestClose={() => {
-          //   setIsLoading(false);
-          // }}
-        >
-          <View style={styles.modalBackground}>
-            <View style={styles.activityIndicatorWrapper}>
-              <ActivityIndicator
-                animating={isFetchingAccountInfo || isFetchingMyContacts}
-                size={50}
-                color={Colors.appThemeColor}
-              />
-            </View>
-          </View>
-        </Modal>
+        <PageLoadSpinner isLoading={isFetchingAccountInfo || isFetchingMyContacts} />
         <View style={[styles.emptyContainer]}>
           <Icon
             name="account-search"
@@ -240,19 +221,6 @@ const styles = StyleSheet.create({
     height: windowHeight,
     paddingHorizontal: 10,
     paddingBottom: 50,
-  },
-  modalBackground: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
   emptyContainer: {
     height: "100%",

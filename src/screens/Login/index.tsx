@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -10,16 +10,13 @@ import {
   View,
   Dimensions,
   TouchableHighlight,
-  Modal,
-  ActivityIndicator,
 } from "react-native";
 import { useForm } from "react-hook-form";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton, Divider } from "../../components";
+import { Input, Divider, PageLoadSpinner, ErrorPopUpModal } from "../../components";
 import colors from "../../assets/colors";
 import { routeInfo } from "../../constants/routes";
 import {
@@ -79,65 +76,19 @@ export default function LoginScreen(props: {
     backgroundColor: Colors?.appThemeColorLight,
   };
 
-  const resetErrorInfo = () => setErrorInfo("");
+  const resetErrorInfo = useCallback(() => setErrorInfo(""), []);
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={isLoading}
-        style={{ zIndex: 1100 }}
-        onRequestClose={() => {
-          setIsLoading(false);
-        }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator
-              animating={isLoading}
-              size={50}
-              color={Colors.appThemeColor}
-            />
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={errorInfo ? true : false}
-        style={{ zIndex: 1100 }}
-        onRequestClose={resetErrorInfo}
-      >
-        <View style={styles.modalBackgroundForError}>
-          <View style={styles.activityIndicatorWrapperForError}>
-            <View>
-              <Icon
-                name="closecircleo"
-                size={40}
-                type="antdesign"
-                color={Colors.red}
-                containerStyle={{ margin: 10 }}
-              />
-            </View>
-            <Text style={[styles.errorIcon]}> Error!</Text>
-            <Text style={[styles.errorMessage]}>{errorInfo}</Text>
-            <View style={[styles.modelButtonContainer]}>
-              <Button
-                title="wanna try again?"
-                buttonStyle={{
-                  backgroundColor: Colors.appThemeColor,
-                }}
-                onPress={resetErrorInfo}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner isLoading={isLoading} />
+      <ErrorPopUpModal
+        isVisible={errorInfo ? true : false}
+        errorInfo={errorInfo}
+        resetErrorInfo={resetErrorInfo}
+      />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle]}
@@ -224,50 +175,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     gap: 10,
-  },
-  modalBackground: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  modalBackgroundForError: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapperForError: {
-    // display: 'flex',
-    alignItems: "center",
-    padding: 10,
-    justifyContent: "space-around",
-    backgroundColor: Colors.white,
-    width: 300,
-    minHeight: 300,
-    borderRadius: 20,
-    gap: -50,
-  },
-  errorIcon: {
-    fontSize: 25,
-    fontWeight: "bold",
-  },
-  errorMessage: {
-    fontSize: 18,
-  },
-  modelButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    // gap: 10,
   },
   imageContainer: {
     flex: 1,

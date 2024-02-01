@@ -37,6 +37,7 @@ import {
   resetTransactionInfoByIdAction,
 } from "../../redux/actions/transactions";
 import { routeInfo } from "../../constants/routes";
+import { PageLoadSpinner } from "../../components";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -260,32 +261,18 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
       </SafeAreaView>
     );
   }
-  
+
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={isFetchingAccountInfo || isFetchingMutualTransactions || isLoading}
-        style={{ zIndex: 1100 }}
-        // onRequestClose={() => {
-        //   setIsLoading(false);
-        // }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator
-              animating={isFetchingAccountInfo || isFetchingMutualTransactions || isLoading}
-              size={50}
-              color={Colors.appThemeColor}
-            />
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner
+        isLoading={
+          isFetchingAccountInfo || isFetchingMutualTransactions || isLoading
+        }
+      />
       <View style={[styles.subHeader]}>
         {isUrlValid(receiverInfo?.photoURL || "") ? (
           <Avatar rounded source={{ uri: receiverInfo?.photoURL || "" }} />
@@ -466,19 +453,6 @@ const styles = StyleSheet.create({
     width: windowWidth,
     height: windowHeight,
     // paddingBottom: 50,
-  },
-  modalBackground: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
   emptyContainer: {
     height: "100%",

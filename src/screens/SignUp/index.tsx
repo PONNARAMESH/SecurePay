@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Colors from "../../assets/colors";
 import { mashreqBankLogo } from "../../assets/images";
-import { Divider, Input } from "../../components";
+import { Divider, ErrorPopUpModal, Input, PageLoadSpinner } from "../../components";
 import colors from "../../assets/colors";
 import {
   confirm_password_validation,
@@ -96,8 +96,8 @@ export default function SignUpScreen(props: {
   }, [loggedInUserInfo?.error]);
   // console.log('##errors: ', errors);
 
-  const resetErrorInfo = () => setErrorInfo("");
-
+  const resetErrorInfo = useCallback(() => setErrorInfo(""), []);
+ 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
     backgroundColor: Colors?.appThemeColorLight,
@@ -109,57 +109,12 @@ export default function SignUpScreen(props: {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={isLoading}
-        style={{ zIndex: 1100 }}
-        onRequestClose={() => {
-          setIsLoading(false);
-        }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator
-              animating={isLoading}
-              size={50}
-              color={Colors.appThemeColor}
-            />
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={errorInfo ? true : false}
-        style={{ zIndex: 1100 }}
-        onRequestClose={resetErrorInfo}
-      >
-        <View style={styles.modalBackgroundForError}>
-          <View style={styles.activityIndicatorWrapperForError}>
-            <View>
-              <Icon
-                name="closecircleo"
-                size={40}
-                type="antdesign"
-                color={Colors.red}
-                containerStyle={{ margin: 10 }}
-              />
-            </View>
-            <Text style={[styles.errorIcon]}> Error!</Text>
-            <Text style={[styles.errorMessage]}>{errorInfo}</Text>
-            <View style={[styles.modelButtonContainer]}>
-              <Button
-                title="wanna try again?"
-                buttonStyle={{
-                  backgroundColor: Colors.appThemeColor,
-                }}
-                onPress={resetErrorInfo}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner isLoading={isLoading} />
+      <ErrorPopUpModal
+        isVisible={errorInfo ? true : false}
+        errorInfo={errorInfo}
+        resetErrorInfo={resetErrorInfo}
+      />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle]}

@@ -47,48 +47,41 @@ export default function paymentTransactionReducers(
         ...state,
         isFetchingTransactionsInfo: true,
         transactionInfo: null,
-        paymentStatus: null,
       };
     case GET_TRANSACTION_INFO_BY_ID_SUCCESS:
       return {
         ...state,
         isFetchingTransactionsInfo: false,
         transactionInfo: action.payload,
-        paymentStatus: null,
       };
     case GET_TRANSACTION_INFO_BY_ID_FAILED:
       return {
         ...state,
         isFetchingTransactionsInfo: false,
         transactionInfo: null,
-        paymentStatus: null,
       };
     case RESET_TRANSACTION_INFO_BY_ID:
       return {
         ...state,
-        isFetchingTransactionsInfo: true,
+        isFetchingTransactionsInfo: false,
         transactionInfo: null,
-        paymentStatus: null,
       };
     case GET_MY_TRANSACTIONS_REQUEST:
       return {
         ...state,
         isFetchingTransactions: true,
-        paymentStatus: null,
       };
     case GET_MY_TRANSACTIONS_SUCCESS:
       return {
         ...state,
         isFetchingTransactions: false,
         transactions: action.payload,
-        paymentStatus: null,
       };
     case GET_MY_TRANSACTIONS_FAILED:
       return {
         ...state,
         isFetchingTransactions: false,
         transactions: [],
-        paymentStatus: null,
       };
     default:
       return state;

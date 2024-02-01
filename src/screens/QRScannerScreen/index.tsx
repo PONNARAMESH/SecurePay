@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -7,10 +7,6 @@ import {
   View,
   Dimensions,
   Alert,
-  Linking,
-  ActivityIndicator,
-  Modal,
-  Text,
 } from "react-native";
 
 import Colors from "../../assets/colors";
@@ -21,6 +17,7 @@ import { Button, Icon } from "@rneui/themed";
 import { color } from "@rneui/base";
 import { getUserInfoByPhoneNumberAPI } from "../../api/users";
 import { routeInfo } from "../../constants/routes";
+import { ErrorPopUpModal, PageLoadSpinner } from "../../components";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -66,11 +63,11 @@ export default function QRScannerScreen(props: {
       setErrorInfo("It's not a valid QR code");
     }
   };
-  
-  const resetErrorInfo = () => {
+
+  const resetErrorInfo = useCallback(() => {
     setErrorInfo("");
     setIsLoading(false);
-  };
+  }, []);
 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
@@ -83,52 +80,12 @@ export default function QRScannerScreen(props: {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      <Modal
-        transparent={true}
-        animationType={'none'}
-        visible={isLoading}
-        style={{ zIndex: 1100 }}
-        onRequestClose={() => {
-          setIsLoading(false);
-        }}>
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator animating={isLoading} size={50} color={Colors.appThemeColor} />
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={errorInfo ? true : false}
-        style={{ zIndex: 1100 }}
-        onRequestClose={resetErrorInfo}
-      >
-        <View style={styles.modalBackgroundForError}>
-          <View style={styles.activityIndicatorWrapperForError}>
-            <View>
-              <Icon
-                name="closecircleo"
-                size={40}
-                type="antdesign"
-                color={Colors.red}
-                containerStyle={{ margin: 10 }}
-              />
-            </View>
-            <Text style={[styles.errorIcon]}> Error!</Text>
-            <Text style={[styles.errorMessage]}>{errorInfo}</Text>
-            <View style={[styles.modelButtonContainer]}>
-              <Button
-                title="wanna try again?"
-                buttonStyle={{
-                  backgroundColor: Colors.appThemeColor,
-                }}
-                onPress={resetErrorInfo}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner isLoading={isLoading} />
+      <ErrorPopUpModal
+        isVisible={errorInfo ? true : false}
+        errorInfo={errorInfo}
+        resetErrorInfo={resetErrorInfo}
+      />
       <QRCodeScanner
         onRead={onSuccess}
         flashMode={
@@ -206,49 +163,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: -100,
     gap: 20,
-  },
-  modalBackground: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    backgroundColor: '#rgba(0, 0, 0, 0.5)',
-    zIndex: 1000
-  },
-  activityIndicatorWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around'
-  },
-  modalBackgroundForError: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapperForError: {
-    // display: 'flex',
-    alignItems: "center",
-    padding: 10,
-    justifyContent: "space-around",
-    backgroundColor: Colors.white,
-    width: 300,
-    minHeight: 250,
-    borderRadius: 20,
-    // gap: -50,
-  },
-  errorIcon: {
-    fontSize: 25,
-    fontWeight: "bold",
-  },
-  errorMessage: {
-    fontSize: 18,
-  },
-  modelButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    // gap: 10,
   },
 });

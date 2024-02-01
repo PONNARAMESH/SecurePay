@@ -28,6 +28,7 @@ import { mashreqBankLogo } from "../../assets/images";
 import { ITransactionInfo, IUserAccountInfo } from "../../types";
 import { getTransactionInfoByTxnId } from "../../api/transactions";
 import { getUserInfoByPhoneNumberAPI } from "../../api/users";
+import { PageLoadSpinner } from "../../components";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -91,25 +92,7 @@ export default function TransactionInfoScreen(props: any): React.JSX.Element {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={isFetchingAccountInfo}
-        style={{ zIndex: 1100 }}
-        // onRequestClose={() => {
-        //   setIsLoading(false);
-        // }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator
-              animating={isFetchingAccountInfo}
-              size={50}
-              color={Colors.appThemeColor}
-            />
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner isLoading={isFetchingAccountInfo} />
       <View style={[styles.transactionInfoContainer]}>
         <Text style={[styles?.paidToText]}> Paid to</Text>
         <View style={[styles.receiverInfoContainer]}>
@@ -281,19 +264,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: windowWidth,
     height: windowHeight,
-  },
-  modalBackground: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
   transactionInfoContainer: {
     margin: 10,

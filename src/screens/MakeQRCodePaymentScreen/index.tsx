@@ -8,8 +8,6 @@ import {
   View,
   Dimensions,
   Alert,
-  Modal,
-  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -24,6 +22,7 @@ import {
   makeNewTransactionRequestAction,
   resetTransactionInfoByIdAction,
 } from "../../redux/actions/transactions";
+import { PageLoadSpinner } from "../../components";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -113,25 +112,7 @@ export default function MakeQRCodePaymentScreen(props: any): React.JSX.Element {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={isLoading}
-        style={{ zIndex: 1100 }}
-        // onRequestClose={() => {
-        //   setIsLoading(false);
-        // }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator
-              animating={isLoading}
-              size={50}
-              color={Colors.appThemeColor}
-            />
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner isLoading={isLoading} />
       <View style={[styles.cardContainer]}>
         {paymentsData.paymentStatus ===
           EnumTransactionStatusValues.TTxnFailed && (
@@ -196,6 +177,7 @@ export default function MakeQRCodePaymentScreen(props: any): React.JSX.Element {
           inputContainerStyle={styles.inputContainerStyle}
           inputStyle={[styles.message]}
           onChangeText={handleTxnMessage}
+          value={txnMessage}
         />
       </View>
       <View style={[styles.proceedButtonContainer]}>
@@ -221,19 +203,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: windowWidth,
     height: windowHeight,
-  },
-  modalBackground: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
   cardContainer: {
     backgroundColor: Colors.white,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -8,9 +8,6 @@ import {
   View,
   Dimensions,
   ScrollView,
-  Alert,
-  Modal,
-  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -25,15 +22,12 @@ import {
 } from "../../utils/inputValidations";
 import { useForm } from "react-hook-form";
 import { Input } from "../../components/Input/Input";
-import {
-  getUserInfoByPhoneNumberAPI,
-  updateRecordInfoByDocIdAPI,
-} from "../../api/users";
 import { generateRandomId } from "../../utils";
 import { IContactInfo } from "../../types";
 import { AddNewContactAPI } from "../../api/contacts";
 import { getAllMyContactsRequestAction } from "../../redux/actions/contacts";
 import { useFetchUserInfoById } from "../../hooks";
+import { ErrorPopUpModal, PageLoadSpinner } from "../../components";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -108,74 +102,23 @@ export default function AddNewContactScreen(props: {
   };
 
   const toggleIsLoading = () => setIsLoading(false);
-  const resetErrorInfo = () => setErrorInfo("");
-  const handleExitFromNewContactScreen = () => {
+  const resetErrorInfo = useCallback(() => setErrorInfo(""), []);
+  const handleExitFromNewContactScreen = useCallback(() => {
     navigation.goBack();
-  };
+  }, []);
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={isLoading}
-        style={{ zIndex: 1100 }}
-        onRequestClose={() => {
-          setIsLoading(false);
-        }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator
-              animating={isLoading}
-              size={50}
-              color={Colors.appThemeColor}
-            />
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={errorInfo ? true : false}
-        style={{ zIndex: 1100 }}
-        onRequestClose={resetErrorInfo}
-      >
-        <View style={styles.modalBackgroundForError}>
-          <View style={styles.activityIndicatorWrapperForError}>
-            <View>
-              <Icon
-                name="closecircleo"
-                size={40}
-                type="antdesign"
-                color={Colors.red}
-                containerStyle={{ margin: 10 }}
-              />
-              <Text style={[styles.errorIcon]}> Error!</Text>
-              <Text style={[styles.errorMessage]}>{errorInfo}</Text>
-            </View>
-            <View style={[styles.modelButtonContainer]}>
-              <Button
-                title="wanna try again?"
-                buttonStyle={{
-                  backgroundColor: Colors.appThemeColor,
-                }}
-                onPress={resetErrorInfo}
-              />
-              <Button
-                title="Exit"
-                buttonStyle={{
-                  backgroundColor: Colors.appThemeColor,
-                }}
-                onPress={handleExitFromNewContactScreen}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner isLoading={isLoading} />
+      <ErrorPopUpModal
+        isVisible={errorInfo ? true : false}
+        errorInfo={errorInfo}
+        resetErrorInfo={resetErrorInfo}
+        handleExitFromNewContactScreen={handleExitFromNewContactScreen}
+      />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle, { margin: 10 }]}

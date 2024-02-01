@@ -9,9 +9,6 @@ import {
   useColorScheme,
   View,
   Dimensions,
-  Alert,
-  Modal,
-  ActivityIndicator,
   // Button,
 } from "react-native";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
@@ -29,6 +26,7 @@ import { TRootState } from "../../redux/store";
 import { ILoggedInUserInfo } from "../../types";
 import { Card, Switch } from "@rneui/themed";
 import { convertIntoCurrency, maskAccountNumber } from "../../utils";
+import { PageLoadSpinner } from "../../components";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -64,25 +62,7 @@ export default function HomeScreen(props: {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
-      <Modal
-        transparent={true}
-        animationType={"none"}
-        visible={isFetchingAccountInfo}
-        style={{ zIndex: 1100 }}
-        // onRequestClose={() => {
-        //   setIsLoading(false);
-        // }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator
-              animating={isFetchingAccountInfo}
-              size={50}
-              color={Colors.appThemeColor}
-            />
-          </View>
-        </View>
-      </Modal>
+      <PageLoadSpinner isLoading={isFetchingAccountInfo} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[backgroundStyle]}
@@ -149,19 +129,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
-  },
-  modalBackground: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    backgroundColor: "#rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-  },
-  activityIndicatorWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
   imageContainer: {
     flex: 1,
