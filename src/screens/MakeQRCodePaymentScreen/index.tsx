@@ -8,6 +8,8 @@ import {
   View,
   Dimensions,
   Alert,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -32,15 +34,17 @@ export default function MakeQRCodePaymentScreen(props: any): React.JSX.Element {
     props?.route?.params || {};
   const isDarkMode = useColorScheme() === "dark";
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const paymentsData = useSelector((store: TRootState) => store?.payments);
   const loggedInUserInfo = useSelector(
     (store: TRootState) => store?.user?.data
   );
   // console.log("##loggedInUserInfo: ", loggedInUserInfo);
-  const accountInfo = useFetchUserInfoById(
-    loggedInUserInfo?.uid || ""
-  );
+  const {
+    userAccountInfo: accountInfo,
+    isFetchingAccountInfo,
+  } = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   // console.log("##accountInfo: ", accountInfo);
 
   const [amount, setAmount] = useState<string>("");
@@ -54,13 +58,13 @@ export default function MakeQRCodePaymentScreen(props: any): React.JSX.Element {
         // EnumTransactionStatusValues.TTxnFailed,
       ].includes(paymentsData?.paymentStatus as any)
     ) {
+      setAmount("");
+      setTxnMessage("");
+      setIsLoading(false);
       // console.log("###paymentsData: ", paymentsData);
       navigation.navigate(routeInfo.PAYMENT_STATUS, {
         transactionInfo: paymentsData.transactionInfo,
       });
-      setAmount("");
-      setTxnMessage("");
-      return;
     }
     setShowErrorPopUp(true);
     return () => {
@@ -91,6 +95,7 @@ export default function MakeQRCodePaymentScreen(props: any): React.JSX.Element {
       txnType: "WalletToWallet",
     };
     // console.log("##data: ", payload);
+    setIsLoading(true);
     dispatch(makeNewTransactionRequestAction(payload));
   };
 
@@ -108,6 +113,25 @@ export default function MakeQRCodePaymentScreen(props: any): React.JSX.Element {
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={isLoading}
+        style={{ zIndex: 1100 }}
+        // onRequestClose={() => {
+        //   setIsLoading(false);
+        // }}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator
+              animating={isLoading}
+              size={50}
+              color={Colors.appThemeColor}
+            />
+          </View>
+        </View>
+      </Modal>
       <View style={[styles.cardContainer]}>
         {paymentsData.paymentStatus ===
           EnumTransactionStatusValues.TTxnFailed && (
@@ -197,6 +221,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: windowWidth,
     height: windowHeight,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   cardContainer: {
     backgroundColor: Colors.white,

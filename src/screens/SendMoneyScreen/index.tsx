@@ -11,6 +11,8 @@ import {
   TextInput,
   SectionList,
   Alert,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Avatar, Badge, Icon, Button } from "@rneui/themed";
@@ -51,10 +53,14 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
   const [wannaSetTxnMessage, setWannaSetTxnMessage] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
   const [txnMessage, setTxnMessage] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const loggedInUserInfo = useSelector(
     (store: TRootState) => store?.user?.data
   );
-  const accountInfo = useFetchUserInfoById(loggedInUserInfo?.uid || "");
+  const {
+    userAccountInfo: accountInfo,
+    isFetchingAccountInfo,
+  } = useFetchUserInfoById(loggedInUserInfo?.uid || "");
   const receiverAccountInfo = useFetchUserInfoByPhoneNumber(
     receiverInfo?.phoneNumber || ""
   );
@@ -88,12 +94,13 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
         senderPhoneNumber: accountInfo?.phoneNumber as string,
         receiverPhoneNumber: receiverInfo?.phoneNumber,
       });
-      navigation.navigate(routeInfo.PAYMENT_STATUS, {
-        transactionInfo: paymentsData.transactionInfo,
-      });
+      setIsLoading(false);
       setWannaSetTxnMessage(false);
       setAmount("");
       setTxnMessage("");
+      navigation.navigate(routeInfo.PAYMENT_STATUS, {
+        transactionInfo: paymentsData.transactionInfo,
+      });
     }
     return () => {
       dispatch(resetTransactionInfoByIdAction());
@@ -148,6 +155,7 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
       Alert.alert("Error!", "Insufficient balance :(");
       return;
     }
+    setIsLoading(true);
     const payload = {
       sender: accountInfo?.phoneNumber as string,
       receiver: receiverInfo?.phoneNumber,
@@ -247,17 +255,37 @@ export default function SendMoneyScreen(props: any): React.JSX.Element {
           <Text style={[styles.noAccountErrorMessage]}>
             Sorry! You can't make any payments to this person as this person
             don't have a Wallet/account number on this Phone number.
-          </Text> 
+          </Text>
         </View>
       </SafeAreaView>
     );
   }
+  
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={Colors.appThemeColor}
       />
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={isFetchingAccountInfo || isFetchingMutualTransactions || isLoading}
+        style={{ zIndex: 1100 }}
+        // onRequestClose={() => {
+        //   setIsLoading(false);
+        // }}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator
+              animating={isFetchingAccountInfo || isFetchingMutualTransactions || isLoading}
+              size={50}
+              color={Colors.appThemeColor}
+            />
+          </View>
+        </View>
+      </Modal>
       <View style={[styles.subHeader]}>
         {isUrlValid(receiverInfo?.photoURL || "") ? (
           <Avatar rounded source={{ uri: receiverInfo?.photoURL || "" }} />
@@ -439,6 +467,19 @@ const styles = StyleSheet.create({
     height: windowHeight,
     // paddingBottom: 50,
   },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
   emptyContainer: {
     height: "100%",
     width: "100%",
@@ -534,10 +575,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     // backgroundColor: Colors.appThemeColor,
     borderRadius: 20,
-    width: "80%",
+    width: 300,
 
-    elevation: 5,
-    shadowColor: Colors.red,
+    elevation: 7,
+    shadowColor: Colors.black,
     shadowOffset: { width: -2, height: 4 },
     shadowRadius: 3,
     shadowOpacity: 0.9,

@@ -90,7 +90,7 @@ export function* getMyTransactionsSaga(action: {
   type: string;
   payload: string;
 }) {
-  console.log("Triggered getMyTransactionsSaga");
+  // console.log("Triggered getMyTransactionsSaga");
   try {
     const resData: ITransactionInfo[] | [] = yield call(
       getMyTransactionsAPI,

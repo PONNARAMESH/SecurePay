@@ -17,7 +17,7 @@ import Colors from "../../assets/colors";
 import colors from "../../assets/colors";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import { RNCamera } from "react-native-camera";
-import { Icon } from "@rneui/themed";
+import { Button, Icon } from "@rneui/themed";
 import { color } from "@rneui/base";
 import { getUserInfoByPhoneNumberAPI } from "../../api/users";
 import { routeInfo } from "../../constants/routes";
@@ -34,11 +34,6 @@ export default function QRScannerScreen(props: {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorInfo, setErrorInfo] = useState<string>('');
 
-  const backgroundStyle = {
-    // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
-    backgroundColor: Colors?.appThemeColorLight,
-  };
-
   const onSuccess = (e: any) => {
     setIsLoading(true); // Once You Call the API Action loading will be true
     setErrorInfo("");
@@ -52,7 +47,7 @@ export default function QRScannerScreen(props: {
           /**
            * TODO: ONCE THE RECEIVER-ACCOUNT IS AVAILABLE, NAVIGATE THE SCREEN TO MAKE-PAYMENT SCREEN
            */
-          setIsLoading(true); // Once You Call the API Action loading will be true
+          setIsLoading(false); // Once You Call the API Action loading will be true
           navigation.navigate(routeInfo?.MAKE_QR_CODE_PAYMENT_INFO,  {
             receiverAccountInfo: accountInfo
           });
@@ -60,7 +55,7 @@ export default function QRScannerScreen(props: {
         .catch(error => {
           console.log('##error: ', error);
           setErrorInfo("Something went wrong reading QR code. please Scan it again")
-          setIsLoading(true); // if any error occurs, closing the thing
+          setIsLoading(false); // if any error occurs, closing the thing
         })
   
       } else {
@@ -71,6 +66,17 @@ export default function QRScannerScreen(props: {
       setErrorInfo("It's not a valid QR code");
     }
   };
+  
+  const resetErrorInfo = () => {
+    setErrorInfo("");
+    setIsLoading(false);
+  };
+
+  const backgroundStyle = {
+    // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+    backgroundColor: Colors?.appThemeColorLight,
+  };
+
   return (
     <SafeAreaView style={[styles.screenContainer, backgroundStyle]}>
       <StatusBar
@@ -91,6 +97,38 @@ export default function QRScannerScreen(props: {
           </View>
         </View>
       </Modal>
+      <Modal
+        transparent={true}
+        animationType={"none"}
+        visible={errorInfo ? true : false}
+        style={{ zIndex: 1100 }}
+        onRequestClose={resetErrorInfo}
+      >
+        <View style={styles.modalBackgroundForError}>
+          <View style={styles.activityIndicatorWrapperForError}>
+            <View>
+              <Icon
+                name="closecircleo"
+                size={40}
+                type="antdesign"
+                color={Colors.red}
+                containerStyle={{ margin: 10 }}
+              />
+            </View>
+            <Text style={[styles.errorIcon]}> Error!</Text>
+            <Text style={[styles.errorMessage]}>{errorInfo}</Text>
+            <View style={[styles.modelButtonContainer]}>
+              <Button
+                title="wanna try again?"
+                buttonStyle={{
+                  backgroundColor: Colors.appThemeColor,
+                }}
+                onPress={resetErrorInfo}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <QRCodeScanner
         onRead={onSuccess}
         flashMode={
@@ -107,12 +145,6 @@ export default function QRScannerScreen(props: {
         fadeIn={false}
         reactivate={true}
         vibrate={true}
-        topContent={
-          errorInfo && <Text style={[styles.errorMessage]}> {errorInfo} </Text>
-        }
-        topViewStyle={{
-          // marginTop: -100,
-        }}
         bottomContent={
           <View style={[styles.bottomContent]}>
             <Icon
@@ -175,12 +207,6 @@ const styles = StyleSheet.create({
     marginTop: -100,
     gap: 20,
   },
-  errorMessage: {
-    fontSize: 18,
-    color: "red",
-    textAlign: "center",
-    marginTop: 20,
-  },
   modalBackground: {
     flex: 1,
     alignItems: 'center',
@@ -193,5 +219,36 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around'
-  }
+  },
+  modalBackgroundForError: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  activityIndicatorWrapperForError: {
+    // display: 'flex',
+    alignItems: "center",
+    padding: 10,
+    justifyContent: "space-around",
+    backgroundColor: Colors.white,
+    width: 300,
+    minHeight: 250,
+    borderRadius: 20,
+    // gap: -50,
+  },
+  errorIcon: {
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  errorMessage: {
+    fontSize: 18,
+  },
+  modelButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // gap: 10,
+  },
 });

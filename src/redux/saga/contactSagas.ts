@@ -13,7 +13,7 @@ export function* getAllMyContactsSaga(action: {
   type: string;
   payload: string;
 }) {
-  console.log("Triggered getAllMyContactsSaga");
+  // console.log("Triggered getAllMyContactsSaga");
   try {
     const resData: IContactInfo[] | [] = yield call(
       getAllMyContactsAPI,

@@ -279,8 +279,8 @@ const styles = StyleSheet.create({
     // backgroundColor: "#fff",
   },
   contactInfoContainer: {
-    elevation: 10,
-    shadowColor: Colors.red,
+    elevation: 5,
+    shadowColor: Colors.black,
     shadowOffset: { width: -2, height: 4 },
     shadowRadius: 3,
     shadowOpacity: 0.9,

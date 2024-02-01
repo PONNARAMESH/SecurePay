@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,11 +8,8 @@ import {
   Dimensions,
   StatusBar,
 } from "react-native";
-import { useSelector } from "react-redux";
 
 import Colors from "../../assets/colors";
-import { TRootState } from "../../redux/store";
-import { useFetchUserInfoById } from "../../hooks/useFetchUserInfoById";
 import { Button, Icon } from "@rneui/themed";
 import { convertIntoCurrency } from "../../utils";
 import { useFetchUserInfoByPhoneNumber } from "../../hooks";
@@ -28,19 +25,10 @@ export default function PaymentStatusScreen(props: any): React.JSX.Element {
     props?.route?.params || {};
   // console.log("##--------transactionInfo: ", transactionInfo);
   const isDarkMode = useColorScheme() === "dark";
-  const loggedInUserInfo = useSelector(
-    (store: TRootState) => store?.user?.data
-  );
   const receiverAccountInfo = useFetchUserInfoByPhoneNumber(
     transactionInfo?.receiver || ""
   );
   // console.log("##receiverAccountInfo: ", receiverAccountInfo);
-  const { displayName, email, phoneNumber, photoURL, uid, accountNumber } =
-    useFetchUserInfoById(loggedInUserInfo?.uid || "") || {};
-
-  const backgroundStyle = {
-    backgroundColor: Colors?.appThemeColorLight,
-  };
 
   const handleViewTransactionInfo = () => {
     navigation.navigate(routeInfo?.TRANSACTIONS_INFO,  {
