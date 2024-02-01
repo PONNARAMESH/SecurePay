@@ -107,7 +107,7 @@ function LandingScreen(): React.JSX.Element {
         tabBarInactiveTintColor: colors.appThemeColor,
         tabBarStyle: {
           // backgroundColor: colors.appThemeColor,
-          // position: "absolute",
+          position: "absolute",
           // borderTopWidth: 0,
           shadowColor: colors.red,
           shadowOffset: {
