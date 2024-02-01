@@ -1,26 +1,16 @@
 import React, { useState } from "react";
 import {
-  Image,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
   View,
   Dimensions,
-  Alert,
-  Button,
 } from "react-native";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import Colors from "../../assets/colors";
-import { mashreqBankLogo } from "../../assets/images";
-import { Input, CustomButton, Divider } from "../../components";
-import colors from "../../assets/colors";
-import { routeInfo } from "../../constants/routes";
-import { userSingOutAction } from "../../redux/actions";
 import QRCODE from "../../components/QRCode";
 import { TRootState } from "../../redux/store";
 import { useFetchUserInfoById } from "../../hooks/useFetchUserInfoById";
@@ -37,14 +27,8 @@ export default function ReceiveMoneyScreen(props: {
   const loggedInUserInfo = useSelector(
     (store: TRootState) => store?.user?.data
   );
-  const {
-    displayName,
-    email,
-    phoneNumber,
-    photoURL,
-    uid,
-    accountNumber,
-  } = useFetchUserInfoById(loggedInUserInfo?.uid || "") || {};
+  const  {userAccountInfo} = useFetchUserInfoById(loggedInUserInfo?.uid || "") || {};
+  const { phoneNumber } = userAccountInfo || {};
 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
