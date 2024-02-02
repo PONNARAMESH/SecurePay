@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { findInputError, isFormInvalid } from '../../utils';
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import colors from "../../assets/colors";
+import { Icon } from "@rneui/themed";
 
 export type InputProps = {
     id: string;
@@ -13,7 +15,7 @@ export type InputProps = {
     onChange?: (data: any) => void;
     onChangeText?: (data: any) => void;
     placeholder: string;
-    keyboardType?: "ascii-capable" | "ascii-capable-number-pad" | "decimal-pad" | "default" | "email-address" | "name-phone-pad" | "number-pad" | "numbers-and-punctuation" | "numeric" | "phone-pad" | "twitter" | "url" | "visible-password" | "web-search";
+    inputMode?: 'decimal'| 'email'| 'none' | 'numeric' | 'search' | 'tel' | 'text' | 'url';
     secureTextEntry?: boolean;
     value?: string;
 };
@@ -27,13 +29,14 @@ export const Input = React.memo((props: InputProps): React.JSX.Element => {
         onChange,
         onChangeText,
         placeholder,
-        keyboardType,
+        inputMode,
         secureTextEntry,
         value
     } = props;
 
     const inputError: any = findInputError(errors, id);
     const isInvalid = isFormInvalid(inputError);
+    const [showPassword, setShowPassword] = useState<boolean>(true);
     // console.log("##inputError: ", inputError);
     // console.log("##isInvalid: ", isInvalid);
 
@@ -57,15 +60,29 @@ export const Input = React.memo((props: InputProps): React.JSX.Element => {
                 </View>
                 {/* </AnimatePresence> */}
             </View>
-            <TextInput
-                id={id}
-                style={styles.input}
-                placeholder={placeholder}
-                // keyboardType={keyboardType ?? "ascii-capable"}
-                secureTextEntry={secureTextEntry ?? false}
-                onChangeText={onChangeText}
-                value={value}
-            />
+            <View style={[styles.inputContainer]}> 
+                <TextInput
+                    id={id}
+                    style={[styles.input, {width: secureTextEntry ? "80%" : "100%",}]}
+                    placeholder={placeholder}
+                    // placeholderTextColor={colors.appThemeColor}
+                    inputMode={inputMode || "none"}
+                    secureTextEntry={secureTextEntry ? showPassword : false}
+                    onChangeText={onChangeText}
+                    value={value}
+                />
+                {
+                    secureTextEntry && 
+                    <Icon
+                        name={ showPassword ? "eye-off" : "eye"}
+                        onPress={() => { setShowPassword(!showPassword)}}
+                        type="material-community"
+                        size={24}
+                        color={colors.gray}
+                        containerStyle={{marginLeft: "auto", }}
+                    />
+                }
+            </View> 
         </View>
     )
 })
@@ -86,7 +103,8 @@ const styles = StyleSheet.create({
         textTransform: 'capitalize',
         marginVertical: 3,
         fontSize: 15,
-        color: "#000",
+        // color: "#000",
+        color: colors?.appThemeColor,
         fontWeight: "bold",
     },
     errorMessage: {
@@ -98,7 +116,8 @@ const styles = StyleSheet.create({
         borderRadius: 0.375,
         color: '#EF4444',
         // backgroundColor: '#FEE2E2',
-        margin: 0
+        margin: 0,
+        fontWeight: "700",
     },
     textArea: {
         maxHeight: 20,
@@ -108,11 +127,25 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     input: {
-        backgroundColor: "#F4F6F6",
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-        borderRadius: 10,
-        borderWidth: 1,
         fontSize: 15,
+        color: colors.black,
     },
+    inputContainer: { 
+        borderWidth: 1,
+        borderColor: colors.appThemeColor,
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        backgroundColor: colors.white,
+        borderRadius: 8, 
+        paddingHorizontal: 10, 
+    }, 
+    icon: { 
+        marginLeft: "auto", 
+    }, 
+    heading: { 
+        alignItems: 'center', 
+        fontSize: 20, 
+        color: 'green', 
+        marginBottom: 20, 
+    }, 
 });

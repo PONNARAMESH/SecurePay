@@ -2,28 +2,14 @@ import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { Provider } from "react-redux";
-import createSagaMiddleware from "redux-saga";
-import { configureStore } from "@reduxjs/toolkit";
 // import { createStore, applyMiddleware, compose  } from 'redux';
 // import NativeDevSettings from 'react-native/Libraries/NativeModules/specs/NativeDevSettings';
 
 import { AuthorizedRoutes, UnAuthorizedRoutes } from "./src/Routes";
-import { rootReducer } from "./src/redux/reducers"; // Assume you have a reducers folder with your reducers
-import rootSaga from "./src/redux/saga"; // Assume you have a sagas folder with your sagas
-import "./src/firebase/firebaseConfigs";
+import "./src/firebase";
 import { ILoggedInUserInfo } from "./src/types";
+import { store } from "./src/redux/store";
 
-
-const sagaMiddleware = createSagaMiddleware();
-
-const store = configureStore({
-  reducer: rootReducer,
-  middleware: (getDefaultMiddleware: any) =>
-    getDefaultMiddleware().concat(sagaMiddleware),
-  // devTools: true,
-});
-
-sagaMiddleware.run(rootSaga);
 
 function App(): React.JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
