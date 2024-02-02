@@ -131,12 +131,12 @@ export function groupTheContactsBasedOnAlphabeticalOrder(contactsList: IContactI
   ) {
     return [];
   }
-  let newObj: Record<string, IUserAccountInfo[]> = {};
+  let newObj: Record<string, IContactInfo[]> = {};
   // console.log("##contacts: ", JSON.stringify(contactsList, null, 4));
   contactsList.sort((a, b) => {
-    if(a.displayName > b.displayName) return 1;
-    if(a.displayName == b.displayName) return 0;
-    else return -1
+    if(a?.displayName?.toLocaleLowerCase() == b?.displayName?.toLocaleLowerCase()) return 0;
+    if(a?.displayName?.toLocaleLowerCase() > b?.displayName?.toLocaleLowerCase()) return 1;
+    return -1;
   });
   
   for(let contact of contactsList) {
