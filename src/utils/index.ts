@@ -1,4 +1,4 @@
-import { IUserAccountInfo } from "../types";
+import { IContactInfo, IUserAccountInfo } from "../types";
 
 export { findInputError } from "./findInputError";
 export { isFormInvalid } from "./isFormInvalid";
@@ -123,7 +123,7 @@ export function isItOutgoingTransaction(
   return loggedInfoUserPhoneNumber === paymentSenderPhoneNumber ? true : false;
 }
 
-export function groupTheContactsBasedOnAlphabeticalOrder(contactsList: IUserAccountInfo[] | []) {
+export function groupTheContactsBasedOnAlphabeticalOrder(contactsList: IContactInfo[] | []) {
   if(
     !contactsList ||
     !Array.isArray(contactsList) ||
@@ -132,6 +132,13 @@ export function groupTheContactsBasedOnAlphabeticalOrder(contactsList: IUserAcco
     return [];
   }
   let newObj: Record<string, IUserAccountInfo[]> = {};
+  // console.log("##contacts: ", JSON.stringify(contactsList, null, 4));
+  contactsList.sort((a, b) => {
+    if(a.displayName > b.displayName) return 1;
+    if(a.displayName == b.displayName) return 0;
+    else return -1
+  });
+  
   for(let contact of contactsList) {
     const letter = contact.displayName?.charAt(0).toLocaleUpperCase() || ' ';
     if (newObj[letter]) {
