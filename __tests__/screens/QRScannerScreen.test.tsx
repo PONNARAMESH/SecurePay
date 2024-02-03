@@ -1,7 +1,7 @@
 import "react-native";
 import React from "react";
 import { render } from "@testing-library/react-native";
-import QRScannerScreen from "../../../src/screens/QRScannerScreen";
+import QRScannerScreen from "../../src/screens/QRScannerScreen";
 // import Camera from '../../../__mocks__/Camera';
 
 jest.mock("react-native-camera", () => {
