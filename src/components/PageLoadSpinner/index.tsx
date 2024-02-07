@@ -13,10 +13,12 @@ export const PageLoadSpinner = (props: TPageLoadSpinnerComponent) => {
       animationType={"none"}
       visible={isLoading}
       style={{ zIndex: 1100 }}
+      testID="containerForPageLoadSpinner"
     >
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
           <ActivityIndicator
+            testID="pageLoadSpinner"
             animating={isLoading}
             size={50}
             color={Colors.appThemeColor}

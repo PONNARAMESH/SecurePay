@@ -38,7 +38,7 @@ export default function LoginScreen(props: {
   const [errorInfo, setErrorInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const loggedInUserInfo = useSelector((store: TRootState) => store?.user);
-  console.log("###999: ", loggedInUserInfo);
+  // console.log("###999: ", loggedInUserInfo);
 
   const {
     register,

@@ -56,7 +56,7 @@ export default function ContactsScreen(props: {
     dispatch(getAllMyContactsRequestAction(accountInfo?.phoneNumber as string));
   }, [accountInfo?.contactsList]);
 
-  // console.log("##contactsInfo: ", {myContacts, isFetchingMyContacts, errorInfo})
+  // console.log("##contactsInfo: ", {myContacts, isFetchingMyContacts})
 
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.white,
@@ -78,19 +78,26 @@ export default function ContactsScreen(props: {
           barStyle={isDarkMode ? "light-content" : "dark-content"}
           backgroundColor={Colors.appThemeColor}
         />
-        <PageLoadSpinner isLoading={isFetchingAccountInfo || isFetchingMyContacts} />
+        <PageLoadSpinner
+          isLoading={isFetchingAccountInfo || isFetchingMyContacts}
+        />
         <View style={[styles.emptyContainer]}>
           <Icon
             name="account-search"
             type="material-community"
             size={60}
             color={Colors.gray}
+            testID="iconForEmptyContactsList"
           />
-          <Text style={[styles.emptyMessage]}>
+          <Text
+            style={[styles.emptyMessage]}
+            testID="messageForEmptyContactsList"
+          >
             Sorry! You don't have any contacts!!
           </Text>
         </View>
         <FAB
+          testID="addNewContactButton"
           icon={{
             name: "person-add-alt-1",
             type: "material",
@@ -134,8 +141,9 @@ export default function ContactsScreen(props: {
           data: groupedContactsInfo[key],
         }))}
         keyExtractor={(item, index) => item?.phoneNumber + index}
-        renderItem={({ item }) => (
+        renderItem={({ item, index, section }) => (
           <ListItem
+            testID={`listItem_${section.title}_${index}`}
             bottomDivider
             Component={TouchableScale}
             friction={90}
@@ -189,10 +197,13 @@ export default function ContactsScreen(props: {
           </ListItem>
         )}
         renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.header}>{title}</Text>
+          <Text style={styles.header} testID={`section_${title}`}>
+            {title}
+          </Text>
         )}
       />
       <FAB
+        testID="addNewContactButton"
         icon={{
           name: "person-add-alt-1",
           type: "material",
