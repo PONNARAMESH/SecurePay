@@ -29,7 +29,7 @@ import QRScannerScreen from "../screens/QRScannerScreen";
 import PaymentStatusScreen from "../screens/PaymentStatusScreen";
 import TransactionInfoScreen from "../screens/TransactionInfoScreen";
 import MakeQRCodePaymentScreen from "../screens/MakeQRCodePaymentScreen";
-import AddNewContactScreen from "../screens/AddNewContactScreen/inded";
+import AddNewContactScreen from "../screens/AddNewContactScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
